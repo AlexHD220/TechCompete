@@ -9,7 +9,7 @@
 
     <h1>Iniciar sesión</h1>
 
-    <form action="/usuario" method="post"> <!--la diagonal me envia al principio de la url "solacyt.test/"-->
+    <form action="/usuario" method="post"> <!--la diagonal me envia al principio de la url "techcompete.test/"-->
 
         @csrf <!--permite entrar al formulario muy importante agregar-->
 

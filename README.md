@@ -14,8 +14,8 @@ Asegúrate de tener [Composer](https://getcomposer.org/) y [Node.js](https://nod
 
 ```bash
 # Clona el repositorio y accede a la rama específica
-git clone https://github.com/AlexHD220/SOLACYT.git
-cd SOLACYT
+git https://github.com/AlexHD220/TechCompete.git
+cd TechCompete
 git checkout tablaAsesoresP3
 
 # Instala las dependencias de Composer
@@ -24,6 +24,11 @@ composer install
 # Configura el archivo .env
 cp .env.example .env
 php artisan key:generate
+
+# Crea la base de datos MySQL
+mysql -u root -p
+CREATE DATABASE techcompete;
+exit 
 
 # Ejecuta las migraciones y semillas
 php artisan migrate:fresh

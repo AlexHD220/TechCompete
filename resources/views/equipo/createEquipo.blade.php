@@ -9,7 +9,7 @@
 
     <h1 style="margin-bottom: 15px;">Registrar Nuevo Equipo</h1>
 
-    <form action="/equipo" method="post"> <!--la diagonal me envia al principio de la url "solacyt.test/"-->
+    <form action="/equipo" method="post"> <!--la diagonal me envia al principio de la url "techcompete.test/"-->
 
         <!--Mostrar errores-->
         @if ($errors->any())

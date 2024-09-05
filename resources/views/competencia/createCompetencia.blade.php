@@ -12,7 +12,7 @@
     <!--<form action = "{{ route('competencia.store') }}">-->
 
                                               <!-- Agregar archivos al formulario -->
-    <form action="/competencia" method="post" enctype="multipart/form-data" id = "createCompetencia"> <!--la diagonal me envia al principio de la url "solacyt.test/"-->
+    <form action="/competencia" method="post" enctype="multipart/form-data" id = "createCompetencia"> <!--la diagonal me envia al principio de la url "techcompete.test/"-->
 
         <!--Mostrar errores-->
         @if ($errors->any())

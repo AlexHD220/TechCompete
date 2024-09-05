@@ -10,7 +10,7 @@
     <h1 style="margin-bottom: 15px;">Editar proyecto</h1>
 
     <!--editar formulario por medio de la direccion de route:list, esto porque como no tengo un archivo, necesito mandar llamas a la ruta de la lista asesor.update-->
-    <form action="{{ route('proyecto.update', $proyecto)}}" method="post"> <!--la diagonal me envia al principio de la url "solacyt.test/"-->
+    <form action="{{ route('proyecto.update', $proyecto)}}" method="post"> <!--la diagonal me envia al principio de la url "techcompete.test/"-->
 
         <!--Mostrar errores-->
         @if ($errors->any())

@@ -10,7 +10,7 @@
     <h1 style="margin-bottom: 15px;">Editar Categoría</h1>
 
     <!--editar formulario por medio de la direccion de route:list, esto porque como no tengo un archivo, necesito mandar llamar a la ruta de la lista asesor.update-->
-    <form action="{{ route('competencia.update', $competencia)}}" method="post"  enctype="multipart/form-data"> <!--la diagonal me envia al principio de la url "solacyt.test/"-->
+    <form action="{{ route('competencia.update', $competencia)}}" method="post"  enctype="multipart/form-data"> <!--la diagonal me envia al principio de la url "techcompete.test/"-->
 
         <!--Mostrar errores-->
         @if ($errors->any())
