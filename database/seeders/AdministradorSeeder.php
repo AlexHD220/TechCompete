@@ -13,6 +13,6 @@ class AdministradorSeeder extends Seeder
      */
     public function run(): void
     {
-        Administrador::factory()->withPersonalTeam()->count(3)->create(); //--> generar informacion falsa
+        //Administrador::factory()->withPersonalTeam()->count(3)->create(); //--> generar informacion falsa
     }
 }

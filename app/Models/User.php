@@ -31,7 +31,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'email', 'password', 'rol'
+        'name', 'email', 'password', 'rol', 'roleable_id','roleable_type','email_verified_at',
     ];
 
     /**
@@ -69,7 +69,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     public function equipos(){
-        $this->hasmany(Equipos::class);
+        $this->hasmany(Equipo::class);
     }
 
     public function proyectos(){
@@ -80,6 +80,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         //return $this->belongsTo(Usuario::class);
         return $this->belongsTo(Administrador::class);
+    }
+
+    public function roleable()
+    {
+        return $this->morphTo();
     }
 
 }

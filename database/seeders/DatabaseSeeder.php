@@ -27,18 +27,18 @@ class DatabaseSeeder extends Seeder
         ]);*/
         
         // Pruebas de asesores
-        \App\Models\Asesor::factory()->create([
+        /*\App\Models\Asesor::factory()->create([
             //'usuario' => 'AlexHD220',
             'nombre' => 'Prueba',
             'correo' => 'prueba@live.com',
             'user_id' => 1,
-        ]);
+        ]);*/
 
         //lista de seeders que quiero que se ejecuten
         $this->call([
-            AdministradorSeeder::class, // (3)
-            UserSeeder::class, // (3)            
-            AsesorSeeder::class, // (10)
+            //AdministradorSeeder::class, // (3) -----> DESCOMENTAR
+            //UserSeeder::class, // (3)           
+            //AsesorSeeder::class, // (10)
             CategoriaSeeder::class, // (6)            
 
             //OrganizacionSeeder::class,

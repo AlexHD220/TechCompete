@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Administrador;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -14,6 +15,10 @@ use Laravel\Jetstream\Features;
  */
 class UserFactory extends Factory
 {
+
+    // Modelo utilizado para crear factorys
+    protected $model = User::class;
+
     /**
      * Define the model's default state.
      *
@@ -21,6 +26,11 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        //Administrador::factory()->count(3)->create(); //--> generar informacion falsa
+
+        // Crear un Administrador 
+        $administrador = Administrador::factory()->create();
+
         return [
             //'name' => $this->faker->name(),
             'name' => $this->faker->company(),
@@ -28,7 +38,9 @@ class UserFactory extends Factory
             'email' => fake()->unique()->email(),
             'email_verified_at' => now(),
             'password' =>Hash::make('Pruebas.tc23'),
-            'rol' => 2,
+            'rol' => 1,
+            'roleable_id' => $administrador->id,
+            'roleable_type' => get_class($administrador),
             //'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,

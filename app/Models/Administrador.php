@@ -9,7 +9,9 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class Administrador extends Model
 {
-    protected $table = 'users'; //<-- Cambiar el nombre de mi tabla
+    //protected $table = 'users'; //<-- Cambiar el nombre de mi tabla
+
+    protected $table = 'administradores'; //<-- Cambiar el nombre de mi tabla
 
     use HasFactory;
     use TwoFactorAuthenticatable;
