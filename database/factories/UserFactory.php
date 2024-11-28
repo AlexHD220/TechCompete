@@ -29,7 +29,7 @@ class UserFactory extends Factory
         //Administrador::factory()->count(3)->create(); //--> generar informacion falsa
 
         // Crear un Administrador 
-        $administrador = Administrador::factory()->create();
+        //$administrador = Administrador::factory()->create();
 
         return [
             //'name' => $this->faker->name(),
@@ -39,15 +39,15 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' =>Hash::make('Pruebas.tc23'),
             'rol' => 1,
-            'roleable_id' => $administrador->id,
-            'roleable_type' => get_class($administrador),
+            //'roleable_id' => $administrador->id,
+            //'roleable_type' => get_class($administrador),
             //'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             //'remember_token' => Str::random(10),
             'remember_token' => null,
             'profile_photo_path' => null,
-            'current_team_id' => null,
+            //'current_team_id' => null,
         ];
     }
 

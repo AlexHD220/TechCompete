@@ -11,12 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categorias', function (Blueprint $table) {
+        Schema::create('horarios', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre')->unique();
-            $table->text('descripcion');
+            $table->string('evento');
+            $table->time('hora_inicio');
             
-            $table->softDeletes(); // Agrega la columna deleted_at
+            $table->foreignId('competencia_id')->constrained();
+            $table->foreignId('competencia_categoria_id')->constrained();
+
+            $table->string('descripcion')->nullable();
+            $table->string('lugar');
+
             //$table->timestamps();
         });
     }
@@ -26,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categorias');
+        Schema::dropIfExists('horarios');
     }
 };

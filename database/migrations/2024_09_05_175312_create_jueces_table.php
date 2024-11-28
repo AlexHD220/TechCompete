@@ -13,7 +13,18 @@ return new class extends Migration
     {
         Schema::create('jueces', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+
+            $table->unsignedBigInteger('registro_juez_id'); //--> crear columna dentro de la tabla jueces            
+            $table->foreign('registro_juez_id')->references('id')->on('registro_jueces')->constrained(); // --> referenciar columna de ID dentro de la tabla registro_jueces 
+
+            $table->foreignId('user_id')->constrained();
+
+            $table->string('name');
+            $table->string('lastname');
+            $table->string('telefono')->nullable();
+
+            $table->softDeletes(); // Agrega la columna deleted_at
+            //$table->timestamps();
         });
     }
 

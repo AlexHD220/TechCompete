@@ -23,7 +23,7 @@ class User extends Authenticatable implements MustVerifyEmail
     use TwoFactorAuthenticatable;
     use SoftDeletes;
 
-    public $timestamps = false; //--> ignorar una valor de la tabla 
+    public $timestamps = false; //--> ignorar una valor de la tabla
 
     /**
      * The attributes that are mass assignable.
@@ -31,7 +31,8 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'email', 'password', 'rol', 'roleable_id','roleable_type','email_verified_at',
+        'name', 'email', 'password', 'rol',
+        //'name', 'email', 'password', 'rol', 'roleable_id','roleable_type','email_verified_at',
     ];
 
     /**
@@ -64,7 +65,50 @@ class User extends Authenticatable implements MustVerifyEmail
         'profile_photo_url',
     ];
 
-    public function asesores(){
+    public function institucion() // --> Relacion Uno a Uno
+    {
+        return $this->hasOne(Institucion::class);
+    }
+
+    public function asesor() // --> Relacion Uno a Uno
+    {
+        return $this->hasOne(Asesor::class);
+    }
+
+    public function juez() // --> Relacion Uno a Uno
+    {
+        return $this->hasOne(Juez::class);
+    }
+
+    public function competencias() // --> Relacion Muchos a Muchos
+    {
+        return $this->belongsToMany(Competencia::class);
+    }
+
+    public function competenciacategorias() // --> Relacion Muchos a Muchos
+    {
+        return $this->belongsToMany(CompetenciaCategoria::class);
+    }
+
+
+    //Pago de proyectos y equipos
+
+    public function equipos() // --> Relacion Muchos a Uno (Tiene muchos)
+    {
+        return $this->hasMany (Equipo::class);
+    }
+
+    public function proyectos() // --> Relacion Muchos a Uno (Tiene muchos)
+    {
+        return $this->hasMany (Proyecto::class);
+    }
+
+    public function registrojueces() // --> Relacion Muchos a Uno (Tiene muchos)
+    {
+        return $this->hasMany (RegistroJuez::class);
+    }
+
+    /*public function asesores(){
         $this->hasmany(Asesor::class);
     }
 
@@ -85,6 +129,6 @@ class User extends Authenticatable implements MustVerifyEmail
     public function roleable()
     {
         return $this->morphTo();
-    }
+    }*/
 
 }

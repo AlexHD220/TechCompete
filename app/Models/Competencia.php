@@ -15,7 +15,49 @@ class Competencia extends Model
 
     protected $fillable = ['identificador','fecha', 'duracion', 'tipo','asesor_id', 'ubicacion_imagen', 'nombre_original_imagen']; // <-- columnas llenables por el usuario (fillable) opuesto es guarded ES MEJOR ESTE
 
-    // Definición de la relación con Usuario (PENDIENTE DE HACERLO FUNCIONAR) NO FUNCIONO LO ELIMINE
+    
+    public function users() // --> Relacion Muchos a Muchos
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+    public function instituciones() // --> Relacion Muchos a Muchos
+    {
+        return $this->belongsToMany(Institucion::class);
+    }
+
+    public function categorias() // --> Relacion Muchos a Muchos
+    {
+        return $this->belongsToMany(Categoria::class);
+    }
+
+    public function competenciacategorias() // --> Relacion Muchos a 1
+    {
+        return $this->hasMany (CompetenciaCategoria::class);
+    }
+
+    public function equipos() // --> Relacion Muchos a 1
+    {
+        return $this->hasMany (Equipo::class);
+    }
+
+    public function proyectos() // --> Relacion Muchos a 1
+    {
+        return $this->hasMany (Proyecto::class);
+    }
+
+    public function jueces() // --> Relacion Muchos a Muchos
+    {
+        return $this->belongsToMany(Juez::class);
+    }
+
+    public function horarios() // --> Relacion Muchos a 1
+    {
+        return $this->hasMany (Horario::class);
+    }
+    
+    
+    /*// Definición de la relación con Usuario (PENDIENTE DE HACERLO FUNCIONAR) NO FUNCIONO LO ELIMINE
     public function asesor()
     {
         //return $this->belongsTo(Usuario::class);
@@ -40,5 +82,5 @@ class Competencia extends Model
 
     public function categorias(){
         return $this -> belongsToMany(Categoria::class); //Pertenece a muchos
-    }
+    }*/
 }

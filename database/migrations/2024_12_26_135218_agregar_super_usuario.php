@@ -17,24 +17,26 @@ return new class extends Migration
     {
         // Crear el Administrador
         //$administrador = Administrador::create([
-        $administrador = Administrador::factory()->create([
+        /*$administrador = Administrador::factory()->create([
             'nombre' => 'Alejandro Hernández',
             // Otros campos necesarios
-        ]);
+        ]);*/
         
         // Crear el Administrador
         //$administrador = Administrador::factory()->create();
 
         // Agregar registro de Super Usuarios base de datos 
         //User::factory()->withPersonalTeam()->create([
-        User::create([
-            //'name' => 'Alejandro Hernández',
-            'name' => $administrador->nombre,
+        User::factory()->create([
+        //User::create([
+            'name' => 'Alejandro Hernández',
+            'username' => 'superadmin',
+            //'name' => $administrador->nombre,
             'rol' => 1,
-            'roleable_id' => $administrador->id,
-            'roleable_type' => get_class($administrador),
+            //'roleable_id' => $administrador->id,
+            //'roleable_type' => get_class($administrador),
             'email' => 'superadmin@techcompete.com',
-            'email_verified_at' => now(),
+            //'email_verified_at' => now(),
             'password' =>Hash::make('Pruebas.tc23'),
             // ---> TEMPORAL
        ]);

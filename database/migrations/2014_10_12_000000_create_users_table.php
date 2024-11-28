@@ -14,13 +14,15 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table -> unsignedInteger('rol');
-            $table->morphs('roleable'); // Crea columnas roleable_id y roleable_type
+            //$table->morphs('roleable'); // Crea columnas roleable_id y roleable_type
             $table->string('name');
+            $table->string('username')->unique();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('change_password')->default(false);
             $table->rememberToken();
-            $table->foreignId('current_team_id')->nullable();
+            //$table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
             $table->softDeletes();
             //$table->timestamps();

@@ -12,8 +12,59 @@ class Equipo extends Model
 
     protected $fillable = ['user_id','nombre','asesor_id','competencia_id', 'categoria_id']; // <-- columnas llenables por el usuario (fillable) opuesto es guarded ES MEJOR ESTE
 
+    public function competencia() // --> Relacion Uno a x
+    {
+        return $this->belongsTo(Competencia::class);
+    }
 
-    public function user()
+    public function user() // --> Relacion Uno a Muchos (pertenece a)(relacion inversa)(Modelo que posee la columna foranea)
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function institucion() // --> Relacion Uno a x
+    {
+        return $this->belongsTo(Institucion::class);
+    }
+
+    public function asesor() // --> Relacion Uno a x
+    {
+        return $this->belongsTo(Asesor::class);
+    }
+
+    public function competenciacategoria() // --> Relacion Uno a x
+    {
+        return $this->belongsTo(CompetenciaCategoria::class);
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($equipo) {
+            // Elimina manualmente los participantes relacionados
+            $equipo->participantes()->delete();
+        });
+    }
+
+    // Relación polimórfica inversa
+    public function participantes()
+    {
+        return $this->morphMany(Participante::class, 'participable');
+    }
+
+    /*public function participantes() // --> Relacion Muchos a 1
+    {
+        return $this->hasMany (Participante::class);
+    }*/
+
+    public function robot() // --> Relacion Uno a x
+    {
+        return $this->hasOne(Robot::class);
+    }
+    
+
+    /*public function user()
     {
         //return $this->belongsTo(Usuario::class);
         return $this->belongsTo(User::class);
@@ -38,5 +89,5 @@ class Equipo extends Model
     {
         //return $this->belongsTo(Usuario::class);
         return $this->belongsTo(Categoria::class);
-    }
+    }*/
 }

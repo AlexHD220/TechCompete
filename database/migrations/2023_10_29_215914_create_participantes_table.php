@@ -13,7 +13,17 @@ return new class extends Migration
     {
         Schema::create('participantes', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            
+            //$table->morphs('participable'); // Crea columnas participable_id y participable_type
+            $table->unsignedBigInteger('participable_id');
+            $table->string('participable_type');
+            $table->unsignedBigInteger('num_participacion');
+
+            $table->string('name');
+            $table->string('lastname');
+
+            $table->string('credencial_path', 2048)->nullable();
+            $table->string('nombre_original_credencial')->nullable();
         });
     }
 

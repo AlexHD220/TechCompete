@@ -12,14 +12,41 @@ class Asesor extends Model
     
     use HasFactory;
     ///APLICAR MIGRACION ANTES DE DESCOMENTAR
-    //use SoftDeletes; // Borrado logico a nivel de base de datos (levnatr bandera de eliminado logico)
+    use SoftDeletes; // Borrado logico a nivel de base de datos (levanatr bandera de eliminado logico)
 
     public $timestamps = false; //--> ignorar una valor de la tabla 
     protected $fillable = ['user_id','nombre','correo','telefono','escuela'/*,'usuario'*/]; // <-- columnas llenables por el usuario (fillable) opuesto es guarded ES MEJOR ESTE
     //protected $guarded = ['id']; // <-- columnas protegidas no llenables por el usuario (guarded)
 
     // Definición de la relación con Usuario 
-    public function competencias()
+    
+    public function user() // --> Relacion Uno a x
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function institucion() // --> Relacion Uno a x
+    {
+        return $this->belongsTo(institucion::class);
+    }
+
+    public function competenciacategorias() // --> Relacion Muchos a Muchos
+    {
+        return $this->belongsToMany(CompetenciaCategoria::class);
+    }
+
+    public function equipos() // --> Relacion Muchos a 1
+    {
+        return $this->hasMany (Equipo::class);
+    }
+
+    public function proyectos() // --> Relacion Muchos a 1
+    {
+        return $this->hasMany (Proyecto::class);
+    }
+    
+    
+    /*public function competencias()
     {
         //return $this->belongsTo(Usuario::class);
         return $this->hasMany(Competencia::class);
@@ -48,6 +75,6 @@ class Asesor extends Model
     {
         //return $this->belongsTo(Usuario::class);
         return $this->hasMany(Proyecto::class);
-    }
+    }*/
 
 }

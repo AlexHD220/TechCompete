@@ -13,15 +13,39 @@ return new class extends Migration
     {
         Schema::create('proyectos', function (Blueprint $table) {
             $table->id();
-            //$table->unsignedBigInteger('user_id'); //Llave foranea de esta columna
-            $table->foreignID('user_id')->constrained();
-            $table->string('nombre')->unique();
-            $table->text('descripcion');
+            $table->string('name');
 
-            $table->unsignedBigInteger('asesor_id'); //--> crear columna dentro de la tabla competencias
-            $table->foreign('asesor_id')->references('id')->on('asesores')->constrained(); //--> referenciar columna de ID dentro de la tabla competencias 
+            $table->foreignId('competencia_id')->constrained();
+            $table->foreignId('competencia_categoria_id')->constrained();
+            $table->boolean('pago')->default(false);
+
+            $table->string('comprobante_path', 2048)->nullable();
+            $table->string('nombre_original_comprobante')->nullable();
             
-            $table->foreignID('competencia_id')->constrained();
+            $table->unsignedBigInteger('autorizado_by')->nullable(); //--> crear columna dentro de la tabla proyectos            
+            $table->foreign('autorizado_by')->references('id')->on('users')->constrained(); // --> referenciar columna de ID dentro de la tabla users 
+
+            $table->string('carta_path', 2048)->nullable();
+            $table->string('nombre_original_carta')->nullable();
+
+            $table->unsignedBigInteger('asesor_id'); //--> crear columna dentro de la tabla asesores            
+            $table->foreign('asesor_id')->references('id')->on('asesores')->constrained(); // --> referenciar columna de ID dentro de la tabla asesores 
+
+            $table->unsignedBigInteger('institucion_id')->nullable(); //--> crear columna dentro de la tabla instituciones            
+            $table->foreign('institucion_id')->references('id')->on('instituciones')->constrained(); // --> referenciar columna de ID dentro de la tabla instituciones 
+            $table->boolean('inst_independiente')->default(false);
+            $table->string('inst_nombre')->nullable();
+
+            $table->unsignedBigInteger('num_proyecto');
+            $table->unsignedBigInteger('num_stand');
+
+            $table->text('descripcion');
+            $table->text('objetivo');
+            $table->text('impacto');
+
+            $table->unsignedBigInteger('total_evaluaciones');
+            $table->unsignedBigInteger('puntaje_total')->default(0);            
+            //$table->timestamps();
         });
     }
 

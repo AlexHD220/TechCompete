@@ -11,23 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('competencias', function (Blueprint $table) {
-
+        Schema::create('instituciones', function (Blueprint $table) {
             $table->id();
-            $table->string('name') -> unique();
-            $table->text('descripcion');
-
-            $table->date('fecha');
-            $table->unsignedInteger('duracion');
-            $table->string('sede');
+            $table->foreignId('user_id')->constrained();
+            $table->string('name');
             $table->string('tipo');
-
-            $table->unsignedInteger('cant_participantes')->default(0);
-            $table->string('imagen_path', 2048)->nullable();
+            $table->string('sede');
+            $table->string('ubicacion')->nullable();
+            
+            $table->string('pagina_web')->nullable();
+            $table->string('email')->nullable();
+            $table->string('telefono')->nullable();
+            $table->string('whatsapp')->nullable();
 
             $table->softDeletes(); // Agrega la columna deleted_at
             //$table->timestamps();
-
         });
     }
 
@@ -36,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('competencias');
+        Schema::dropIfExists('instituciones');
     }
 };

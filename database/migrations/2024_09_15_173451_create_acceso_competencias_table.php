@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categorias', function (Blueprint $table) {
+        Schema::create('acceso_competencias', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre')->unique();
-            $table->text('descripcion');
             
-            $table->softDeletes(); // Agrega la columna deleted_at
+            $table->foreignId('competencia_categoria_id')->constrained();
+            $table->foreignId('user_id')->constrained(); //(juez_id/staff_id)
+
             //$table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categorias');
+        Schema::dropIfExists('acceso_competencias');
     }
 };
