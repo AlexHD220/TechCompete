@@ -33,5 +33,26 @@
     <!-- Template Stylesheet -->
     <link href="/dark/css/style.css" rel="stylesheet">
     <link href="/dark/css/estilos.css" rel="stylesheet">
+    
+
+    <style>
+        .nav-link {
+            display: flex; /* Activar Flexbox */
+            align-items: center; /* Centrar los elementos verticalmente */
+            justify-content: space-between; /* Asegura la separación entre texto e imagen */
+        }
+
+        .info-container {
+            flex: 1; /* Ocupa todo el espacio disponible antes de la imagen */
+            text-align: right; /* Alinear texto al lado izquierdo */
+            word-break: break-word; /* Permitir saltos de línea si el texto es demasiado largo */
+        }
+
+        .profile-pic {
+            flex-shrink: 0; /* Prevenir que la imagen se reduzca en pantallas pequeñas */
+            margin-left: 15px; /* Espacio entre texto e imagen */
+        }
+
+    </style>
 
 </head>

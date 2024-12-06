@@ -46,4 +46,9 @@ class Juez extends Model
     {
         return $this->belongsTo(RegistroJuez::class);
     }
+
+    public function juecescompetencias() // --> Relacion Muchos a Uno (Tiene muchos)
+    {
+        return $this->hasMany (JuecesCompetencia::class);
+    }
 }

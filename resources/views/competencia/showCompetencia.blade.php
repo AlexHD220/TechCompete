@@ -31,7 +31,7 @@
     </ul>
 
 
-    @can('only-admin')
+    @can('only-superadmin')
         @if ($competencia->tipo == 'Equipo' && $equipos->count() > 0)
             <br>
             <h4>Equipos registrados</h4>

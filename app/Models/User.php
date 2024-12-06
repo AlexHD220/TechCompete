@@ -31,7 +31,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'email', 'password', 'rol',
+        'name', 'lastname', 'email', 'password', 'rol', // Solo estas columnas pueden ser agregadas por el usuario, el resto no se agrega y se ignora
         //'name', 'email', 'password', 'rol', 'roleable_id','roleable_type','email_verified_at',
     ];
 
@@ -106,6 +106,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function registrojueces() // --> Relacion Muchos a Uno (Tiene muchos)
     {
         return $this->hasMany (RegistroJuez::class);
+    }
+
+    public function accesocompetencias() // --> Relacion Muchos a Uno (Tiene muchos)
+    {
+        return $this->hasMany (AccesoCompetencia::class);
     }
 
     /*public function asesores(){

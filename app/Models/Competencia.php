@@ -55,6 +55,11 @@ class Competencia extends Model
     {
         return $this->hasMany (Horario::class);
     }
+
+    public function accesocompetencias() // --> Relacion Muchos a Uno (Tiene muchos)
+    {
+        return $this->hasMany (AccesoCompetencia::class);
+    }
     
     
     /*// Definición de la relación con Usuario (PENDIENTE DE HACERLO FUNCIONAR) NO FUNCIONO LO ELIMINE

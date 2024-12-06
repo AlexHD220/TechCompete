@@ -1,63 +1,53 @@
-<x-guest-layout>
-    <x-authentication-card>
-        <x-slot name="logo">
-            <x-authentication-card-logo />
-        </x-slot>
+<!DOCTYPE html>
+<html lang="es">
 
-        <x-validation-errors class="mb-4" />
+<x-plantilla-head>
+    <title>Administrador | Cuenta</title>
+</x-plantilla-head>
 
-        <div class="flex items-center justify-center">
-            <h1 style="margin-bottom: 15px;">Registrar Nuevo Administrador</h1>
-        </div>
+<x-plantilla-body>
 
-        <form method="POST" action="{{ route('administrador.store') }}">
-            @csrf
+    <h1 style="margin-bottom: 20px;">Crear cuenta de administrador</h1>
 
-            <div>
-                <x-label for="name" value="{{ __('Nombre completo') }}" />
-                <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" minlength="10" maxlength="50" required autofocus /> <!-- autocomplete="name" --->
+    <form action="/administrador" method="post"> <!--la diagonal me envia al principio de la url "solacyt.test/"-->
+
+        <!--Mostrar errores-->
+        @if ($errors->any())
+            <div class="msgAlerta">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
+            <br>
+        @endif
 
-            <div class="mt-4">
-                <x-label for="email" value="{{ __('Correo electrónico') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" minlength="5" maxlength="50" required /> <!-- autocomplete="username" -->
-            </div>
+        @csrf <!--permite entrar al formulario muy importante agregar-->
 
-            <div class="mt-4">
-                <x-label for="password" value="{{ __('Contraseña') }}" />
-                <x-input id="password" class="block mt-1 w-full" type="password" name="password" minlength="8" maxlength="50" required autocomplete="new-password" style="width: 365px; display: inline;"/>
-                <i onmouseover="this.style.color='gray'" onmouseout="this.style.color='white'" class="fas fa-eye" id="showPassword" onclick="cambiarIcono()" style="margin-left: 10px;"></i>
-            </div>
+        <!--<label for="usuario"><b> Usuario: </b></label>
+        <input type="text" id="usuario" name="usuario" placeholder="Usuario" required value = "{{ old('usuario') }}"><br><br>--> <!--value = "{{old('name')}}"-->
 
-            <div class="mt-4">
-                <x-label for="password_confirmation" value="{{ __('Confirmar contraseña') }}" />
-                <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" minlength="8" maxlength="50" required autocomplete="new-password" style="width: 365px; display: inline;"/>
-                <i onmouseover="this.style.color='gray'" onmouseout="this.style.color='white'" class="fas fa-eye" id="showPassword_confirmation" onclick="cambiarIcono()" style="margin-left: 10px;"></i>
-            </div>
+        <label for="rol"><b>Tipo de cuenta: </b></label>
+        <select name="rol" style="width: 200px; margin: 5px;" autofocus required>
+            <option selected disabled value=""> - </option>
+            <option value=1 @selected(old('rol') == 'SuperAdministrador')>SuperAdministrador</option>
+            <option value=2 @selected(old('rol') == 'Administrador')>Administrador</option>
+        </select><br><br>
 
-            @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
-                <div class="mt-4">
-                    <x-label for="terms">
-                        <div class="flex items-center">
-                            <x-checkbox name="terms" id="terms" required />
+        <label for="name"><b> Nombre(s): </b></label>
+        <input type="text" id = "name" name="name" minlength="5" maxlength="50" required value = "{{ old('name') }}" style="width: 400px; margin: 5px"><br><br>
 
-                            <div class="ml-2">
-                                {!! __('I agree to the :terms_of_service and :privacy_policy', [
-                                        'terms_of_service' => '<a target="_blank" href="'.route('terms.show').'" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">'.__('Terms of Service').'</a>',
-                                        'privacy_policy' => '<a target="_blank" href="'.route('policy.show').'" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">'.__('Privacy Policy').'</a>',
-                                ]) !!}
-                            </div>
-                        </div>
-                    </x-label>
-                </div>
-            @endif
+        <label for="lastname"><b> Apellido(s): </b></label>
+        <input type="text" id = "lastname" name="lastname" minlength="5" maxlength="50" required value = "{{ old('lastname') }}" style="width: 400px; margin: 5px"><br><br>
 
-            <div class="flex items-center justify-center mt-4" style="margin-top: 20px; margin-bottom: 10px;">
-                <!--<a href="/"> Cancelar </a>-->
-                <x-button class="ml-4">
-                    {{ __('Registrar administrador') }}
-                </x-button>
-            </div>
-        </form>
-    </x-authentication-card>
-</x-guest-layout>
+        <label for = "email"><b>Correo Electrónico: </b></label>
+        <input type="email" name="email" minlength="5" maxlength="50" required value = "{{ old('email') }}" style="width: 337px; margin: 5px"><br><br>
+
+        <input type="submit" value="Crear cuenta" style="margin-top: 10px;"> 
+        <a href="{{ route('administrador.index') }}" style="margin-left:20px;">Cancelar</a>
+    </form>
+
+    </x-plantilla-body>
+
+</html>

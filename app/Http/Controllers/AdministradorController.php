@@ -10,13 +10,15 @@ use Illuminate\Support\Facades\Auth; //ID Usuario
 use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\Rules\Password;
 
+use Illuminate\Support\Str;
+
 class AdministradorController extends Controller
 {
     protected $model = User::class;
 
     public function __construct()
     {
-        $this->middleware('can:only-admin');
+        $this->middleware('can:only-superadmin');
 
     }
 
@@ -25,9 +27,10 @@ class AdministradorController extends Controller
      */
     public function index()
     {
-        $administradores = User::where('rol',1)->get();
+        $superadministradores = User::where('rol',1)->get();
+        $administradores = User::where('rol',2)->get();
 
-        return view("administrador/indexAdmin",compact('administradores')); 
+        return view("administrador/indexAdmin",compact('superadministradores', 'administradores')); 
     }
 
     /**
@@ -49,24 +52,25 @@ class AdministradorController extends Controller
         //Tabla pivote
         //$asesor = Asesor::create($request->only('id'));
 
-        //dd($request->organizacion_id); //PRUEBA DD
+        //dd($request-> lastname); //PRUEBA DD para verificar los datos del formulario
 
         //User::create($request->all()); // <-- hace todo lo que esta abajo desde new hasta save
         
-        $request->validate([
+        /*$request->validate([
             'name' => ['required', 'string', 'min:10', 'max:50', 'regex:/^[A-Za-z\s]+$/'],
             'email' => ['required', 'string', 'email', 'min:5', 'max:50', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'max:50', new Password, 'confirmed', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],
-        ]);
+        ]);*/
 
         $user = User::create([
-                'rol' => 1,
+                'rol' => $request->rol,
                 'name' => $request->name,
+                'lastname' => $request->lastname,
                 'email' => $request->email,
-                'password' => Hash::make($request->password),                
+                'password' => Hash::make(Str::random(10)),
         ]);
         
-        $this->createTeam($user);
+        //$this->createTeam($user);
         
 
 
@@ -122,6 +126,59 @@ class AdministradorController extends Controller
     {
         //dd($administrador);
         $administrador->delete();
+
+        return redirect('/administrador');
+    }
+
+    public function hardDestroy(User $administrador) 
+    {
+        //dd($administrador);
+        $administrador->forceDelete();
+
+        return redirect('/administrador');
+    }
+
+    public function trashed()
+    {
+        // Obtiene todos los registros eliminados
+        $superadministradores = User::onlyTrashed()->where('rol',1)->get();
+        $administradores = User::onlyTrashed()->where('rol',2)->get();
+
+        //dd($superadministradores);
+
+        // Retorna la vista con los registros eliminados
+        return view("administrador/trashedAdmin",compact('superadministradores', 'administradores')); 
+    }
+
+    public function restore($id)
+    {
+
+        //dd($id);
+
+        // Busca el registro eliminado por ID
+        $administrador = User::onlyTrashed()->findOrFail($id); // Busca solo registros eliminados
+    
+        // Restaura el registro
+        $administrador->restore();
+        
+
+        return redirect('/administrador/trashed');
+    }
+
+    public function makeUpper(User $administrador) 
+    {
+
+        $administrador->rol = 1; // Cambia el rol a 1
+        $administrador->save();
+
+        return redirect('/administrador');
+    }
+
+    public function makeLower(User $administrador) 
+    {
+
+        $administrador->rol = 2; // Cambia el rol a 2
+        $administrador->save();
 
         return redirect('/administrador');
     }

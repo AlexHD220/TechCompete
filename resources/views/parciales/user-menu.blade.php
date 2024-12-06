@@ -65,18 +65,19 @@
                     
                     <!--User Menu-->
                     <div class="nav-item dropdown">
-                        <a href="" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <span class="d-lg-inline-flex me-lg-2"><b>{{ auth()->user()->name }}</b></span> <!--{--class = "d-none" Hacer que se esconda cuando se hace pequeña la pagina--}-->
-                            @can('only-admin')
-                                @if(Auth::id() == 1)  
-                                    <span class="d-lg-inline-flex me-lg-2"><b>(Super Admin)</b></span>
-                                @else
-                                    <span class="d-lg-inline-flex me-lg-2"><b>(Admin)</b></span>
-                                @endif
-                            @endcan
-                            <img class="rounded-circle" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" style="width: 40px; height: 40px;">
-                            <!--<img style="margin-left: 10px;" class="h-8 w-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />-->                            
+                        <a href="" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+                            <div class="info-container text-end">
+                                <span class="name d-block"><b>{{ auth()->user()->name }}</b></span>
+                                @can('only-superadmin')
+                                    <span class="role d-block" style="font-size: 12px;"><b>(Super Admin)</b></span>
+                                @endcan
+                                @can('only-admin')
+                                    <span class="role d-block" style="font-size: 12px;"><b>(Admin)</b></span>
+                                @endcan
+                            </div>
+                            <img class="profile-pic rounded-circle ms-2" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" style="width: 40px; height: 40px;">
                         </a>
+
 
                         <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
                             <!--<p>{{ auth()->user()->email }}</p>-->

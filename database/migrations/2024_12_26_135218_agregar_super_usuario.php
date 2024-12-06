@@ -29,8 +29,9 @@ return new class extends Migration
         //User::factory()->withPersonalTeam()->create([
         User::factory()->create([
         //User::create([
-            'name' => 'Alejandro Hernández',
-            'username' => 'superadmin',
+            'name' => 'Alejandro',
+            'lastname' => 'Hernández',
+            //'username' => 'superadmin',
             //'name' => $administrador->nombre,
             'rol' => 1,
             //'roleable_id' => $administrador->id,

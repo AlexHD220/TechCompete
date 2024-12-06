@@ -113,7 +113,7 @@ class ProyectoController extends Controller
     {
 
         // Solo administradores
-        if (!Gate::allows('only-admin')) {
+        if (!Gate::allows('only-superadmin')) {
             
             if (!Gate::allows('gate-asesor', $proyecto)) { // Uso de gate
                 return redirect('/asesor');

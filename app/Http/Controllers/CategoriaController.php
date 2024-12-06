@@ -15,10 +15,10 @@ class CategoriaController extends Controller
     {
         $this->middleware('auth')->except(['show']); //excepto estas necesitan iniciar sesion 
         
-        $this->middleware('can:only-admin')->except('show');
+        $this->middleware('can:only-superadmin')->except('show');
         //return redirect()->route('competencia.index');
         
-        //$this->middleware('can:only-admin')->except('index');
+        //$this->middleware('can:only-superadmin')->except('index');
         //return redirect()->route('competencia.index');
 
     }

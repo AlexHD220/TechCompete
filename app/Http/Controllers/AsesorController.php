@@ -13,6 +13,21 @@ use Illuminate\Support\Facades\Auth; //ID Usuario
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 
+
+use App\Models\Competencia;
+use App\Models\Institucion;
+
+use App\Mail\NotificaEquipoRegistrado;
+use App\Models\Categoria;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+
+use App\Models\Administrador;
+use App\Models\Team;
+use Illuminate\Auth\Events\Registered;
+use Laravel\Fortify\Rules\Password;
+
 class AsesorController extends Controller
 {
     /**
@@ -29,10 +44,10 @@ class AsesorController extends Controller
     //otra variante es "only" para autenticar solo aquellas que notros queramos 
 
 
-    public function __construct()
+    /*public function __construct()
     {
         $this->middleware('can:only-user')->except('show');
-    }
+    }*/
 
     public function index()
     {
@@ -67,19 +82,19 @@ class AsesorController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([ ///Validar datos, si los datos recibidos no cumplen estas regresas no les permite la entrada a la base de datos y regresa a la pagina original
+        /*$request->validate([ ///Validar datos, si los datos recibidos no cumplen estas regresas no les permite la entrada a la base de datos y regresa a la pagina original
             //'nombre' => 'required|string|max:255',
             //'telefono' => ['required','min:10','max:10']
-            /*'usuario' => ['required', 'string', 'min:5', 'regex:/^[A-Za-z0-9_-]+$/'],*/
+            //'usuario' => ['required', 'string', 'min:5', 'regex:/^[A-Za-z0-9_-]+$/'],
             'nombre' => ['required', 'string', 'min:10', 'max:50', 'regex:/^[A-Za-z\s]+$/'],
             'correo' => ['required', 'string', 'email', 'min:5', 'max:50'],
             'telefono' => ['nullable','numeric','regex:/^\d{10}$/',],
             
-            /*'pass' => ['required', 'min:5','max:15', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/']*/
+            //'pass' => ['required', 'min:5','max:15', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/']
 
             //'pass' => ['required', 'min:8','max:15', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/']
-            /*La contraseña debe tener al menos 8 caracteres y debe contener al menos una letra minúscula, una letra mayúscula, un número y un carácter especial.*/
-        ]);
+            //La contraseña debe tener al menos 8 caracteres y debe contener al menos una letra minúscula, una letra mayúscula, un número y un carácter especial.
+        ]);*/
     
         
         
@@ -92,7 +107,7 @@ class AsesorController extends Controller
         //Forma nueva
 
         // Insertar un dato en el request
-        $request->merge(['user_id' => Auth::id()]); //Inyectar el user id en el request
+        //$request->merge(['user_id' => Auth::id()]); //Inyectar el user id en el request
 
        
         //$asesor = Asesor::create($request->only('id'));
@@ -100,7 +115,7 @@ class AsesorController extends Controller
         //dd($request->organizacion_id); //PRUEBA DD
 
         
-        $asesor = Asesor::create($request->all()); // <-- hace todo lo que esta abajo desde new hasta save
+        //$asesor = Asesor::create($request->all()); // <-- hace todo lo que esta abajo desde new hasta save
 
 
         //RELACION MUCHOS A MUCHOS prueba
@@ -133,9 +148,43 @@ class AsesorController extends Controller
         $usuario->save();*/
 
         // Notificar por email que el asesor se creo correctamente
-        Mail::to($request->user())->send(new NotificaAsesorCreado($asesor));
+        //Mail::to($request->user())->send(new NotificaAsesorCreado($asesor));
 
-        return redirect() -> route('asesor.index');
+
+//--------------------------------------------------------------------------------------------------------------> Nuevo
+
+        $user = User::create([
+            'rol' => 6,
+            'name' => $request->name,
+            'lastname' => $request->lastname,
+            'email' => $request->email,                
+            'password' => Hash::make($request->password),                
+        ]);
+        
+        //$this->createTeam($user);
+
+        //$user->sendEmailVerificationNotification();
+
+
+        // EQUIVALENTE --> Asesor::create($request->all()); 
+
+        $asesor = new Asesor(); //quiero una nueva instanciade este modelo que va a representar mi tabla (representante de alto nivel)
+        $asesor->user_id = $user->id;
+        $asesor->name = $request->name;
+        $asesor->lastname = $request->lastname; //asignar atributos que corresonden por como se llaman mis columnas
+        $asesor->email = $request->email;        
+        $asesor->telefono = $request->telefono;
+        $asesor->save();
+
+        // Enviar automáticamente el correo de verificación
+        //event(new Registered($user));
+        $user->sendEmailVerificationNotification();
+
+        // Redirigir con un mensaje de éxito
+        return redirect()->route('login');
+        //->with('success', 'Registro completado. Por favor verifica tu correo electrónico.');
+        
+        //return redirect() -> route('asesor.index');
     
         //return redirect('/asesor'); 
     }
@@ -147,7 +196,7 @@ class AsesorController extends Controller
     {
 
         // Solo administradores
-        if (!Gate::allows('only-admin')) {
+        if (!Gate::allows('only-superadmin')) {
             
             if (!Gate::allows('gate-asesor', $asesor)) { // Uso de gate
                 return redirect('/asesor');

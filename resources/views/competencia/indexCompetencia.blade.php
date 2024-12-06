@@ -16,7 +16,7 @@ $timestampNow = now()->toDateString();
         <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 15px;">
             <h1 style="display: inline;">Listado de Competencias</h1>
             @auth <!--Cuando el usuario este logueado muestrame lo sigiente-->
-                @can('only-admin')
+                @can('only-superadmin')
                     @if ($categorias->count() > 0)
                         <button class="btn btn-primary" onclick="window.location.href = '/competencia/create';">Registrar nueva competencia</button>
                     @else
@@ -30,7 +30,7 @@ $timestampNow = now()->toDateString();
         </div>
 
         @if ($competencias->count() == 0)
-            @can('only-admin')
+            @can('only-superadmin')
                 <p style="margin-left: 20px;"><i>Aún no hay ninguna competencia registrada.</i></p>
             @else
                 <p style="margin-left: 20px;"><i>No hay nuevas competencias disponibles.</i></p>
@@ -69,7 +69,7 @@ $timestampNow = now()->toDateString();
                                 <td>{{ $competencia->duracion }} días</td>-->
 
                                 @auth
-                                    @can('only-admin')
+                                    @can('only-superadmin')
                                         <td style="padding-left: 20px; padding-right: 20px;">
                                             <a href="{{route('competencia.edit', $competencia)}}">
                                                 Editar

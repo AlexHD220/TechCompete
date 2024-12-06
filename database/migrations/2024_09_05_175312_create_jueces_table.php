@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('lastname');
             $table->string('telefono')->nullable();
+            $table->string('email');
 
             $table->softDeletes(); // Agrega la columna deleted_at
             //$table->timestamps();

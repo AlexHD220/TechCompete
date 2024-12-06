@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('competencia_id')->constrained();
             $table->foreignId('categoria_id')->constrained();
+            $table->string('nivel');
 
             $table->unsignedBigInteger('costo');
 
@@ -24,6 +25,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('total_inscritos')->default(0);
             
+            $table->softDeletes();
             //$table->timestamps();
         });
     }

@@ -23,7 +23,7 @@ class CompetenciaController extends Controller
     {        
         $this->middleware('auth')->except(['index','show']); //excepto estas necesitan iniciar sesion 
 
-        $this->middleware('can:only-admin')->except('index', 'show');
+        $this->middleware('can:only-superadmin')->except('index', 'show');
     }
      
     //otra variante es "only" para autenticar solo aquellas que notros queramos 
@@ -110,7 +110,7 @@ class CompetenciaController extends Controller
     {
         //$competencias = Competencia::all();
 
-        if (Gate::allows('only-admin')) {
+        if (Gate::allows('only-superadmin')) {
             $equipos = Equipo::where('competencia_id',$competencia->id)->get(); 
             $proyectos = Proyecto::where('competencia_id',$competencia->id)->get(); 
             

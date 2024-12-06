@@ -5,12 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class Institucion extends Model
 {
     protected $table = 'instituciones'; //<-- Cambiar el nombre de mi tabla
 
     use HasFactory;
+    use TwoFactorAuthenticatable;
+    use SoftDeletes;
 
     use SoftDeletes; // Habilita Soft Deletes
 

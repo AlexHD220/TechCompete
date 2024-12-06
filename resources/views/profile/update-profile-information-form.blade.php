@@ -1,4 +1,5 @@
 <x-form-section submit="updateProfileInformation">
+    
     <x-slot name="title">
         {{ __('Profile Information') }}
     </x-slot>
@@ -38,58 +39,87 @@
                     </span>
                 </div>
 
-                <x-secondary-button class="mt-2 mr-2" type="button" x-on:click.prevent="$refs.photo.click()">
-                    {{ __('Subir Nueva Foto') }}
-                </x-secondary-button>
+                @can('mail-verificado')
+                    <x-secondary-button class="mt-2 mr-2" type="button" x-on:click.prevent="$refs.photo.click()">
+                        {{ __('Subir Nueva Foto') }}
+                    </x-secondary-button>                
 
-                @if ($this->user->profile_photo_path)
-                    <x-secondary-button type="button" class="mt-2" wire:click="deleteProfilePhoto">
-                        {{ __('Eliminar Foto') }}
-                    </x-secondary-button>
-                @endif
+                    @if ($this->user->profile_photo_path)
+                        <x-secondary-button type="button" class="mt-2" wire:click="deleteProfilePhoto">
+                            {{ __('Eliminar Foto') }}
+                        </x-secondary-button>
+                    @endif
+                @endcan
 
                 <x-input-error for="photo" class="mt-2" />
             </div>
         @endif
 
-        <!-- Name -->
+        <!-- Last Name -->
         <div class="col-span-6 sm:col-span-4">
-            <x-label for="name" value="{{ __('Name') }}" />
-            <x-input id="name" type="text" class="mt-1 block w-full" wire:model="state.name" required autocomplete="name" />
+            <x-label for="name" value="{{ __('Nombre(s)') }}" />
+            @can('mail-verificado')
+                <x-input id="name" type="text" class="mt-1 block w-full" wire:model="state.name" required autocomplete="name" />
+            @else
+                <x-input id="name" type="text" class="mt-1 block w-full" wire:model="state.name" required autocomplete="name" readonly />
+            @endcan
             <x-input-error for="name" class="mt-2" />
         </div>
+
+        <!-- Name -->
+        @cannot('only-institucion')
+            <div class="col-span-6 sm:col-span-4">
+                <x-label for="lastname" value="{{ __('Apellido(s)') }}" />
+                @can('mail-verificado')
+                    <x-input id="lastname" type="text" class="mt-1 block w-full" wire:model="state.lastname" required autocomplete="lastname" />
+                @else
+                    <x-input id="lastname" type="text" class="mt-1 block w-full" wire:model="state.lastname" required autocomplete="lastname" readonly />
+                @endcan
+                <x-input-error for="lastname" class="mt-2" />
+            </div>
+        @endcan
 
         <!-- Email -->
         <div class="col-span-6 sm:col-span-4">
             <x-label for="email" value="{{ __('Email') }}" />
-            <x-input id="email" type="email" class="mt-1 block w-full" wire:model="state.email" required autocomplete="username" />
+            @can('mail-verificado')
+                <x-input id="email" type="email" class="mt-1 block w-full" wire:model="state.email" required autocomplete="username" />
+            @else
+                <x-input id="email" type="email" class="mt-1 block w-full" wire:model="state.email" required autocomplete="username" readonly/>
+            @endcan
             <x-input-error for="email" class="mt-2" />
 
             @if (Laravel\Fortify\Features::enabled(Laravel\Fortify\Features::emailVerification()) && ! $this->user->hasVerifiedEmail())
-                <p class="text-sm mt-2 dark:text-white">
-                    {{ __('Your email address is unverified.') }}
+                <div style="margin-top: 30px;">
+                    <p class="text-sm mt-2 dark:text-white">
+                        {{ __('Su dirección de correo electrónico no está verificada.') }}<br>
 
-                    <button type="button" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" wire:click.prevent="sendEmailVerification">
-                        {{ __('Click here to re-send the verification email.') }}
-                    </button>
-                </p>
+                        <button type="button" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" wire:click.prevent="sendEmailVerification">
+                            {{ __('Haga clic aquí para volver a enviar el correo electrónico de verificación.') }}
+                        </button>
+                    </p>
+                </div>                
 
                 @if ($this->verificationLinkSent)
-                    <p class="mt-2 font-medium text-sm text-green-600 dark:text-green-400">
-                        {{ __('A new verification link has been sent to your email address.') }}
-                    </p>
+                    <div style="margin-top: 15px;">
+                        <p class="mt-2 font-medium text-sm text-green-600 dark:text-green-400">
+                            {{ __('Se ha enviado un nuevo enlace de verificación a su dirección de correo electrónico.') }}
+                        </p>
+                    </div>
                 @endif
             @endif
         </div>
     </x-slot>
 
-    <x-slot name="actions">
-        <x-action-message class="mr-3" on="saved">
-            {{ __('Guardado.') }}
-        </x-action-message>
+    @can('mail-verificado')
+        <x-slot name="actions">
+            <x-action-message class="mr-3" on="saved">
+                <b style="color: #41ef1f;">{{ __('Guardado.') }}</b>
+            </x-action-message>
 
-        <x-button wire:loading.attr="disabled" wire:target="photo">
-            {{ __('Guardar') }}
-        </x-button>
-    </x-slot>
+            <x-button wire:loading.attr="disabled" wire:target="photo" style="margin-bottom: 10px;">
+                {{ __('Guardar') }}
+            </x-button>
+        </x-slot>
+    @endcan
 </x-form-section>

@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('acceso_competencias', function (Blueprint $table) {
+        Schema::create('jueces_competencias', function (Blueprint $table) {
             $table->id();
             
-            //$table->foreignId('competencia_categoria_id')->constrained();
-            $table->foreignId('competencia_id')->constrained();
-            $table->foreignId('user_id')->constrained(); //(staff_id)
-            
+            $table->foreignId('competencia_categoria_id')->constrained();            
+            $table->unsignedBigInteger('juez_id'); //--> crear columna dentro de esta tabla            
+            $table->foreign('juez_id')->references('id')->on('jueces')->constrained(); // --> referenciar columna de ID dentro de la tabla jueces 
+
             $table->softDeletes();
             //$table->timestamps();
         });
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('acceso_competencias');
+        Schema::dropIfExists('jueces_competencias');
     }
 };

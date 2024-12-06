@@ -13,38 +13,43 @@
                 <x-section-border />
             @endif
 
-            @if (Laravel\Fortify\Features::enabled(Laravel\Fortify\Features::updatePasswords()))
-                <div class="mt-10 sm:mt-0">
-                    @livewire('profile.update-password-form')
-                </div>
-
-                <x-section-border />
-            @endif
-
-            @if (Laravel\Fortify\Features::canManageTwoFactorAuthentication())
-                <div class="mt-10 sm:mt-0">
-                    @livewire('profile.two-factor-authentication-form')
-                </div>
-
-                <x-section-border />
-            @endif
-
-            <div class="mt-10 sm:mt-0">
-                @livewire('profile.logout-other-browser-sessions-form')
-            </div>
-
-            @if (Laravel\Jetstream\Jetstream::hasAccountDeletionFeatures())
-                <x-section-border />
-                @if(Auth::id() != 1) <!-- Si el usuario logueado es el super administrador, no se puede eliminar -->
+            <!-- mail-verificado-->
+            @can('mail-verificado')
+                @if (Laravel\Fortify\Features::enabled(Laravel\Fortify\Features::updatePasswords()))
                     <div class="mt-10 sm:mt-0">
-                        @livewire('profile.delete-user-form')
+                        @livewire('profile.update-password-form')
                     </div>
-                @else
-                    <div class="mt-10 sm:mt-0" style="text-align: center;">
-                    <h1 class="text-lg font-medium text-gray-900 dark:text-gray-100">No es posible eliminar este usuario</h1>
-                    </div>
+
+                    <x-section-border />
                 @endif
-            @endif
+
+                @if(Laravel\Fortify\Features::canManageTwoFactorAuthentication() && 0)
+                    <div class="mt-10 sm:mt-0">
+                        @livewire('profile.two-factor-authentication-form')
+                    </div>
+
+                    <x-section-border />
+                @endif
+            @endcan
+
+                <div class="mt-10 sm:mt-0">
+                    @livewire('profile.logout-other-browser-sessions-form')
+                </div>
+
+            @can('mail-verificado')
+                @if (Laravel\Jetstream\Jetstream::hasAccountDeletionFeatures())
+                    <x-section-border />
+                    @if(Auth::id() != 1) <!-- Si el usuario logueado es el superadministrador, no se puede eliminar -->
+                        <div class="mt-10 sm:mt-0">
+                            @livewire('profile.delete-user-form')
+                        </div>
+                    @else
+                        <div class="mt-10 sm:mt-0" style="text-align: center;">
+                        <h1 class="text-lg font-medium text-gray-900 dark:text-gray-100">No es posible eliminar este usuario</h1>
+                        </div>
+                    @endif
+                @endif
+            @endcan
         </div>
     </div>
 </x-app-layout>

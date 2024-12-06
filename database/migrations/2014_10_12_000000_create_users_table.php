@@ -16,11 +16,12 @@ return new class extends Migration
             $table -> unsignedInteger('rol');
             //$table->morphs('roleable'); // Crea columnas roleable_id y roleable_type
             $table->string('name');
-            $table->string('username')->unique();
+            $table->string('lastname')->nullable();
+            //$table->string('username')->unique();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->boolean('change_password')->default(false);
+            //$table->boolean('change_password')->default(false);
             $table->rememberToken();
             //$table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();

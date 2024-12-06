@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->string('name');
+            $table->string('email');
             $table->string('tipo');
-            $table->string('sede');
-            $table->string('ubicacion')->nullable();
+            $table->string('pais');
+            $table->string('region');
             
-            $table->string('pagina_web')->nullable();
-            $table->string('email')->nullable();
+            $table->string('pagina_web')->nullable();            
             $table->string('telefono')->nullable();
             $table->string('whatsapp')->nullable();
 

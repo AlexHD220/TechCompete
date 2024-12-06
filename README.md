@@ -78,5 +78,5 @@ npm run build
 php artisan storage:link
 
 # Accede al proyecto desde tu navegador
-Laragon generará automáticamente un dominio local con la ruta 
+Laragon generará automáticamente un dominio local con la ruta:
 http://techcompete.test

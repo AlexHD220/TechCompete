@@ -20,7 +20,7 @@ class Administrador extends Model
     public $timestamps = false; //--> ignorar una valor de la tabla 
 
     protected $fillable = [
-        'name', 'email', 'password', 'rol'
+        'name', 'lastname', 'email', 'password', 'rol' // Solo estas columnas pueden ser agregadas por el usuario, el resto no se agrega y se ignora
     ];
 
 

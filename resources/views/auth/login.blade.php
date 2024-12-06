@@ -5,6 +5,16 @@
             <x-authentication-card-logo />
         </x-slot>
 
+        @if (session('success'))
+            <div style="margin-bottom: 15px; text-align: center;" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                {!! session('success') !!}
+            </div>
+        @endif
+
+        <!--<div style="margin-bottom: 15px; text-align: center;" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+            <b style="color: #41ef1f;">Su cuenta fue creada correctamente.</b> <br> <i>Antes de continuar, por favor verifique su dirección de correo electrónico.</i>
+        </div>-->
+
         <x-validation-errors class="mb-4" />
 
         @if (session('status'))
@@ -60,8 +70,9 @@
 
         <div style="margin-top: 30px; text-align: right;">
             <p class="text-gray-400" style="display: inline;">¿No tienes una cuenta?</p>
-            <a onmouseover="this.style.color='gray'" onmouseout="this.style.color='white'" href="{{ route('register') }}" style="margin-left: 5px; display: inline-block;">Regístrate</a>
+            <a onmouseover="this.style.color='gray'" onmouseout="this.style.color='white'" href="{{ route('type-register') }}" style="margin-left: 5px; display: inline-block;">Regístrate</a>
         </div>
 
     </x-authentication-card>
+    
 </x-guest-layout>

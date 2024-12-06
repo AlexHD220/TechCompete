@@ -7,25 +7,45 @@
         <x-validation-errors class="mb-4" />
 
         <div class="flex items-center justify-center">
-         <b><h1 style="margin-bottom: 15px; font-size: 20px;">Crea una cuenta como Asesor</h1></b>
+         <b><h1 style="margin-bottom: 15px; font-size: 20px;">Crea una cuenta como Institución</h1></b>
         </div>
 
-        <form method="POST" action="{{ route('asesor.store') }}">
+        <form method="POST" action="{{ route('institucion.store') }}">
             @csrf
 
             <div class="mt-4">
-                <x-label for="name" value="{{ __('Nombre(s)') }}" />
-                <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" minlength="5" maxlength="20" required autofocus /> <!-- autocomplete="name" --->
+                <x-label for="name" value="{{ __('Nombre de la institución') }}" />
+                <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" minlength="5" maxlength="50" required autofocus /> <!-- autocomplete="name" --->
             </div>
 
             <div class="mt-4">
-                <x-label for="lastname" value="{{ __('Apellido(s)') }}" />
-                <x-input id="lastname" class="block mt-1 w-full" type="text" name="lastname" :value="old('lastname')" minlength="5" maxlength="30" required/> <!-- autocomplete="name" --->
+                <x-label for="tipo" value="{{ __('Tipo de institución') }}" />
+                <x-input id="tipo" class="block mt-1 w-full" type="text" name="tipo" :value="old('tipo')" required/> <!-- autocomplete="name" --->
+            </div>
+
+            <div class="mt-4">
+                <x-label for="pais" value="{{ __('País') }}" />
+                <x-input id="pais" class="block mt-1 w-full" type="text" name="pais" :value="old('pais')" required/> <!-- autocomplete="name" --->
+            </div>
+
+            <div class="mt-4">
+                <x-label for="region" value="{{ __('Región') }}" />
+                <x-input id="region" class="block mt-1 w-full" type="text" name="region" :value="old('region')" required/> <!-- autocomplete="name" --->
+            </div>
+
+            <div class="mt-4">
+                <x-label for="pagina" value="{{ __('Página Web') }}" />
+                <x-input id="pagina" class="block mt-1 w-full" type="url" placeholder="Opcional" name="pagina" :value="old('pagina')"/> <!-- autocomplete="name" --->
             </div>
 
             <div class="mt-4">
                 <x-label for="telefono" value="{{ __('Número de telefono') }}" />
                 <x-input id="telefono" class="block mt-1 w-full" type="tel" placeholder="Opcional" name="telefono" :value="old('telefono')"/> <!-- autocomplete="name" --->
+            </div>
+
+            <div class="mt-4">
+                <x-label for="whatsapp" value="{{ __('WhatsApp') }}" />
+                <x-input id="whatsapp" class="block mt-1 w-full" type="tel"  placeholder="Opcional" name="whatsapp" :value="old('whatsapp')"/> <!-- autocomplete="name" --->
             </div>
 
             <div class="mt-4">

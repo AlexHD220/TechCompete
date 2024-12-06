@@ -17,7 +17,7 @@ return new class extends Migration
             $table->time('hora_inicio');
             
             $table->foreignId('competencia_id')->constrained();
-            $table->foreignId('competencia_categoria_id')->constrained();
+            $table->foreignId('competencia_categoria_id')->nullable()->constrained();
 
             $table->string('descripcion')->nullable();
             $table->string('lugar');

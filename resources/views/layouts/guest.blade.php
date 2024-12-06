@@ -46,10 +46,13 @@
     </head>
     <body>
         
-        <!--Equis-->
-        <a href="/" class="go-home-link">
-            <i class="fas fa-times"></i>
-        </a>
+        <!-- mail-verificado-->
+        @can('mail-verificado')
+            <!--Equis-->
+            <a href="/" class="go-home-link">
+                <i class="fas fa-times"></i>
+            </a>
+        @endcan
 
         <div class="font-sans text-gray-900 dark:text-gray-100 antialiased">
             {{ $slot }}

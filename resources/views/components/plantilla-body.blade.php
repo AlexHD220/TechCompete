@@ -48,7 +48,7 @@
                         </div>
                     </div>-->
 
-                    <a href="/" class="nav-item nav-link"><i class="fa fa-home me-2"></i>Página principal</a>
+                    <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/" class="nav-item nav-link"><i class="fa fa-home me-2"></i>Página principal</a>
 
                     @auth <!--Cuando el usuario este logueado muestrame lo sigiente-->
                         @can('only-user')
@@ -59,10 +59,10 @@
                                 </a>
                                 <div class="dropdown-menu bg-transparent border-0">
                                     <!--<a href="/" class="dropdown-item">Página principal</a>-->
-                                    <a href="/asesor" class="dropdown-item">Asesores</a>                        
-                                    <a href="/equipo" class="dropdown-item">Equipos</a>
-                                    <a href="/proyecto" class="dropdown-item">Proyectos</a>
-                                    <a href="/participante" class="dropdown-item">Participantes</a>
+                                    <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/asesor" class="dropdown-item">Asesores</a>                        
+                                    <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/equipo" class="dropdown-item">Equipos</a>
+                                    <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/proyecto" class="dropdown-item">Proyectos</a>
+                                    <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/participante" class="dropdown-item">Participantes</a>
                                     <!--<a href="/competencia" class="dropdown-item">Competencias</a>-->
                                 </div>
                             </div>
@@ -71,16 +71,16 @@
 
 
                     @auth
-                        @can('only-admin')
-                            <a href="/administrador" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Administradores</a>
+                        @can('only-superadmin')
+                            <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/administrador" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Administradores</a>
                             @endcan
                     @endauth
 
-                    <a href="/competencia" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Competencias</a>
+                    <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/competencia" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Competencias</a>
 
                     @auth
-                        @can('only-admin')
-                            <a href="/categoria" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Categorías</a>
+                        @can('only-superadmin')
+                            <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/categoria" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Categorías</a>
                         @endcan
                     @endauth
                     <!--<a href="form.html" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Forms</a>-->
@@ -96,19 +96,23 @@
         <div class="content">
             <!-- Navbar Start -->
             <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
+                @if(0)
+                    <a href="/" class="navbar-brand d-flex d-lg-none me-4">
+                        <!--<h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>-->
+                        <img src="/dark/img/tsPortada.png" style="height: 60px; border-radius: 5px;">
+                    </a>
+                @endif
                 
-                <a href="/" class="navbar-brand d-flex d-lg-none me-4">
-                    <!--<h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>-->
-                    <img src="/dark/img/tsPortada.png" style="height: 60px; border-radius: 5px;">
-                </a>
                 <a class="sidebar-toggler flex-shrink-0" style="cursor: pointer;">
                     <i class="fa fa-bars"></i>
                 </a>
 
-                <form class="d-none d-md-flex ms-4">
-                    <input class="form-control bg-dark border-0" type="search" placeholder="Busqueda">
-                    <button type="submit" class="btn btn-primary" style="margin-left: 15px; font-size: 15px;">Buscar</button>
-                </form>
+                @if(0)
+                    <form class="d-none d-md-flex ms-4">
+                        <input class="form-control bg-dark border-0" type="search" placeholder="Busqueda">
+                        <button type="submit" class="btn btn-primary" style="margin-left: 15px; font-size: 15px;">Buscar</button>
+                    </form>
+                @endif
 
                 <div class="navbar-nav align-items-center ms-auto">
                     
@@ -179,5 +183,6 @@
     <!-- Template Javascript -->
     <script src="/dark/js/main.js"></script>
     <script src="/dark/js/codigo.js"></script>
+    <script src="/dark/js/notificacion.js"></script>
 
 </body>

@@ -13,7 +13,7 @@
             <p style="margin-left: 100px; margin-right: 100px;">{{ $categoria -> descripcion}}</p>
         </div>
 
-        @can('only-admin')
+        @can('only-superadmin')
             <div style="margin-top: 30px;">
                 <a href="/categoria">Regresar</a> 
             </div>

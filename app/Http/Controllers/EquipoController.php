@@ -103,7 +103,7 @@ class EquipoController extends Controller
     {
 
         // Solo administradores
-        if (!Gate::allows('only-admin')) {
+        if (!Gate::allows('only-superadmin')) {
             
             if (!Gate::allows('gate-equipo', $equipo)) { // Uso de gate
                 return redirect('/asesor');
