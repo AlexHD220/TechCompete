@@ -2,14 +2,14 @@
 <html lang="es">
 
 <x-plantilla-head>
-    <title>Administrador | Cuenta</title>
+    <title>Staff | Cuenta</title>
 </x-plantilla-head>
 
 <x-plantilla-body>
 
-    <h1 style="margin-bottom: 20px;">Crear cuenta de administrador</h1>
+    <h1 style="margin-bottom: 20px;">Crear cuenta de staff</h1>
 
-    <form action="/administrador" method="post"> <!--la diagonal me envia al principio de la url "solacyt.test/"-->
+    <form action="/staff" method="post"> <!--la diagonal me envia al principio de la url "solacyt.test/"-->
 
         <!--Mostrar errores-->
         @if ($errors->any())
@@ -31,12 +31,12 @@
         <label for="rol"><b>Tipo de cuenta: </b></label>
         <select name="rol" style="width: 200px; margin: 5px;" autofocus required>
             <option selected disabled value=""> - </option>
-            <option value=1 @selected(old('rol') == 'SuperAdministrador')>SuperAdministrador</option>
-            <option value=2 @selected(old('rol') == 'Administrador')>Administrador</option>
+            <option value=3 @selected(old('rol') == 'SuperStaff')>SuperStaff</option>
+            <option value=4 @selected(old('rol') == 'Staff')>Staff</option>
         </select><br><br>
 
         <label for="name"><b> Nombre(s): </b></label>
-        <input type="text" id = "name" name="name" minlength="4" maxlength="50" required value = "{{ old('name') }}" style="width: 400px; margin: 5px"><br><br>
+        <input type="text" id = "name" name="name" minlength="5" maxlength="50" required value = "{{ old('name') }}" style="width: 400px; margin: 5px"><br><br>
 
         <label for="lastname"><b> Apellido(s): </b></label>
         <input type="text" id = "lastname" name="lastname" minlength="5" maxlength="50" required value = "{{ old('lastname') }}" style="width: 400px; margin: 5px"><br><br>
@@ -45,7 +45,7 @@
         <input type="email" name="email" minlength="5" maxlength="50" required value = "{{ old('email') }}" style="width: 337px; margin: 5px"><br><br>
 
         <input type="submit" value="Crear cuenta" style="margin-top: 10px;"> 
-        <a href="{{ route('administrador.index') }}" style="margin-left:20px;">Cancelar</a>
+        <a href="{{ route('staff.index') }}" style="margin-left:20px;">Cancelar</a>
     </form>
 
     </x-plantilla-body>

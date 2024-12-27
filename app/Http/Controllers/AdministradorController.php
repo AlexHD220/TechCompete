@@ -30,7 +30,10 @@ class AdministradorController extends Controller
         $superadministradores = User::where('rol',1)->get();
         $administradores = User::where('rol',2)->get();
 
-        return view("administrador/indexAdmin",compact('superadministradores', 'administradores')); 
+        $disabledsuperadministradores = User::onlyTrashed()->where('rol',1)->get();
+        $disabledadministradores = User::onlyTrashed()->where('rol',2)->get();
+
+        return view("administrador/indexAdmin",compact('superadministradores', 'administradores','disabledsuperadministradores','disabledadministradores')); 
     }
 
     /**
@@ -46,6 +49,12 @@ class AdministradorController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email|unique:registro_jueces,email',
+            'email' => ['unique:users'],
+            // Otras reglas de validación para otros campos
+        ]);
+
         //$user = $this->create($request->all());
         //$request->merge(['tipo' => 1]); //Inyectar el user id en el request
         
@@ -98,7 +107,7 @@ class AdministradorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show(User $administrador)
     {
         return redirect('/');
     }
@@ -106,7 +115,7 @@ class AdministradorController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit(User $administrador)
     {
         return redirect('/');
     }
@@ -114,7 +123,7 @@ class AdministradorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $administrador)
     {
         return redirect('/');
     }
@@ -165,6 +174,19 @@ class AdministradorController extends Controller
         return redirect('/administrador/trashed');
     }
 
+    public function disabledharddestroy($id) 
+    {
+        //dd($id);
+
+        // Busca el registro eliminado por ID
+        $administrador = User::onlyTrashed()->findOrFail($id); // Busca solo registros eliminados
+
+        //dd($administrador);
+        $administrador->forceDelete();
+
+        return redirect('/administrador/trashed');
+    }
+
     public function makeUpper(User $administrador) 
     {
 
@@ -179,6 +201,12 @@ class AdministradorController extends Controller
 
         $administrador->rol = 2; // Cambia el rol a 2
         $administrador->save();
+
+        /*return redirect('/administrador')->with('notificacion', [
+            'titulo' => 'Registro exitoso',
+            'mensaje' => 'Tu cuenta se ha creado correctamente.',
+        ]);*/
+        
 
         return redirect('/administrador');
     }

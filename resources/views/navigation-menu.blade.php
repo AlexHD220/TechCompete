@@ -54,21 +54,24 @@
 
                         <x-slot name="content">
                             <!-- Account Management -->
-                            <div class="block px-4 py-2 text-xs text-gray-400">
-                                {{ __('Administrar cuenta') }}
+                            <div style="text-align: center">
+                                <div class="block px-4 py-2 text-xs text-gray-400">
+                                    {{ __('Administrar cuenta') }}
+                                </div>
                             </div>
-
+                            
+                            
                             <x-dropdown-link href="{{ route('dashboard') }}">
-                                {{ __('') }}
+                                <center>{{ __('Mi Perfil') }}</center>
                             </x-dropdown-link>
 
                             <x-dropdown-link href="{{ route('profile.show') }}">
-                                {{ __('Configuración del perfil') }}
+                                <center>{{ __('Configuración del perfil') }}</center>
                             </x-dropdown-link>
 
                             @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
                                 <x-dropdown-link href="{{ route('api-tokens.index') }}">
-                                    {{ __('API Tokens') }}
+                                    <center>{{ __('API Tokens') }}<center>
                                 </x-dropdown-link>
                             @endif
 
@@ -79,10 +82,11 @@
                                 @csrf
 
                                 <x-dropdown-link href="{{ route('logout') }}"
-                                         @click.prevent="$root.submit();">
-                                    {{ __('Cerrar sesión') }}
+                                        @click.prevent="$root.submit();">
+                                        <center>{{ __('Cerrar sesión') }}</center>
                                 </x-dropdown-link>
                             </form>
+                                                      
                         </x-slot>
                     </x-dropdown>
                 </div>

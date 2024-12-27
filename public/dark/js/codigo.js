@@ -5,7 +5,7 @@ document.getElementById("showPassword").addEventListener("click", function () {
     } else {
       passwordField.type = "password";
     }
-  });
+});
 
   /*document.getElementById("enviar").addEventListener("click", function () {
     var passwordField = document.getElementById("pass");
@@ -15,53 +15,53 @@ document.getElementById("showPassword").addEventListener("click", function () {
   });*/
   
 
-  function cambiarTexto() {
-    const boton = document.getElementById('showPassword');
-    
-    if (boton.innerHTML === 'Mostrar') {
-      boton.innerHTML = 'Ocultar';
-    } else {
-      boton.innerHTML = 'Mostrar';
-    }
+function cambiarTexto() {
+  const boton = document.getElementById('showPassword');
+  
+  if (boton.innerHTML === 'Mostrar') {
+    boton.innerHTML = 'Ocultar';
+  } else {
+    boton.innerHTML = 'Mostrar';
   }
+}
 
 
 
-  const showPassword = document.getElementById('showPassword');
+const showPassword = document.getElementById('showPassword');
 
-  document.getElementById("showPassword").addEventListener("click", function () {
-    var passwordField = document.getElementById("password");
-    if (passwordField.type === "password") {
-      passwordField.type = "text";
-      
-      showPassword.classList.remove("fa-eye");
-      showPassword.classList.add("fa-eye-slash");
-    } else {
-      passwordField.type = "password";
-      
-      showPassword.classList.remove("fa-eye-slash");
-      showPassword.classList.add("fa-eye");
-    }
-  });
+document.getElementById("showPassword").addEventListener("click", function () {
+  var passwordField = document.getElementById("password");
+  if (passwordField.type === "password") {
+    passwordField.type = "text";
+    
+    showPassword.classList.remove("fa-eye");
+    showPassword.classList.add("fa-eye-slash");
+  } else {
+    passwordField.type = "password";
+    
+    showPassword.classList.remove("fa-eye-slash");
+    showPassword.classList.add("fa-eye");
+  }
+});
 
   
 
-  const showPassword_confirmation = document.getElementById('showPassword_confirmation');
+const showPassword_confirmation = document.getElementById('showPassword_confirmation');
 
-  document.getElementById("showPassword_confirmation").addEventListener("click", function () {
-    var passwordField = document.getElementById("password_confirmation");
-    if (passwordField.type === "password") {
-      passwordField.type = "text";
-      
-      showPassword_confirmation.classList.remove("fa-eye");
-      showPassword_confirmation.classList.add("fa-eye-slash");
-    } else {
-      passwordField.type = "password";
-      
-      showPassword_confirmation.classList.remove("fa-eye-slash");
-      showPassword_confirmation.classList.add("fa-eye");
-    }
-  });
+document.getElementById("showPassword_confirmation").addEventListener("click", function () {
+  var passwordField = document.getElementById("password_confirmation");
+  if (passwordField.type === "password") {
+    passwordField.type = "text";
+    
+    showPassword_confirmation.classList.remove("fa-eye");
+    showPassword_confirmation.classList.add("fa-eye-slash");
+  } else {
+    passwordField.type = "password";
+    
+    showPassword_confirmation.classList.remove("fa-eye-slash");
+    showPassword_confirmation.classList.add("fa-eye");
+  }
+});
 
 
   /*const duracionInput = document.getElementById('duracion');  // Obtén el elemento del campo de número
@@ -82,20 +82,20 @@ document.getElementById("showPassword").addEventListener("click", function () {
   });*/
 
 
-    const backToTopButton = document.getElementById("backToTopButton");
+const backToTopButton = document.getElementById("backToTopButton");
 
-    // Controlar la visibilidad del botón
-    function toggleBackToTopButton() {
-        if (window.scrollY > 100) {   // mostrar cuando se desplaze 100 pixeles
-            backToTopButton.style.display = "block";
-        } else {
-            backToTopButton.style.display = "none";
-        }
+// Controlar la visibilidad del botón
+function toggleBackToTopButton() {
+    if (window.scrollY > 100) {   // mostrar cuando se desplaze 100 pixeles
+        backToTopButton.style.display = "block";
+    } else {
+        backToTopButton.style.display = "none";
     }
+}
 
-    // Detectar el desplazamiento de la página
-    window.addEventListener("scroll", toggleBackToTopButton);
-    //toggleBackToTopButton();
+// Detectar el desplazamiento de la página
+window.addEventListener("scroll", toggleBackToTopButton);
+//toggleBackToTopButton();
 
 
 
@@ -134,3 +134,43 @@ document.getElementById('createCompetencia').addEventListener('submit', function
   // Agrega aquí cualquier lógica adicional que necesites antes de enviar el formulario
   event.preventDefault(); // Evitar el envío real del formulario en este ejemplo
 });
+
+
+
+function copyToClipboard(button) {
+  const codigo = button.getAttribute("data-codigo");
+  const tempInput = document.createElement("input");
+  tempInput.value = codigo;
+  document.body.appendChild(tempInput);
+  tempInput.select();
+  document.execCommand("copy");
+  document.body.removeChild(tempInput);
+
+  // Usando SweetAlert para notificación
+  Swal.fire({
+      title: "¡Copiado!",
+      text: "Código copiado al portapapeles.",
+      icon: "success",
+      timer: 2000,
+      showConfirmButton: false
+  });
+}
+
+
+function toggleCambiarFecha(element) {
+  // Obtener las fechas desde los atributos data
+  const creacionDate = element.getAttribute('data-creacion');
+  const expiracionDate = element.getAttribute('data-expiracion');
+
+  // Cambiar el texto y el título dinámicamente
+  if (element.innerText.trim() === creacionDate) {
+      element.innerText = expiracionDate;
+      element.title = "Fecha de Expiración";
+  } else {
+      element.innerText = creacionDate;
+      element.title = "Fecha de Creación";
+  }
+}
+
+
+

@@ -84,19 +84,25 @@
                             <div class="block px-4 py-2 text-xs text-gray-400" style="font-size: 12px; text-align: center;">
                                 Administrar cuenta
                             </div>
-                            <a href="/dashboard" class="dropdown-item">Mi Perfil</a>
-                            <!--<a href="#" class="dropdown-item">Settings</a>-->
-                            <!--<a href="#" class="dropdown-item">Log Out</a> -->
-                            
-                            <!--<div class="border-t border-gray-200 dark:border-gray-600"></div>-->
 
-                            <!-- Authentication -->
-                            <form id="logout-form" method="POST" action="{{ route('logout') }}">
-                                @csrf
-                            </form>
+                            <div style="text-align: center; font-size: 15px;">
+                                <a href="/dashboard" class="dropdown-item">Mi Perfil</a>
+                                <a href="/user/profile" class="dropdown-item">Configuración del Perfil</a>
+                                <!--<a href="#" class="dropdown-item">Settings</a>-->
+                                <!--<a href="#" class="dropdown-item">Log Out</a> -->
+                                
+                                <!--<div class="border-t border-gray-200 dark:border-gray-600"></div>-->
 
-                            <a class="dropdown-item" onclick="document.getElementById('logout-form').submit();" style="cursor: pointer;">
-                                {{ __('Cerrar sesión') }}
-                            </a>                       
+                                <div style="border-top: 1px solid #4b5563; margin-top: 0px;"></div>
+
+                                <!-- Authentication -->
+                                <form id="logout-form" method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                </form>
+
+                                <a class="dropdown-item" onclick="document.getElementById('logout-form').submit();" style="cursor: pointer;">
+                                    {{ __('Cerrar sesión') }}
+                                </a>
+                            </div>                                              
                         </div>
                     </div>

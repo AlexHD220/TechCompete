@@ -82,6 +82,12 @@ class AsesorController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email|unique:registro_jueces,email',
+            'email' => ['unique:users'],
+            // Otras reglas de validación para otros campos
+        ]);
+
         /*$request->validate([ ///Validar datos, si los datos recibidos no cumplen estas regresas no les permite la entrada a la base de datos y regresa a la pagina original
             //'nombre' => 'required|string|max:255',
             //'telefono' => ['required','min:10','max:10']
@@ -168,11 +174,11 @@ class AsesorController extends Controller
 
         // EQUIVALENTE --> Asesor::create($request->all()); 
 
-        $asesor = new Asesor(); //quiero una nueva instanciade este modelo que va a representar mi tabla (representante de alto nivel)
+        $asesor = new Asesor(); //quiero una nueva instancia de este modelo que va a representar mi tabla (representante de alto nivel)
         $asesor->user_id = $user->id;
         $asesor->name = $request->name;
         $asesor->lastname = $request->lastname; //asignar atributos que corresonden por como se llaman mis columnas
-        $asesor->email = $request->email;        
+        $asesor->email = $request->email;      
         $asesor->telefono = $request->telefono;
         $asesor->save();
 

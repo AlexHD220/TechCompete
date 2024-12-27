@@ -47,6 +47,11 @@ class InstitucionController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email|unique:registro_jueces,email',
+            'email' => ['unique:users'],
+            // Otras reglas de validación para otros campos
+        ]);
 
         $user = User::create([
             'rol' => 5,

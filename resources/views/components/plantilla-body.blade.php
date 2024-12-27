@@ -185,4 +185,10 @@
     <script src="/dark/js/codigo.js"></script>
     <script src="/dark/js/notificacion.js"></script>
 
+    <!-- SweetAlert CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    
+
+
 </body>

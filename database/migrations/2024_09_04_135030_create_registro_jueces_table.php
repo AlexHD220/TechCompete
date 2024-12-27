@@ -15,13 +15,16 @@ return new class extends Migration
             $table->id();
             
             $table->string('codigo')->unique();
+            $table->string('email')->unique();
             $table->boolean('validado')->default(false);
 
             $table->unsignedBigInteger('creado_by'); //--> crear columna dentro de la tabla registro jueces            
             $table->foreign('creado_by')->references('id')->on('users')->constrained(); // --> referenciar columna de ID dentro de la tabla users 
             
-            $table->timestamp('creacion_date');
-            $table->timestamp('validado_date')->nullable();
+            $table->date('creacion_date');
+
+            $table->date('expiracion_date')->nullable();
+            $table->date('validacion_date')->nullable();
             //$table->timestamps();
         });
     }

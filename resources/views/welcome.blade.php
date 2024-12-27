@@ -124,7 +124,8 @@
 
                 @auth
                     <div class="flex justify-center" style="margin-top: 10px;">
-                        <h1 style="color: #ed5048; font-size: 35px; font-weight: bold; margin-bottom: 10px; margin-top: 20px; font-family: 'Montserrat'; letter-spacing: 5px;">
+                        <h1 style="color: #ed5048; font-size: 35px; font-weight: bold; margin-bottom: 10px; margin-top: 0px; font-family: 'Montserrat'; letter-spacing: 5px;">
+                            <b style="font-size: 45px; font-weight: bolder;" class="flex justify-center">Bienvenido</b>
                             <a onmouseover="this.style.color='#eb1616'" onmouseout="this.style.color='#ed5048'" href="{{ url('/dashboard') }}">
                             @can('only-user')
                                 <b>{{ auth()->user()->name }}</b>
@@ -178,10 +179,10 @@
                             </button>
 
                             <button onclick="window.location.href = '/staff';" class="boton" style="margin: 10px;  font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->
-                                Staff
+                                Staffs
                             </button>
 
-                            <button onclick="window.location.href = '/jueces';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->
+                            <button onclick="window.location.href = '/juez';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->
                                 Jueces
                             </button>
                         @endcan

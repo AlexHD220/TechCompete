@@ -14,12 +14,18 @@
             @endauth
         </div>
 
-        <div style="margin-bottom: 20px;">
-            <button onMouseOver="this.style.backgroundColor='#141d76'" onmouseout="this.style.backgroundColor='#1b279c'" class="btn btn-primary" style="font-size: 14px; background-color: #1b279c; border:0px; box-shadow: none;" onclick="window.location.href = '/administrador/trashed';">Cuentas Deshabilitadas</button>
-        </div>
+        @if($disabledsuperadministradores->count() > 0 || $disabledadministradores->count() > 0)
+            <div style="margin-bottom: 20px;">
+                <button onMouseOver="this.style.backgroundColor='#bd4e00'" onmouseout="this.style.backgroundColor='#e26b18'" class="btn btn-primary" style="font-size: 14px; background-color: #e26b18; border:0px; box-shadow: none;" onclick="window.location.href = '/administrador/trashed';"><b>Cuentas Deshabilitadas</b></button>
+            </div>
+        @endif
 
         @if($superadministradores->count() == 1 && $administradores->count() == 0)
-            <p sty style="margin-left: 20px;"><i>Usted es el único Administrador registrado.</i></p>
+            @if($disabledsuperadministradores->count() > 0 || $disabledadministradores->count() > 0)
+                <p sty style="margin-left: 20px;"><i>Usted es el único Administrador activo.</i></p>
+            @else
+                <p sty style="margin-left: 20px;"><i>Usted es el único Administrador registrado.</i></p>
+            @endif
         @else
             @if($superadministradores->count() > 1)
                 <div style="margin-top: 15px;">
@@ -32,13 +38,25 @@
                                 (<i><a href="mailto:{{ $superadministrador -> email }}">{{ $superadministrador -> email }}</a></i>)
                                 <h style="margin-right: 5px;"></h>
                                 
+                                <!-- Botón para cambiar a Lower -->
+                                <form action="{{ route('administrador.lower', $superadministrador) }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    @method('PATCH')
+
+                                    <button type="submit" onclick="return confirm('¿Está seguro que desea disminuir los privilegios de esta cuenta?')" onmouseover="this.style.backgroundColor='#ffd24c';" onmouseout="this.style.backgroundColor='#f1b90e';"  
+                                    style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: #f1b90e; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
+                                    title="Disminuir Privilegios">
+                                        <i class="fas fa-arrow-down" style="font-size: 15px;"></i> <!-- Ícono de FontAwesome -->
+                                    </button>                                    
+                                </form>
+
                                 <form action="{{route('administrador.destroy', $superadministrador)}}" method = "POST" style="display: inline-block;">
                                     @csrf
                                     @method('DELETE')
                                     
-                                    <button type="submit" onclick="return confirm('¿Está seguro que desea deshabilitar la cuenta?')" onmouseover="this.style.backgroundColor='#ff6666';" onmouseout="this.style.backgroundColor='red';"  
-                                    style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: red; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
-                                    title="Deshabilitar cuenta">
+                                    <button type="submit" onclick="return confirm('¿Está seguro que desea deshabilitar esta cuenta?')" onmouseover="this.style.backgroundColor='#f97c3e';" onmouseout="this.style.backgroundColor='#ff5500';"  
+                                    style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: #ff5500; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
+                                    title="Deshabilitar Cuenta">
                                         <i class="fas fa-ban" style="font-size: 15px;"></i> <!-- Ícono de FontAwesome -->
                                     </button>
                                 </form>
@@ -49,17 +67,10 @@
                                     
                                     <button type="submit" onclick="return confirm('¿Está seguro que desea eliminar esta cuenta de forma permanente?')" onmouseover="this.style.backgroundColor='#ff6666';" onmouseout="this.style.backgroundColor='red';"  
                                     style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: red; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
-                                    title="Eliminar cuenta">
+                                    title="Eliminar Cuenta">
                                         <i class="fas fa-trash" style="font-size: 15px;"></i> <!-- Ícono de FontAwesome -->
                                     </button>
-                                </form>
-
-                                 <!-- Botón para cambiar a Lower -->
-                                <form action="{{ route('administrador.lower', $superadministrador) }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="btn btn-warning">Lower</button>
-                                </form>
+                                </form>                                 
                             </li><br>
                         @endif
                     @endforeach
@@ -75,33 +86,40 @@
                             <li>
                                 <b style="font-size: 20px;">{{ $administrador -> name }}</b>                                
                                 (<i><a href="mailto:{{ $administrador -> email }}">{{ $administrador -> email }}</a></i>)
-                                |
-                                <form action="{{route('administrador.destroy', $administrador)}}" method = "POST" style="display: inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    
-                                    <button type="submit" onclick="return confirm('¿Está seguro que desea deshabilitar la cuenta?')" onmouseover="this.style.backgroundColor='#ff6666';" onmouseout="this.style.backgroundColor='red';"  style="background-color: red; color: white;">
-                                        Deshabilitar cuenta
-                                    </button>
-                                </form>
-                                |
-                                <form action="{{route('administrador.harddestroy', $administrador)}}" method = "POST" style="display: inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    
-                                    <button type="submit" onclick="return confirm('¿Está seguro que desea eliminar esta cuenta de forma permanente?')" onmouseover="this.style.backgroundColor='#ff6666';" onmouseout="this.style.backgroundColor='red';"  style="background-color: red; color: white;">
-                                        Eliminar cuenta
-                                    </button>
-                                </form>
-
+                                
                                 <!-- Botón para cambiar a Upper -->
                                 <form action="{{ route('administrador.upper', $administrador) }}" method="POST" style="display: inline;">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="submit" class="btn btn-success">Upper</button>
-                                </form>
+                                    
+                                    <button type="submit" onclick="return confirm('¿Está seguro que desea aumentar los privilegios de esta cuenta?')" onmouseover="this.style.backgroundColor='#63b38e';" onmouseout="this.style.backgroundColor='#198754';"  
+                                    style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: #198754; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
+                                    title="Aumentar Privilegios">
+                                        <i class="fas fa-arrow-up" style="font-size: 15px;"></i> <!-- Ícono de FontAwesome -->
+                                    </button>                                    
+                                </form>  
 
-                                <button id="notificacion">Notificacion</button>
+                                <form action="{{route('administrador.destroy', $administrador)}}" method = "POST" style="display: inline-block;">
+                                    @csrf
+                                    @method('DELETE')
+                                    
+                                    <button type="submit" onclick="return confirm('¿Está seguro que desea deshabilitar esta cuenta?')" onmouseover="this.style.backgroundColor='#f97c3e';" onmouseout="this.style.backgroundColor='#ff5500';"  
+                                    style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: #ff5500; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
+                                    title="Deshabilitar Cuenta">
+                                        <i class="fas fa-ban" style="font-size: 15px;"></i> <!-- Ícono de FontAwesome -->
+                                    </button>
+                                </form>
+                                
+                                <form action="{{route('administrador.harddestroy', $administrador)}}" method = "POST" style="display: inline-block;">
+                                    @csrf
+                                    @method('DELETE')
+                                    
+                                    <button type="submit" onclick="return confirm('¿Está seguro que desea eliminar esta cuenta de forma permanente?')" onmouseover="this.style.backgroundColor='#ff6666';" onmouseout="this.style.backgroundColor='red';"  
+                                    style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: red; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
+                                    title="Eliminar Cuenta">
+                                        <i class="fas fa-trash" style="font-size: 15px;"></i> <!-- Ícono de FontAwesome -->
+                                    </button>
+                                </form>                                                              
                             </li><br>
                         @endif
                     @endforeach

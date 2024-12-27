@@ -84,12 +84,17 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
     Route::resource('proyecto', ProyectoController::class);
 
     Route::resource('participante', ParticipanteController::class);
+    
 
-    //Route::resource('participante', ParticipanteController::class);
+//------------------------------------------------------------------------------------> Administrador
 
     // Ruta personalizada para "hard destroy"
     Route::delete('administrador/{administrador}/harddestroy', [AdministradorController::class, 'hardDestroy']) //Nombre del metodo controller
     ->name('administrador.harddestroy');
+
+    // Ruta personalizada para "disabled hard destroy"
+    Route::delete('administrador/{id}/disabledharddestroy', [AdministradorController::class, 'disabledhardDestroy']) //Nombre del metodo controller
+    ->name('administrador.disabledharddestroy');
 
     // Ruta para mostrar los registros eliminados
     Route::get('administrador/trashed', [AdministradorController::class, 'trashed'])
@@ -107,11 +112,74 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
 
     Route::resource('administrador', AdministradorController::class);
 
+//------------------------------------------------------------------------------------|
+
+
+//------------------------------------------------------------------------------------> Staff
+
+    // Ruta personalizada para "hard destroy"
+    Route::delete('staff/{staff}/harddestroy', [StaffController::class, 'hardDestroy']) //Nombre del metodo controller
+    ->name('staff.harddestroy');
+
+    // Ruta personalizada para "disabled hard destroy"
+    Route::delete('staff/{id}/disabledharddestroy', [StaffController::class, 'disabledhardDestroy']) //Nombre del metodo controller
+    ->name('staff.disabledharddestroy');
+
+    // Ruta para mostrar los registros eliminados
+    Route::get('staff/trashed', [StaffController::class, 'trashed'])
+    ->name('staff.trashed');
+
+    // Ruta para restaurar un registro
+    Route::patch('staff/{id}/restore', [StaffController::class, 'restore'])
+    ->name('staff.restore');
+
+    Route::patch('staff/{staff}/upper', [StaffController::class, 'makeUpper'])
+    ->name('staff.upper');
+
+    Route::patch('staff/{staff}/lower', [StaffController::class, 'makeLower'])
+    ->name('staff.lower');
+
     Route::resource('staff', StaffController::class);
+
+//------------------------------------------------------------------------------------|
+
     
+//------------------------------------------------------------------------------------> Juez
+
+    Route::get('juez/create/{codigo}', [JuezController::class, 'createjuez'])
+    ->name('juez.createjuez');
+
+    // Ruta personalizada para "hard destroy"
+    Route::delete('juez/{juez}/harddestroy', [JuezController::class, 'hardDestroy']) //Nombre del metodo controller
+    ->name('juez.harddestroy');
+
+    // Ruta personalizada para "disabled hard destroy"
+    Route::delete('juez/{id}/disabledharddestroy', [JuezController::class, 'disabledhardDestroy']) //Nombre del metodo controller
+    ->name('juez.disabledharddestroy');
+
+    // Ruta para mostrar los registros eliminados
+    Route::get('juez/trashed', [JuezController::class, 'trashed'])
+    ->name('juez.trashed');
+
+    // Ruta para restaurar un registro
+    Route::patch('juez/{id}/restore', [JuezController::class, 'restore'])
+    ->name('juez.restore');
+
     Route::resource('juez', JuezController::class);
 
+//------------------------------------------------------------------------------------|
+
+//------------------------------------------------------------------------------------> Registro Juez
+
+    Route::delete('registrojuez/destroyexpirados', [RegistroJuezController::class, 'destroyexpirados']) //Nombre del metodo controller
+    ->name('registrojuez.destroyexpirados');
+
+    Route::post('reenviarcorreo/{registrojuez}', [RegistroJuezController::class, 'reenviarcorreo'])
+    ->name('registrojuez.reenviarcorreo');
+
     Route::resource('registrojuez', RegistroJuezController::class);
+
+//------------------------------------------------------------------------------------|
 
 
     Route::resource('accesocompetencia', AccesoCompetenciaController::class)->parameters([
