@@ -130,10 +130,10 @@ function validarImagen() {
   }
 }
 
-document.getElementById('createCompetencia').addEventListener('submit', function(event) {
+/*document.getElementById('createCompetencia').addEventListener('submit', function(event) {
   // Agrega aquí cualquier lógica adicional que necesites antes de enviar el formulario
   event.preventDefault(); // Evitar el envío real del formulario en este ejemplo
-});
+});*/
 
 
 
@@ -173,4 +173,26 @@ function toggleCambiarFecha(element) {
 }
 
 
+const password = document.getElementById('password');
+const confirmPassword = document.getElementById('password_confirmation');
+const passwordError = document.getElementById('passwordError');
 
+confirmPassword.addEventListener('input', function () {
+    if (confirmPassword.value === password.value) {
+        passwordError.style.display = 'none';        
+        confirmPassword.setCustomValidity(''); // Limpia el mensaje de validación
+    } else {
+        passwordError.style.display = 'inline';
+    }
+});
+
+document.getElementById('registroForm').addEventListener('submit', function (event) {
+    if (password.value !== confirmPassword.value) {
+        event.preventDefault(); // Evita que el formulario se envíe
+        passwordError.style.display = 'block'; // Muestra el mensaje de error
+        confirmPassword.setCustomValidity('Las contraseñas no coinciden.'); // Establece un mensaje de validación
+    } else {
+        passwordError.style.display = 'none'; // Oculta el mensaje de error
+        confirmPassword.setCustomValidity(''); // Limpia el mensaje de validación
+    }
+});

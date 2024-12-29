@@ -32,7 +32,7 @@ class Equipo extends Model
         return $this->belongsTo(Asesor::class);
     }
 
-    public function competenciacategoria() // --> Relacion Uno a x
+    public function competencia_categoria() // --> Relacion Uno a x
     {
         return $this->belongsTo(CompetenciaCategoria::class);
     }

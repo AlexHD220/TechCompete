@@ -241,7 +241,7 @@
 
     <!-- Template Javascript -->
     <script src="/dark/js/main.js"></script>
-    <script src="/dark/js/codigo.js"></script>
+    <script src="/dark/js/codigo.js" defer></script>
 </body>
 
 </html>

@@ -18,7 +18,7 @@ class Competencia extends Model
     
     public function users() // --> Relacion Muchos a Muchos
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'acceso_competencias', 'competencia_id', 'user_id');
     }
 
     public function instituciones() // --> Relacion Muchos a Muchos
@@ -56,7 +56,7 @@ class Competencia extends Model
         return $this->hasMany (Horario::class);
     }
 
-    public function accesocompetencias() // --> Relacion Muchos a Uno (Tiene muchos)
+    public function acceso_competencias() // --> Relacion Muchos a Uno (Tiene muchos)
     {
         return $this->hasMany (AccesoCompetencia::class);
     }

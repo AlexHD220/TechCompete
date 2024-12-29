@@ -27,7 +27,7 @@ class Juez extends Model
         return $this->belongsToMany(Competencia::class);
     }
 
-    public function competenciacategorias() // --> Relacion Muchos a Muchos
+    public function competencia_categorias() // --> Relacion Muchos a Muchos
     {
         return $this->belongsToMany(CompetenciaCategoria::class);
     }
@@ -42,12 +42,13 @@ class Juez extends Model
         return $this->hasMany (Evaluacion::class);
     }
 
-    public function registrojueces() // --> Relacion Uno a Uno (Pertenece a)(Relacion inversa)(Modelo que posee la columna foranea)
+    // En el modelo Juez
+    public function registro_juez()
     {
-        return $this->belongsTo(RegistroJuez::class);
+        return $this->belongsTo(RegistroJuez::class);  // Asegúrate de que el nombre del método es correcto
     }
 
-    public function juecescompetencias() // --> Relacion Muchos a Uno (Tiene muchos)
+    public function jueces_competencias() // --> Relacion Muchos a Uno (Tiene muchos)
     {
         return $this->hasMany (JuecesCompetencia::class);
     }

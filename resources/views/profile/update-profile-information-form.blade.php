@@ -114,7 +114,8 @@
     @can('mail-verificado')
         <x-slot name="actions">
             <x-action-message class="mr-3" on="saved">
-                <b style="color: #41ef1f;">{{ __('Guardado.') }}</b>
+            <b style="color: #41ef1f;">{{ __('Guardado.') }}</b>
+            <!--<b style="color: #41ef1f;">{{ __('Espera un momento y vuelve a guardar los cambios...') }}</b>-->
             </x-action-message>
 
             <x-button wire:loading.attr="disabled" wire:target="photo" style="margin-bottom: 10px;">

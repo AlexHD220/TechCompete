@@ -75,7 +75,7 @@ class CompetenciaCategoria extends Model
         return $this->hasMany (Evaluacion::class);
     }
 
-    public function juecescompetencias() // --> Relacion Muchos a Uno (Tiene muchos)
+    public function jueces_competencias() // --> Relacion Muchos a Uno (Tiene muchos)
     {
         return $this->hasMany (JuecesCompetencia::class);
     }

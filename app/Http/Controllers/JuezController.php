@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; //ID Usuario
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\Rules\Password;
 
@@ -27,6 +28,7 @@ class JuezController extends Controller
     public function index()
     {
         $jueces = Juez::all();
+        
         $disabledjueces = Juez::onlyTrashed()->get();
 
         return view("juez/indexJuez",compact('jueces', 'disabledjueces')); 
@@ -45,7 +47,7 @@ class JuezController extends Controller
         // Verificar si el código existe y es válido
         $registro = RegistroJuez::where('codigo', $codigo)->first();
 
-        if (!$registro || $registro->expiracion_date < now()) {
+        if (!$registro || $registro->expiracion_date < now() || $registro->validado) { // Pruebas Pendientes con !$registro->validacion_date
             return redirect('/');
         }
 
@@ -72,6 +74,11 @@ class JuezController extends Controller
         /*if ($codigo->expiracion_date < now()) {
             return redirect()->back()->withErrors(['codigo' => 'El código de registro ha expirado.'])->withInput();
         }*/
+
+        // Verificar que el código no haya sido validado
+        if ($codigo->validado) {
+            return redirect()->back()->withErrors(['codigo' => 'El código ya fue validado.'])->withInput();
+        }
 
         if ($request->codigo_registro !== $request->codigo) {
             return redirect()->back()->withErrors(['codigo' => 'Parece que este código de registro no te pertenece.'])->withInput();
@@ -118,7 +125,15 @@ class JuezController extends Controller
      */
     public function show(Juez $juez)
     {
-        //
+        // Solo administradores
+        /*if (!Gate::allows('only-admin')) {
+            
+            if (!Gate::allows('gate-asesor', $juez)) { // Uso de gate
+                return redirect('/asesor');
+            }
+        }*/     
+
+        return view('juez/showJuez',compact('juez')); //asesor es el usuario actual a mostrar
     }
 
     /**
@@ -126,7 +141,7 @@ class JuezController extends Controller
      */
     public function edit(Juez $juez)
     {
-        //
+        return redirect('/');
     }
 
     /**
@@ -134,7 +149,7 @@ class JuezController extends Controller
      */
     public function update(Request $request, Juez $juez)
     {
-        //
+        return redirect('/');
     }
 
     /**
@@ -142,6 +157,77 @@ class JuezController extends Controller
      */
     public function destroy(Juez $juez)
     {
-        //
+        //dd($juez);
+
+        $juez->delete();
+        
+        $juez->user->delete();        
+
+        return redirect('/juez');
     }
+
+    public function hardDestroy(Juez $juez) 
+    {
+        //dd($juez->registro_juez);
+
+        $juez->forceDelete();
+        
+        $juez->user->forceDelete();
+        
+        $juez->registro_juez->delete();
+
+        return redirect('/juez');
+    }
+
+    public function trashed()
+    {
+        // Obtiene todos los registros eliminados
+        
+        $jueces = Juez::onlyTrashed()->get();
+
+        //dd($jueces);
+
+        // Retorna la vista con los registros eliminados
+        return view("juez/trashedJuez",compact('jueces')); 
+    }
+
+    public function restore($id)
+    {
+
+        //dd($id);
+
+        // Busca el registro eliminado por ID
+        $juez = Juez::onlyTrashed()->findOrFail($id); // Busca solo registros eliminados
+    
+
+        //dd($juez->user()->withTrashed()->first());
+
+        // Restaura el registro
+        $juez->restore();
+        
+        $juez->user()->withTrashed()->restore(); // Restaurar el usuario relacionado    
+
+        return redirect('/juez/trashed');
+    }
+
+    public function disabledharddestroy($id) 
+    {
+        //dd($id);
+
+        // Busca el registro eliminado por ID
+        $juez = Juez::onlyTrashed()->findOrFail($id); // Busca solo registros eliminados
+
+        //dd($juez->user()->withTrashed()->first());
+
+        //dd($juez->registro_juez);
+
+        $juez->forceDelete();
+
+        $juez->user()->withTrashed()->forceDelete(); // Eliminar el usuario relacionado
+
+        $juez->registro_juez->delete();
+
+        return redirect('/juez/trashed');
+    }
+
 }

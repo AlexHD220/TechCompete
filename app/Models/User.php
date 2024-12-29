@@ -82,7 +82,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function competencias() // --> Relacion Muchos a Muchos
     {
-        return $this->belongsToMany(Competencia::class);
+        return $this->belongsToMany(Competencia::class, 'acceso_competencias', 'user_id', 'competencia_id');
     }
 
     public function competenciacategorias() // --> Relacion Muchos a Muchos
@@ -103,12 +103,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany (Proyecto::class);
     }
 
-    public function registrojueces() // --> Relacion Muchos a Uno (Tiene muchos)
+    public function registro_jueces() // --> Relacion Muchos a Uno (Tiene muchos)
     {
         return $this->hasMany (RegistroJuez::class);
     }
 
-    public function accesocompetencias() // --> Relacion Muchos a Uno (Tiene muchos)
+    public function acceso_competencias() // --> Relacion Muchos a Uno (Tiene muchos)
     {
         return $this->hasMany (AccesoCompetencia::class);
     }

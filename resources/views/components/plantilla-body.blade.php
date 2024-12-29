@@ -73,7 +73,7 @@
                     @auth
                         @can('only-superadmin')
                             <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/administrador" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Administradores</a>
-                            @endcan
+                        @endcan
                     @endauth
 
                     <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/competencia" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Competencias</a>
@@ -182,7 +182,7 @@
 
     <!-- Template Javascript -->
     <script src="/dark/js/main.js"></script>
-    <script src="/dark/js/codigo.js"></script>
+    <script src="/dark/js/codigo.js" defer></script>
     <script src="/dark/js/notificacion.js"></script>
 
     <!-- SweetAlert CDN -->

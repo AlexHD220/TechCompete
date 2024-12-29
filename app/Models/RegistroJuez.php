@@ -16,7 +16,7 @@ class RegistroJuez extends Model
 
     public $timestamps = false; //--> ignorar una valor de la tabla
     
-    public function jueces() // --> Relacion Uno a Uno (Tiene uno)
+    public function juez() // --> Relacion Uno a Uno (Tiene uno)
     {
         return $this->hasOne(Juez::class);
     }

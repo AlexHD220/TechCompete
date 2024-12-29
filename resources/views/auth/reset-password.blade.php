@@ -6,7 +6,7 @@
 
         <x-validation-errors class="mb-4" />
 
-        <form method="POST" action="{{ route('password.update') }}">
+        <form id="registroForm" method="POST" action="{{ route('password.update') }}">
             @csrf
 
             <input type="hidden" name="token" value="{{ $request->route('token') }}">
@@ -26,6 +26,7 @@
                 <x-label for="password_confirmation" value="{{ __('Confirmar contraseña') }}" />
                 <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" minlength="8" maxlength="50" required autocomplete="new-password" style="width: 365px; display: inline;"/>
                 <i onmouseover="this.style.color='gray'" onmouseout="this.style.color='white'" class="fas fa-eye" id="showPassword_confirmation" onclick="cambiarIcono()" style="margin-left: 10px;"></i>
+                <small id="passwordError" style="color: #f87171; display: none;"><div style="margin-top: 10px;"><b>Las contraseñas no coinciden.</b></div></small>
             </div>
 
             <div class="flex items-center justify-end mt-4">

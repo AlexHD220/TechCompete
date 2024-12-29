@@ -36,7 +36,7 @@
         </select><br><br>
 
         <label for="name"><b> Nombre(s): </b></label>
-        <input type="text" id = "name" name="name" minlength="4" maxlength="50" required value = "{{ old('name') }}" style="width: 400px; margin: 5px"><br><br>
+        <input type="text" id = "name" name="name" minlength="3" maxlength="50" required value = "{{ old('name') }}" style="width: 400px; margin: 5px"><br><br>
 
         <label for="lastname"><b> Apellido(s): </b></label>
         <input type="text" id = "lastname" name="lastname" minlength="5" maxlength="50" required value = "{{ old('lastname') }}" style="width: 400px; margin: 5px"><br><br>

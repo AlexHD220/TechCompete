@@ -23,7 +23,7 @@ class Evaluacion extends Model
         return $this->belongsTo(Juez::class);
     }
 
-    public function competenciacategoria() // --> Relacion Uno a x
+    public function competencia_categoria() // --> Relacion Uno a x
     {
         return $this->belongsTo(CompetenciaCategoria::class);
     }

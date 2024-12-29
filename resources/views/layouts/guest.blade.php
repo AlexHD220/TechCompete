@@ -57,8 +57,10 @@
         <div class="font-sans text-gray-900 dark:text-gray-100 antialiased">
             {{ $slot }}
         </div>
+        
+        <!-- Plantilla de Registro de Usuario Laravel -->
 
         @livewireScripts
-        <script src="/dark/js/codigo.js"></script>
+        <script src="/dark/js/codigo.js" defer></script>
     </body>
 </html>

@@ -18,7 +18,7 @@ class JuecesCompetencia extends Model
         return $this->belongsTo(Juez::class);
     }
 
-    public function competenciacategoria() // --> Relacion Uno a Muchos (pertenece a)(relacion inversa)(Modelo que posee la columna foranea)
+    public function competencia_categoria() // --> Relacion Uno a Muchos (pertenece a)(relacion inversa)(Modelo que posee la columna foranea)
     {
         return $this->belongsTo(CompetenciaCategoria::class);
     }
