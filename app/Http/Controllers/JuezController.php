@@ -166,7 +166,7 @@ class JuezController extends Controller
         return redirect('/juez');
     }
 
-    public function hardDestroy(Juez $juez) 
+    public function harddestroy(Juez $juez) 
     {
         //dd($juez->registro_juez);
 

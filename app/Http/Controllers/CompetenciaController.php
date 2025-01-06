@@ -48,12 +48,14 @@ class CompetenciaController extends Controller
     {
         //$asesores = Asesor::all();
 
-        $categorias = Categoria::all();
+        //$categorias = Categoria::all();
         
         //$asesores = Asesor::where('user_id',Auth::id())->get(); //registros que solo pertenezcan al usuario logueado
 
         //return view('competencia/createCompetencia', compact('asesores','categorias'));
-        return view('competencia/createCompetencia', compact('categorias'));
+        //return view('competencia/createCompetencia', compact('categorias'));
+
+        return view('competencia/createCompetencia');
     }
 
     /**
@@ -63,13 +65,13 @@ class CompetenciaController extends Controller
     {
 
         $request->validate([ ///Validar datos, si los datos recibidos no cumplen estas regresas no les permite la entrada a la base de datos y regresa a la pagina original
-            'identificador' => ['required', 'string', 'min:5', 'max:50', 'unique:competencias'],
+            //'identificador' => ['required', 'string', 'min:5', 'max:50', 'unique:competencias'],
             'fecha' => ['required', 'date', 'after_or_equal:today', 'before_or_equal:' . now()->addYears(2)->format('Y-m-d')],
             'duracion' => ['required','integer','min:1','max:100'],
             //'asesor_id' => ['required', 'not_in:Selecciona una opción'],
             'tipo' => ['required', 'not_in:-'],
-            'categoria_id' => ['required'],
-            'imagen' => ['required', 'file', 'mimes:png,jpg,jpeg', 'max:5120'], // Máximo 5 Mb
+            //'categoria_id' => ['required'],
+            'imagen' => ['required', 'file', 'mimes:png,jpg,jpeg', 'max:15360'], // Máximo 15 Mb
         ]);
 
         /*$competencia = new Competencia();
@@ -87,17 +89,42 @@ class CompetenciaController extends Controller
             $request->file('imagen')->store('imagenes competencias'); // 'imaganes competencias' --> carpeta 
         }*/
 
-        $request -> merge([
+        /*$request -> merge([
             'nombre_original_imagen' =>  $request->file('imagen')->getClientOriginalName(),
             //'ubicacion_imagen' =>  $request->file('imagen')->store('imagenes_competencias'),
             'ubicacion_imagen' =>  $request->file('imagen')->storeAs('public/imagenes_competencias', 'Logo_'.$request->identificador.'.'. $request->file('imagen')->extension()),
-        ]);
+        ]);*/
 
-        $competencia = Competencia::create($request->all()); // <-- hace todo lo que esta abajo desde new hasta save
+        //$competencia = Competencia::create($request->all()); // <-- hace todo lo que esta abajo desde new hasta save
         
         // Insertar en la tabla pivote relacion m:n
-        $competencia->categorias()->attach($request->categoria_id); //detach() elimina de la lista el usuario que le pasemos 
+        //$competencia->categorias()->attach($request->categoria_id); //detach() elimina de la lista el usuario que le pasemos 
         
+        
+        //dd($registrojuez);
+
+        // Generar el enlace de Google Maps
+        $googleMapsLink = "https://www.google.com/maps?q={$request->latitude},{$request->longitude}";
+        
+        $competencia = new Competencia();
+
+        // Crear el registro en la base de datos
+        
+        $competencia->name = $request->name;
+        $competencia->descripcion = $request->descripcion;
+        $competencia->fecha = $request->fecha;
+        $competencia->duracion = $request->duracion;
+        $competencia->tipo = $request->tipo;
+        $competencia->sede = $request->sede;
+        $competencia->latitud = $request->latitude;
+        $competencia->longitud = $request->longitude;
+        $competencia->mapa_link = $googleMapsLink;
+        $competencia->ubicacion_imagen = $request->file('imagen')->storeAs('public/imagenes_competencias', 'Portada_'.$request->name.'.'. $request->file('imagen')->extension());
+
+
+        //dd($registrojuez->id);
+        
+        $competencia->save();
 
         return redirect()->route('competencia.index');
 
@@ -179,6 +206,30 @@ class CompetenciaController extends Controller
         return redirect() -> route('competencia.show', $competencia);
     }
 
+    public function drafts()
+    {
+        // Obtiene todos los registros eliminados
+        
+        $jueces = Competencia::onlyTrashed()->get();
+
+        //dd($jueces);
+
+        // Retorna la vista con los registros eliminados
+        return view("juez/trashedJuez",compact('jueces')); 
+    }
+    
+    public function previous()
+    {
+        // Obtiene todos los registros eliminados
+        
+        $jueces = Competencia::onlyTrashed()->get();
+
+        //dd($jueces);
+
+        // Retorna la vista con los registros eliminados
+        return view("juez/trashedJuez",compact('jueces')); 
+    }
+
     /**
      * Remove the specified resource from storage.
      */
@@ -189,9 +240,90 @@ class CompetenciaController extends Controller
         //$competencia->categorias()->detach(); // Eliminar registros de tabla pivote
 
         // Soft delete tabla pivote
-        $competencia->categorias()->update(['deleted_at' => now()]);
+        
+        
+        //$competencia->categorias()->update(['deleted_at' => now()]);        
+
+        //dd($juez);
+
+        
+        //$juez->user->delete();  //Relacion 1:1
 
         $competencia -> delete();
+
         return redirect('/competencia');
     }
+
+    public function harddestroy(Competencia $juez) 
+    {
+        //dd($juez->registro_juez);
+
+        $juez->forceDelete();
+        
+        $juez->user->forceDelete();
+        
+        $juez->registro_juez->delete();
+
+        return redirect('/competencia');
+    }
+
+    public function trashed()
+    {
+        // Obtiene todos los registros eliminados
+        
+        $jueces = Competencia::onlyTrashed()->get();
+
+        //dd($jueces);
+
+        // Retorna la vista con los registros eliminados
+        return view("juez/trashedJuez",compact('jueces')); 
+    }
+
+    /**
+     * Display the specified delete resource.
+     */
+    public function showtrashed($id)
+    {
+        //
+    }
+
+    public function restore($id)
+    {
+
+        //dd($id);
+
+        // Busca el registro eliminado por ID
+        $juez = Competencia::onlyTrashed()->findOrFail($id); // Busca solo registros eliminados
+    
+
+        //dd($juez->user()->withTrashed()->first());
+
+        // Restaura el registro
+        $juez->restore();
+        
+        $juez->user()->withTrashed()->restore(); // Restaurar el usuario relacionado    
+
+        return redirect('/juez/trashed');
+    }
+
+    public function disabledharddestroy($id) 
+    {
+        //dd($id);
+
+        // Busca el registro eliminado por ID
+        $juez = Competencia::onlyTrashed()->findOrFail($id); // Busca solo registros eliminados
+
+        //dd($juez->user()->withTrashed()->first());
+
+        //dd($juez->registro_juez);
+
+        $juez->forceDelete();
+
+        $juez->user()->withTrashed()->forceDelete(); // Eliminar el usuario relacionado
+
+        $juez->registro_juez->delete();
+
+        return redirect('/juez/trashed');
+    }
+
 }

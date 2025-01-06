@@ -139,7 +139,7 @@ class AdministradorController extends Controller
         return redirect('/administrador');
     }
 
-    public function hardDestroy(User $administrador) 
+    public function harddestroy(User $administrador) 
     {
         //dd($administrador);
         $administrador->forceDelete();

@@ -129,7 +129,7 @@ class StaffController extends Controller
         return redirect('/staff');
     }
 
-    public function hardDestroy(User $staff) 
+    public function harddestroy(User $staff) 
     {
         //dd($staff);
         $staff->forceDelete();

@@ -78,13 +78,14 @@
 
         <!-- Imagen de perfil -->
         @if (!is_null($juez->user->profile_photo_path))
-            <img src="{{ $juez->user->profile_photo_url }}" alt="{{ $juez->user->name }}"style="height: 100px; margin-right: 15px; object-fit: cover; cursor: pointer;" onclick="showModal()">
+            <img src="{{ $juez->user->profile_photo_url }}" alt="{{ $juez->user->name }}"style="height: 100px; margin-right: 15px; border-radius: 15%; object-fit: cover; cursor: pointer;" onclick="showModal()">
         @endif
+        
         
         <!-- Contenedor de nombre y apellido -->
         <div>
-            <h1 style="margin-top: 8px; margin-bottom: 10px;"> {{ $juez -> name }}</h1>
-            <h1> {{ $juez -> lastname }}</h1>
+            <h1 style="margin-top: 8px; margin-bottom: 10px; margin-right: 15px;"> {{ $juez -> name }}</h1>
+            <h1 style="margin-right: 15px;"> {{ $juez -> lastname }}</h1>
         </div>
     </div>
 

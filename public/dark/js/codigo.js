@@ -120,13 +120,19 @@ function validarImagen() {
   var archivo = input.files[0];
 
   if (archivo) {
-      var tipoImagen = archivo.type;
-      if (tipoImagen === 'image/png' || tipoImagen === 'image/jpeg' || tipoImagen === 'image/jpg') {
-          alert('Archivo válido: ' + tipoImagen);
-      } else {
-          alert('Por favor, selecciona un archivo PNG o JPG válido.');
-          input.value = ''; // Limpiar el input para permitir seleccionar otro archivo
-      }
+    var tipoImagen = archivo.type;
+    if (tipoImagen !== 'image/png' && tipoImagen !== 'image/jpeg' && tipoImagen !== 'image/jpg') {        
+        input.value = ''; // Limpiar el input para permitir seleccionar otro archivo
+
+        // Usando SweetAlert para notificación
+        Swal.fire({
+            title: "¡Hubo un error!",
+            text: "Por favor, selecciona un archivo PNG o JPG válido.",
+            icon: "error",
+            //timer: 3000,
+            //showConfirmButton: false
+        });
+    }
   }
 }
 

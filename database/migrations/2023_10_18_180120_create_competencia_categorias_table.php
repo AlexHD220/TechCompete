@@ -15,11 +15,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('competencia_id')->constrained();
             $table->foreignId('categoria_id')->constrained();
-            $table->string('nivel');
+            
+            $table->date('inicio_registros');
+            $table->date('fin_registros')->nullable();
 
+            $table->string('nivel');
             $table->unsignedBigInteger('costo');
 
-            $table->unsignedBigInteger('limite_inscritos');
+            $table->unsignedBigInteger('limite_inscripciones');
             $table->unsignedBigInteger('min_participantes');
             $table->unsignedBigInteger('max_participantes');
 

@@ -89,11 +89,11 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
 //------------------------------------------------------------------------------------> Administrador
 
     // Ruta personalizada para "hard destroy"
-    Route::delete('administrador/{administrador}/harddestroy', [AdministradorController::class, 'hardDestroy']) //Nombre del metodo controller
+    Route::delete('administrador/{administrador}/harddestroy', [AdministradorController::class, 'harddestroy']) //Nombre del metodo controller
     ->name('administrador.harddestroy');
 
     // Ruta personalizada para "disabled hard destroy"
-    Route::delete('administrador/{id}/disabledharddestroy', [AdministradorController::class, 'disabledhardDestroy']) //Nombre del metodo controller
+    Route::delete('administrador/{id}/disabledharddestroy', [AdministradorController::class, 'disabledharddestroy']) //Nombre del metodo controller
     ->name('administrador.disabledharddestroy');
 
     // Ruta para mostrar los registros eliminados
@@ -118,11 +118,11 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
 //------------------------------------------------------------------------------------> Staff
 
     // Ruta personalizada para "hard destroy"
-    Route::delete('staff/{staff}/harddestroy', [StaffController::class, 'hardDestroy']) //Nombre del metodo controller
+    Route::delete('staff/{staff}/harddestroy', [StaffController::class, 'harddestroy']) //Nombre del metodo controller
     ->name('staff.harddestroy');
 
     // Ruta personalizada para "disabled hard destroy"
-    Route::delete('staff/{id}/disabledharddestroy', [StaffController::class, 'disabledhardDestroy']) //Nombre del metodo controller
+    Route::delete('staff/{id}/disabledharddestroy', [StaffController::class, 'disabledharddestroy']) //Nombre del metodo controller
     ->name('staff.disabledharddestroy');
 
     // Ruta para mostrar los registros eliminados
@@ -150,11 +150,11 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
     ->name('juez.createjuez');
 
     // Ruta personalizada para "hard destroy"
-    Route::delete('juez/{juez}/harddestroy', [JuezController::class, 'hardDestroy']) //Nombre del metodo controller
+    Route::delete('juez/{juez}/harddestroy', [JuezController::class, 'harddestroy']) //Nombre del metodo controller
     ->name('juez.harddestroy');
 
     // Ruta personalizada para "disabled hard destroy"
-    Route::delete('juez/{id}/disabledharddestroy', [JuezController::class, 'disabledhardDestroy']) //Nombre del metodo controller
+    Route::delete('juez/{id}/disabledharddestroy', [JuezController::class, 'disabledharddestroy']) //Nombre del metodo controller
     ->name('juez.disabledharddestroy');
 
     // Ruta para mostrar los registros eliminados
@@ -189,6 +189,38 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
     Route::resource('juecescompetencia', JuecesCompetenciaController::class)->parameters([
         'juecescompetencia' => 'juecescompetencia', //Corregir error {competencium} en -> php artisan route:list
     ]);
+
+//------------------------------------------------------------------------------------> Competencia
+
+    // Ruta personalizada para "hard destroy"
+    Route::delete('competencia/{competencia}/harddestroy', [CompetenciaController::class, 'harddestroy']) //Nombre del metodo controller
+    ->name('competencia.harddestroy');
+
+    // Ruta personalizada para "disabled hard destroy"
+    Route::delete('competencia/{id}/disabledharddestroy', [CompetenciaController::class, 'disabledharddestroy']) //Nombre del metodo controller
+    ->name('competencia.disabledharddestroy');
+
+    // Ruta para mostrar los registros pendientes de publicar
+    Route::get('competencia/drafts', [CompetenciaController::class, 'drafts'])
+    ->name('competencia.drafts');
+
+    // Ruta para mostrar los registros eliminados
+    Route::get('competencia/trashed', [CompetenciaController::class, 'trashed'])
+    ->name('competencia.trashed');
+
+    // Ruta para mostrar los registros anteriores
+    Route::get('competencia/previous', [CompetenciaController::class, 'previous'])
+    ->name('competencia.previous');
+
+    // Ruta para restaurar un registro
+    Route::patch('competencia/{id}/restore', [CompetenciaController::class, 'restore'])
+    ->name('competencia.restore');
+
+    // Ruta para mostrar los detalles de registros eliminados
+    Route::get('competencias/trashed/{id}', [CompetenciaController::class, 'showtrashed'])
+    ->name('competencias.showtrashed');
+
+//------------------------------------------------------------------------------------|
     
 });
 
