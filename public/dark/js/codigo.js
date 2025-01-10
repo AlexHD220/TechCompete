@@ -86,7 +86,7 @@ const backToTopButton = document.getElementById("backToTopButton");
 
 // Controlar la visibilidad del botón
 function toggleBackToTopButton() {
-    if (window.scrollY > 100) {   // mostrar cuando se desplaze 100 pixeles
+    if (window.scrollY > 50) {   // mostrar cuando se desplaze 100 pixeles
         backToTopButton.style.display = "block";
     } else {
         backToTopButton.style.display = "none";
@@ -163,7 +163,7 @@ function copyToClipboard(button) {
 }
 
 
-function toggleCambiarFecha(element) {
+function toggleCambiarFechaCodigo(element) {
   // Obtener las fechas desde los atributos data
   const creacionDate = element.getAttribute('data-creacion');
   const expiracionDate = element.getAttribute('data-expiracion');
@@ -177,6 +177,22 @@ function toggleCambiarFecha(element) {
       element.title = "Fecha de Creación";
   }
 }
+
+function toggleCambiarFechaExpirada(element) {
+  // Obtener las fechas desde los atributos data
+  const inicioDate = element.getAttribute('data-inicio');
+  const finDate = element.getAttribute('data-fin');
+
+  // Cambiar el texto y el título dinámicamente
+  if (element.innerText.trim() === inicioDate) {
+      element.innerText = finDate;
+      element.title = "Fecha de Cierre";
+  } else {
+      element.innerText = inicioDate;
+      element.title = "Fecha de Inicio";
+  }
+}
+
 
 
 const password = document.getElementById('password');

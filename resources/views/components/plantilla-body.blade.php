@@ -107,6 +107,41 @@
                     <i class="fa fa-bars"></i>
                 </a>
 
+                @php
+                    $previousUrl = session('_custom_previous.url');
+                @endphp 
+
+                @php                    
+                    $respaldo = Session('_respaldo_previous.url'); 
+                    $custom = Session('_current_custom_previous.url'); 
+                @endphp     
+                
+                @if($previousUrl)
+                    <button onclick="window.location.href='{{ $previousUrl }}'" type="submit" onmouseover="this.style.backgroundColor='#ff6666';" onmouseout="this.style.backgroundColor='#eb1616';"  
+                        style="margin-left: 15px; background-color: #eb1616; color: white; border: none; border-radius: 100%; 
+                        width: 30px; height: 30px; display: inline-flex; justify-content: center; align-items: center;"
+                        title="Regresar a la página anterior">
+                            <i class="fa-solid fa-arrow-left" style="font-size: 20px;"></i> <!-- Ícono de FontAwesome -->
+                    </button>
+                @endif
+
+                @if(0)
+                    <b style="font-size: 10px;">{{ $previousUrl }}</b>
+
+                     | 
+        
+                    <h  style="font-size: 10px;">{{ url()->previous(); }}</h>
+
+                     |
+        
+                    <b style="font-size: 10px;">{{ $respaldo }}</b>                    
+
+                     |
+        
+                    <h style="font-size: 10px;">{{ $custom }}</h>                    
+                @endif
+
+
                 @if(0)
                     <form class="d-none d-md-flex ms-4">
                         <input class="form-control bg-dark border-0" type="search" placeholder="Busqueda">

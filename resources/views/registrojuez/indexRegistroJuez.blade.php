@@ -16,13 +16,16 @@
 
         @if($expiradoscount > 0)
             <div style="margin-bottom: 20px;">
-                <form action="{{ route('registrojuez.destroyexpirados') }}" method="POST"  onsubmit="return confirm('¿Estás seguro de eliminar los registros expirados?')">
+                <form action="{{ route('registrojuez.destroyexpirados') }}" method="POST"  onsubmit="return confirm('¿Estás seguro de eliminar todos los registros expirados?')">
                     @csrf
                     @method('DELETE')
 
                     <button type="submit" class="btn btn-primary" onMouseOver="this.style.backgroundColor='#053482'" onmouseout="this.style.backgroundColor='#004ecf'" style="font-size: 14px; background-color: #004ecf; border:0px; box-shadow: none;">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-trash" style="font-size: 12px; margin-right: 8px;"></i> <!-- Ícono de FontAwesome -->
                         Eliminar Registros Expirados
-                    </button>
+                    </div>
+                </button>
                 </form>
             </div>
         @endif
@@ -42,16 +45,25 @@
 
                         <b style="font-size: 20px;"> | </b>
 
-                        <b id="fecha" 
-                            style="font-size: 17px; cursor: pointer;" 
-                            onmouseover="this.style.color='#9294a1';" 
-                            onmouseout="this.style.color='#6c7293';" 
-                            data-creacion="{{ date('d/m/Y', strtotime($registrojuez->creacion_date)) }}" 
-                            data-expiracion="{{ date('d/m/Y', strtotime($registrojuez->expiracion_date)) }}" 
-                            title="Fecha de Creación"
-                            onclick="toggleCambiarFecha(this)">
-                            {{ date('d/m/Y', strtotime($registrojuez->creacion_date)) }}
-                        </b>
+                        @if
+                            <b style="font-size: 17px; cursor: pointer;" 
+                                onmouseover="this.style.color='#9294a1';" 
+                                onmouseout="this.style.color='#6c7293';"                                
+                                title="Fecha de Creación y Expiración">
+                                {{ date('d/m/Y', strtotime($registrojuez->creacion_date)) }}
+                            </b>
+                        @else
+                            <b id="fecha" 
+                                style="font-size: 17px; cursor: pointer;" 
+                                onmouseover="this.style.color='#9294a1';" 
+                                onmouseout="this.style.color='#6c7293';" 
+                                data-creacion="{{ date('d/m/Y', strtotime($registrojuez->creacion_date)) }}" 
+                                data-expiracion="{{ date('d/m/Y', strtotime($registrojuez->expiracion_date)) }}" 
+                                title="Fecha de Creación"
+                                onclick="toggleCambiarFechaCodigo(this)">
+                                {{ date('d/m/Y', strtotime($registrojuez->creacion_date)) }}
+                            </b>
+                        @endif
                         
                         
                         @if($registrojuez->diasrestantes == 0)

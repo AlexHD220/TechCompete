@@ -115,7 +115,9 @@
             <label for="map"><b>Ubicación:</b></label>
             
             <!-- Texto 2 alineado a la derecha -->
-            <a href="https://maps.google.com/intl/es/" style="font-size: 13px;" target="_blank" rel="noopener noreferrer">Abrir Google Maps</a>
+            <a href="https://maps.google.com/intl/es/" style="font-size: 13px;" target="_blank" rel="noopener noreferrer" title="Apoyo de Búsqueda">
+                Abrir Google Maps
+            </a>
         </div>
 
         <!-- Objeto debajo -->
@@ -129,7 +131,7 @@
         <div>
             <div style="display: flex; align-items: center;">
                 <label for="imagen" id="imagen-button" class="custom-file-label">Seleccionar imagen</label>                    
-                <i id="circle-check" class="fa-solid fa-file-circle-check" style="margin-left: 10px; font-size: 20px; color: #2bbf29; display: none;"></i>
+                <i id="circle-check" class="fa-solid fa-file-circle-check" style="margin-left: 10px; font-size: 20px; color: #2bbf29;  opacity: 0; visibility: hidden; transition: opacity 0.5s ease;"></i> <!--display: none;-->
             </div>
 
             <input type="file" id="imagen" name="imagen" placeholder="imagen" accept=".png, .jpg, .jpeg" onchange="validarImagen(this); circleCheckIcon(this)">
@@ -140,7 +142,7 @@
 
 
         <input type="submit" value="Registrar competencia" style="margin-top: 30px;"> 
-        <a href="{{ route('competencia.index') }}" style="margin-left:10px;">Cancelar</a> 
+        <a href="{{ route('competencia.draft') }}" style="margin-left:10px;">Cancelar</a> 
 
     </form>
 
@@ -276,10 +278,18 @@
             var archivo = input.files[0];
 
             if (archivo) {
-                document.getElementById('circle-check').style.display = 'block';
+                //document.getElementById('circle-check').style.display = 'block';
+                const icono = document.getElementById("circle-check");
+                icono.style.visibility = "visible"; // Asegura que sea visible
+                icono.style.opacity = "1";         // Cambia la opacidad para que se muestre
             }
             else{
-                document.getElementById('circle-check').style.display = 'none';
+                //document.getElementById('circle-check').style.display = 'none';
+                const icono = document.getElementById("circle-check");
+                icono.style.opacity = "0";         // Cambia la opacidad para ocultar
+                setTimeout(() => {
+                    icono.style.visibility = "hidden"; // Oculta completamente después de la transición
+                }, 50); // Ajusta este tiempo según el valor de `transition` (0.5 seg)
             }
         }
         

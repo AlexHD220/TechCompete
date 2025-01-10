@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('descripcion');
 
             $table->date('fecha');
+            $table->date('fecha_fin');
             $table->unsignedInteger('duracion');            
             $table->string('tipo');
             $table->string('sede');
@@ -29,7 +30,9 @@ return new class extends Migration
             $table->unsignedInteger('cant_participaciones')->default(0);
             $table->string('ubicacion_imagen', 2048);
 
-            $table->boolean('publicada')->nullable()->default(false);
+            //$table->boolean('publicada')->nullable()->default(false);
+            $table->boolean('publicada')->default(false);
+            $table->boolean('oculta')->default(false);
 
             $table->softDeletes(); // Agrega la columna deleted_at
             //$table->timestamps();

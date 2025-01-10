@@ -7,6 +7,7 @@ use App\Models\Categoria;
 use App\Models\Competencia;
 use App\Models\Equipo;
 use App\Models\Proyecto;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -21,9 +22,9 @@ class CompetenciaController extends Controller
 
     public function __construct() //proteger con inicio de sesion aquellas pestañas que yo quiera
     {        
-        $this->middleware('auth')->except(['index','show']); //excepto estas necesitan iniciar sesion 
+        $this->middleware('auth')->except(['index','show', 'previous']); //excepto estas necesitan iniciar sesion 
 
-        $this->middleware('can:only-superadmin')->except('index', 'show');
+        $this->middleware('can:only-superadmin')->except('index', 'show', 'previous');
     }
      
     //otra variante es "only" para autenticar solo aquellas que notros queramos 
@@ -31,14 +32,29 @@ class CompetenciaController extends Controller
 
     public function index()
     {
-        $competencias = Competencia::all();
-
-        $categorias = Categoria::all();
+        // Competencias futuras
+        $competencias = Competencia::where('publicada',1)->where('fecha', '>', Carbon::now()->startOfDay())
+        ->orderBy('fecha', 'asc')->get(); // Mas proxima a mas lejana | // Si quiero ordenarlos de mayor a menos usar desc
         
-        // Eager Loading
-        //$competencias = Competencia::with('categorias')->get(); // Hace una consulta más
+        // Competencias en progreso
+        $actuales = Competencia::where('publicada',1)->where('fecha', '<=', Carbon::now()->startOfDay())
+        ->where('fecha_fin', '>=', Carbon::now()->startOfDay())->orderBy('fecha', 'asc')->get(); // Mas proxima a mas lejana | // Si quiero ordenarlos de mayor a menos usar desc   
+        
+        // Cuenta de competencias pasadas
+        $pasadas = Competencia::where('publicada',1)->where('fecha_fin', '<', Carbon::now()->startOfDay())->get();
 
-        return view('competencia/indexCompetencia', compact('competencias','categorias'));
+        $pasadascount = $pasadas->count();
+
+        // Cuenta de borradores de competencias no publicadas
+        /*$borradores = Competencia::where('publicada',0)->get(); 
+        $borradorescount = $borradores->count();*/
+
+        // Cuenta de competencias borradas
+        /*$borradas = Competencia::onlyTrashed()->where('publicada',1)->get();
+
+        $borradascount = $borradas->count();*/
+
+        return view('competencia/indexCompetencia', compact('competencias','actuales','pasadascount'));
     }
 
     /**
@@ -113,6 +129,7 @@ class CompetenciaController extends Controller
         $competencia->name = $request->name;
         $competencia->descripcion = $request->descripcion;
         $competencia->fecha = $request->fecha;
+        $competencia->fecha_fin = Carbon::parse($request->fecha)->addDays($request->duracion);       
         $competencia->duracion = $request->duracion;
         $competencia->tipo = $request->tipo;
         $competencia->sede = $request->sede;
@@ -126,7 +143,7 @@ class CompetenciaController extends Controller
         
         $competencia->save();
 
-        return redirect()->route('competencia.index');
+        return redirect()->route('competencia.draft');
 
     }
 
@@ -206,36 +223,138 @@ class CompetenciaController extends Controller
         return redirect() -> route('competencia.show', $competencia);
     }
 
-    public function drafts()
+
+//=======================================================================================================================>
+
+
+    public function draft()
     {
-        // Obtiene todos los registros eliminados
-        
-        $jueces = Competencia::onlyTrashed()->get();
+        // Proximas competencias
+        $competencias = Competencia::where('publicada',0)->where('fecha', '>', Carbon::now()->startOfDay())
+        ->orderBy('fecha', 'asc')->get(); // Mas proxima a mas lejana | // Si quiero ordenarlos de mayor a menos usar desc
 
-        //dd($jueces);
+        // Competencias que ya pasaron o estan pasando
+        $expiradas = Competencia::where('publicada',0)->where('fecha', '<=', Carbon::now()->startOfDay())
+        ->orderBy('fecha', 'desc')->get(); // Mas lejana a mas proxima | // Si quiero ordenarlos de menor a mayor usar asc
 
-        // Retorna la vista con los registros eliminados
-        return view("juez/trashedJuez",compact('jueces')); 
+        // Cuenta de competencias borradas
+        $borrados = Competencia::onlyTrashed()->where('publicada',0)->get();
+
+        $borradoscount = $borrados->count();        
+
+        //$previousUrl = url()->previous();
+
+        /*foreach ($registrojueces as $registro) {
+            $registro->diasrestantes = Carbon::now()->diffInDays(Carbon::parse($registro->expiracion_date), false);
+        }*/
+        // Eager Loading
+        //$competencias = Competencia::with('categorias')->get(); // Hace una consulta más
+
+        return view('competencia/draftCompetencia', compact('competencias', 'expiradas', 'borradoscount'));
     }
-    
-    public function previous()
+
+    public function showdraft($id)
     {
-        // Obtiene todos los registros eliminados
-        
-        $jueces = Competencia::onlyTrashed()->get();
+        //
+    }
 
-        //dd($jueces);
+    public function publicar(Competencia $competencia) 
+    {
 
-        // Retorna la vista con los registros eliminados
-        return view("juez/trashedJuez",compact('jueces')); 
+        if($competencia->publicada == true){
+            $competencia->publicada = false; 
+            $competencia->save();
+
+            return redirect('/competencia'); // Pendiente enviar a show
+        }
+        else{
+            $competencia->publicada = true; 
+            $competencia->save();
+
+            return redirect('/competencia/draft'); // Pendiente enviar a show
+        }        
+
+        /* Sweet Alert Pendiente (NO BORRAR) */
+        /*return redirect('/competencia')->with('notificacion', [
+            'titulo' => 'Registro exitoso',
+            'mensaje' => 'Tu cuenta se ha creado correctamente.',
+        ]);*/
+
+        //return redirect('/competencia/draft'); // Pendiente enviar a show
+    }
+
+    /*public function disabled(Competencia $competencia) 
+    {
+
+        $competencia->publicada = false; // Cambia publicada de true a false
+        $competencia->save();            
+
+        return redirect('/competencia');  // Pendiente enviar a show
+    }*/
+
+    public function previous()
+    {        
+
+        if (auth()->check()) { // Verifica si el usuario está logueado
+            
+            $user = auth()->user();
+
+            if ($user->rol == 1 || $user->rol == 2) {
+                // Competencias pasadas
+                $competencias = Competencia::where('publicada',1)->where('fecha_fin', '<', Carbon::now()->startOfDay())
+                ->orderByRaw('YEAR(fecha) DESC, MONTH(fecha) ASC')->get() // Ordena por año y luego por mes        
+                ->groupBy(function ($competencia) {
+                    return date('Y', strtotime($competencia->fecha)); // Agrupa por año
+                });
+            } else{
+                // Competencias pasadas otros usuarios
+                $competencias = Competencia::where('publicada',1)->where('oculta',0)
+                ->where('fecha_fin', '<', Carbon::now()->startOfDay())
+                ->orderByRaw('YEAR(fecha) DESC, MONTH(fecha) ASC')->get() // Ordena por año y luego por mes        
+                ->groupBy(function ($competencia) {
+                    return date('Y', strtotime($competencia->fecha)); // Agrupa por año
+                });
+            }
+        } else {
+            // Competencias pasadas no logueados
+            $competencias = Competencia::where('publicada',1)->where('oculta',0)
+            ->where('fecha_fin', '<', Carbon::now()->startOfDay())
+            ->orderByRaw('YEAR(fecha) DESC, MONTH(fecha) ASC')->get() // Ordena por año y luego por mes        
+            ->groupBy(function ($competencia) {
+                return date('Y', strtotime($competencia->fecha)); // Agrupa por año
+            });
+        }
+
+        return view('competencia/previousCompetencia', compact('competencias')); 
+    }
+
+    public function ocultar(Competencia $competencia) 
+    {
+        if($competencia->oculta == true){
+            $competencia->oculta = false; // Cambia el rol a 1
+            $competencia->save();
+        }
+        else{
+            $competencia->oculta = true; // Cambia el rol a 1
+            $competencia->save();
+        }
+
+        return redirect('/competencia/previous'); // Pendiente enviar a show
+    }
+
+    public function showprevious($id)
+    {
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Competencia $competencia)
+    public function destroy(Request $request, Competencia $competencia)
     {
         //dd($competencia);
+
+        //dd($request->ruta);
         
         //$competencia->categorias()->detach(); // Eliminar registros de tabla pivote
 
@@ -249,34 +368,44 @@ class CompetenciaController extends Controller
         
         //$juez->user->delete();  //Relacion 1:1
 
+        $competencia->publicada = false; // Cambia publicada de true a false
+        
+        $competencia->save();
+
         $competencia -> delete();
 
-        return redirect('/competencia');
-    }
-
-    public function harddestroy(Competencia $juez) 
+        return redirect($request->ruta);
+    } 
+    
+    // Eliminar todos los registros expirados
+    public function destroyexpiradas()
     {
-        //dd($juez->registro_juez);
 
-        $juez->forceDelete();
-        
-        $juez->user->forceDelete();
-        
-        $juez->registro_juez->delete();
+        // Elimina los registros expirados
+        Competencia::where(function ($query){
+            $query->where('publicada',0)->where('fecha', '<=', Carbon::now()->startOfDay());            
+        })->delete();
 
-        return redirect('/competencia');
+        // Redirige con un mensaje de éxito
+        return redirect('/competencia/draft');
     }
 
     public function trashed()
     {
         // Obtiene todos los registros eliminados
-        
-        $jueces = Competencia::onlyTrashed()->get();
 
         //dd($jueces);
 
-        // Retorna la vista con los registros eliminados
-        return view("juez/trashedJuez",compact('jueces')); 
+        // Proximas competencias
+        $competencias = Competencia::onlyTrashed()->where('publicada',0)->where('fecha', '>', Carbon::now()->startOfDay())
+        ->orderBy('fecha', 'asc')->get(); // Mas proxima a mas lejana | // Si quiero ordenarlos de mayor a menos usar desc
+
+        // Competencias que ya pasaron o estan pasando
+        $expiradas = Competencia::onlyTrashed()->where('publicada',0)->where('fecha', '<=', Carbon::now()->startOfDay())
+        ->orderBy('fecha', 'desc')->get(); // Mas lejana a mas proxima | // Si quiero ordenarlos de menor a mayor usar asc   
+
+
+        return view('competencia/trashedCompetencia', compact('competencias', 'expiradas'));
     }
 
     /**
@@ -293,20 +422,51 @@ class CompetenciaController extends Controller
         //dd($id);
 
         // Busca el registro eliminado por ID
-        $juez = Competencia::onlyTrashed()->findOrFail($id); // Busca solo registros eliminados
+        $competencia = Competencia::onlyTrashed()->findOrFail($id); // Busca solo registros eliminados
     
 
         //dd($juez->user()->withTrashed()->first());
 
         // Restaura el registro
-        $juez->restore();
-        
-        $juez->user()->withTrashed()->restore(); // Restaurar el usuario relacionado    
+        $competencia->restore();         
 
-        return redirect('/juez/trashed');
+        return redirect('/competencia/trashed');
     }
 
-    public function disabledharddestroy($id) 
+
+
+    /*public function drafttrashed()
+    {
+        // Obtiene todos los registros eliminados
+        
+        $jueces = Competencia::onlyTrashed()->get();
+
+        //dd($jueces);
+
+        // Retorna la vista con los registros eliminados
+        return view("juez/trashedJuez",compact('jueces')); 
+    }*/
+
+    /*public function showtdrafttrashed($id)
+    {
+        //
+    }*/
+
+
+    /*public function harddestroy(Competencia $juez) 
+    {
+        //dd($juez->registro_juez);
+
+        $juez->forceDelete();
+        
+        $juez->user->forceDelete();
+        
+        $juez->registro_juez->delete();
+
+        return redirect('/competencia');
+    }*/
+
+    /*public function disabledharddestroy($id) 
     {
         //dd($id);
 
@@ -324,6 +484,6 @@ class CompetenciaController extends Controller
         $juez->registro_juez->delete();
 
         return redirect('/juez/trashed');
-    }
+    }*/
 
 }

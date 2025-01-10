@@ -6,7 +6,7 @@
 </x-plantilla-head>
 
 <x-plantilla-body>
-
+    <div>
         <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
             <h1 style="display: inline;">Listado de Jueces</h1>            
             @auth <!--Cuando el usuario este logueado muestrame lo sigiente-->

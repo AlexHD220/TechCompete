@@ -33,7 +33,7 @@ class registrojuezController extends Controller
      */
     public function index()
     {
-        $registrojueces = registrojuez::where('validado',0)->where('expiracion_date', '>', Carbon::now())
+        $registrojueces = registrojuez::whereNotNull('expiracion_date')->where('validado',0)->where('expiracion_date', '>', Carbon::now())
         ->orderBy('expiracion_date', 'asc')->get(); // Si quiero ordenarlos de mayor a menos usar desc
 
         foreach ($registrojueces as $registro) {
@@ -87,7 +87,7 @@ class registrojuezController extends Controller
         // Manejar la expiración según el tipo seleccionado
         if ($request->expiration_type === 'days') {
             $registrojuez->expiracion_date = Carbon::now()->addDays($request->days);
-        } elseif ($request->expiration_type === 'specific_date') {
+        } else if ($request->expiration_type === 'specific_date') {
             $registrojuez->expiracion_date = Carbon::parse($request->specific_date);
         }
 

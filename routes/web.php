@@ -192,41 +192,89 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
 
 //------------------------------------------------------------------------------------> Competencia
 
-    // Ruta personalizada para "hard destroy"
+    /*// Ruta personalizada para "hard destroy"
     Route::delete('competencia/{competencia}/harddestroy', [CompetenciaController::class, 'harddestroy']) //Nombre del metodo controller
     ->name('competencia.harddestroy');
 
     // Ruta personalizada para "disabled hard destroy"
     Route::delete('competencia/{id}/disabledharddestroy', [CompetenciaController::class, 'disabledharddestroy']) //Nombre del metodo controller
-    ->name('competencia.disabledharddestroy');
+    ->name('competencia.disabledharddestroy');*/
 
+
+    /*// Ruta para mostrar los borradores eliminados
+    Route::get('competencia/drafttrashed', [CompetenciaController::class, 'drafttrashed'])
+    ->name('competencia.drafttrashed');
+
+    // Ruta para mostrar los detalles de borradores eliminados
+    Route::get('competencias/drafttrashed/{id}', [CompetenciaController::class, 'showdrafttrashed'])
+    ->name('competencias.showdrafttrashed');*/
+
+    
+    /*// Ruta para activar un registro
+    Route::patch('competencia/{competencia}/enabled', [CompetenciaController::class, 'enabled'])
+    ->name('competencia.enabled');
+
+    // Ruta para desactivar un registro
+    Route::patch('competencia/{competencia}/disabled', [CompetenciaController::class, 'disabled'])
+    ->name('competencia.disabled');*/
+
+    
     // Ruta para mostrar los registros pendientes de publicar
-    Route::get('competencia/drafts', [CompetenciaController::class, 'drafts'])
-    ->name('competencia.drafts');
+    Route::get('competencia/draft', [CompetenciaController::class, 'draft'])
+    ->name('competencia.draft');
 
     // Ruta para mostrar los registros eliminados
     Route::get('competencia/trashed', [CompetenciaController::class, 'trashed'])
     ->name('competencia.trashed');
 
-    // Ruta para mostrar los registros anteriores
-    Route::get('competencia/previous', [CompetenciaController::class, 'previous'])
-    ->name('competencia.previous');
-
-    // Ruta para restaurar un registro
+    // Ruta para restaurar un registro eliminado
     Route::patch('competencia/{id}/restore', [CompetenciaController::class, 'restore'])
     ->name('competencia.restore');
 
+    // Ruta para mostrar los detalles de registros no publicados
+    Route::get('competencia/draft/{id}', [CompetenciaController::class, 'showdraft'])
+    ->name('competencia.showdraft');
+
     // Ruta para mostrar los detalles de registros eliminados
-    Route::get('competencias/trashed/{id}', [CompetenciaController::class, 'showtrashed'])
-    ->name('competencias.showtrashed');
+    Route::get('competencia/trashed/{id}', [CompetenciaController::class, 'showtrashed'])
+    ->name('competencia.showtrashed');   
+    
+    // Ruta para mostrar los detalles de registros no publicados
+    Route::get('competencia/previous/{id}', [CompetenciaController::class, 'showprevious'])
+    ->name('competencia.showprevious');    
+
+    // Ruta para publicar un registro
+    Route::patch('competencia/{competencia}/publicar', [CompetenciaController::class, 'publicar'])
+    ->name('competencia.publicar');
+
+    // Ruta Destroy mofificada
+    Route::delete('competencia/{competencia}', [CompetenciaController::class, 'destroy'])
+    ->name('competencia.destroy');
+
+    Route::delete('competencia/destroyexpiradas', [CompetenciaController::class, 'destroyexpiradas']) //Nombre del metodo controller
+    ->name('competencia.destroyexpiradas');
+
+    // Ruta para desactivar un registro
+    Route::patch('competencia/{competencia}/ocultar', [CompetenciaController::class, 'ocultar'])
+    ->name('competencia.ocultar');
 
 //------------------------------------------------------------------------------------|
     
 });
 
+
+// Ruta para mostrar los registros anteriores
+Route::get('competencia/previous', [CompetenciaController::class, 'previous'])
+->name('competencia.previous');
+
+// Ruta para mostrar los detalles de las competencias previas
+Route::get('competencia/previous/{id}', [CompetenciaController::class, 'showprevious'])
+->name('competencia.showprevious');
+
 Route::resource('competencia', CompetenciaController::class)->parameters([
     'competencia' => 'competencia', //Corregir error {competencium} en -> php artisan route:list
-]);
+])->except(['destroy']); // Dejar fuera la ruta Destroy para agregarla manualmente 
+
 
 Route::resource('categoria', CategoriaController::class)->parameters([
     'categoria' => 'categoria',
