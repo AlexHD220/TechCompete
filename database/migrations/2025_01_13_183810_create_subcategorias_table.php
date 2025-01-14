@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categorias', function (Blueprint $table) {
+        Schema::create('subcategorias', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('tipo');
-            $table->text('descripcion');        
+            $table->string('nivel')->unique();            
+            //$table->text('descripcion');       
             
-            $table->softDeletes(); // Agrega la columna deleted_at
+            //$table->softDeletes(); // Agrega la columna deleted_at
             //$table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categorias');
+        Schema::dropIfExists('subcategorias');
     }
 };

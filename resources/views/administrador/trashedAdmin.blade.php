@@ -9,9 +9,9 @@
 
         <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
             <h1 style="display: inline;">Cuentas Deshabilitadas (Administrador)</h1>            
-            @auth <!--Cuando el usuario este logueado muestrame lo sigiente-->
+            @if(0) <!--Cuando el usuario este logueado muestrame lo sigiente-->
                 <button class="btn btn-primary" style="font-size: 14px;" onclick="window.location.href = '/administrador';">Regresar</button>
-            @endauth
+            @endif
         </div>
 
         @if($superadministradores->count() == 0 && $administradores->count() == 0)
@@ -19,7 +19,7 @@
         @else
             @if($superadministradores->count() > 0)
                 <div style="margin-bottom: 20px;">
-                    <h3>SuperAdministradores deshabilitados</h3>
+                    <h3 style="margin-bottom: 15px;">SuperAdministradores deshabilitados</h3>
 
                     @foreach ($superadministradores as $superadministrador) <!--Listar todos los datos de la tabla user-->
                         @if($superadministrador->id != Auth::id() && $superadministrador->id != 1)
@@ -56,7 +56,7 @@
 
             @if($administradores->count() > 0)
                 <div>
-                    <h3>Administradores deshabilitados</h3>
+                    <h3 style="margin-bottom: 15px;">Administradores deshabilitados</h3>
 
                     @foreach ($administradores as $administrador) <!--Listar todos los datos de la tabla user-->
                         @if($administrador->id != Auth::id() && $administrador->id != 1)

@@ -29,7 +29,7 @@
         @else
             @if($superadministradores->count() > 1)
                 <div style="margin-top: 15px;">
-                    <h3>SuperAdministradores</h3>
+                    <h3 style="margin-bottom: 15px;">SuperAdministradores</h3>
 
                     @foreach ($superadministradores as $superadministrador) <!--Listar todos los datos de la tabla user-->
                         @if($superadministrador->id != Auth::id() && $superadministrador->id != 1)
@@ -78,8 +78,8 @@
             @endif
 
             @if($administradores->count() > 0)
-                <div style="margin-top: 15px;">
-                    <h3>Administradores</h3>
+                <div style="margin-top: 20px;">
+                    <h3 style="margin-bottom: 15px;">Administradores</h3>
 
                     @foreach ($administradores as $administrador) <!--Listar todos los datos de la tabla user-->
                         @if($administrador->id != Auth::id() && $administrador->id != 1)

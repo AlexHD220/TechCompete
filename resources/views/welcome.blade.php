@@ -68,6 +68,11 @@
                 background-color: #e67951;
                 /*opacity: 0.5; /* Reduz la opacidad al 80% */
             }
+
+            .sombra {
+                /*box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.5);*/
+                box-shadow: 0px 0px 5px 3px rgba(255,255,255,0.2);
+            }
         </style>
 
     </head>

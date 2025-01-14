@@ -14,14 +14,14 @@
             @endauth
         </div>
 
-        @if($disabledjueces->count() > 0)
+        @if($disabledjuecescount > 0)
             <div style="margin-bottom: 20px;">
                 <button onMouseOver="this.style.backgroundColor='#bd4e00'" onmouseout="this.style.backgroundColor='#e26b18'" class="btn btn-primary" style="font-size: 14px; background-color: #e26b18; border:0px; box-shadow: none;" onclick="window.location.href = '/juez/trashed';"><b>Cuentas Deshabilitadas</b></button>
             </div>
         @endif
 
         @if($jueces->count() == 0)
-            @if($disabledjueces->count() > 0)
+            @if($disabledjuecescount > 0)
                 <p sty style="margin-left: 20px;"><i>No existen cuentas activas.</i></p>
             @else
                 <p sty style="margin-left: 20px;"><i>Aún no se ha creado ninguna cuenta.</i></p>

@@ -31,18 +31,20 @@ class JuezController extends Controller
         
         $disabledjueces = Juez::onlyTrashed()->get();
 
-        return view("juez/indexJuez",compact('jueces', 'disabledjueces')); 
+        $disabledjuecescount = $disabledjueces->count();
+
+        return view("juez/indexJuez",compact('jueces', 'disabledjuecescount')); 
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function createjuez()
     {
         return redirect('/');
     }
 
-    public function createjuez($codigo)
+    public function create($codigo)
     {
         // Verificar si el código existe y es válido
         $registro = RegistroJuez::where('codigo', $codigo)->first();

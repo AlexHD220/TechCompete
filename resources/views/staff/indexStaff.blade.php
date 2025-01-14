@@ -29,7 +29,7 @@
         @else
             @if($superstaffs->count() > 0)
                 <div style="margin-top: 15px;">
-                    <h3>SuperStaffs</h3>
+                    <h3 style="margin-bottom: 15px;">SuperStaffs</h3>
 
                     @foreach ($superstaffs as $superstaff) <!--Listar todos los datos de la tabla user-->
 
@@ -78,8 +78,8 @@
             @endif
 
             @if($staffs->count() > 0)
-                <div style="margin-top: 15px;">
-                    <h3>Staffs</h3>
+                <div style="margin-top: 20px;">
+                    <h3 style="margin-bottom: 15px;">Staffs</h3>
 
                     @foreach ($staffs as $staff) <!--Listar todos los datos de la tabla user-->
                         

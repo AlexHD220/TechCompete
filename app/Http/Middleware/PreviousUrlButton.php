@@ -31,8 +31,8 @@ class PreviousUrlButton
         $respaldoPrevious = Session::get('_respaldo_previous.url'); // 
 
 
-        // Si la URL anterior contiene '/create'
-        if (str_contains($currentCustomPrevious, '/create')) {
+        // Si la URL anterior contiene '/create' o '/edit'
+        if (str_contains($currentCustomPrevious, '/create') || str_contains($currentCustomPrevious, '/edit')) {
             // Si la URL previa es diferente a la actual, la guardamos
             if ($currentUrl !== $currentCustomPrevious){ // Si se recarga la pagina     
                 Session::put('_current_custom_previous.url', $currentUrl);  //   

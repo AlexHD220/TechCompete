@@ -20,8 +20,9 @@ return new class extends Migration
             $table->date('fecha');
             $table->date('fecha_fin');
             $table->unsignedInteger('duracion');            
-            $table->string('tipo');
+            $table->string('tipo');            
             $table->string('sede');
+            $table->string('ubicacion');
 
             $table->string('latitud');
             $table->string('longitud');

@@ -86,8 +86,8 @@ class CompetenciaController extends Controller
             'duracion' => ['required','integer','min:1','max:100'],
             //'asesor_id' => ['required', 'not_in:Selecciona una opción'],
             'tipo' => ['required', 'not_in:-'],
-            //'categoria_id' => ['required'],
-            'imagen' => ['required', 'file', 'mimes:png,jpg,jpeg', 'max:15360'], // Máximo 15 Mb
+            'categoria_id' => ['required'],
+            'imagen' => ['required', 'image', 'mimes:png,jpg,jpeg', 'max:15360'], // Máximo 15 Mb
         ]);
 
         /*$competencia = new Competencia();
@@ -120,7 +120,7 @@ class CompetenciaController extends Controller
         //dd($registrojuez);
 
         // Generar el enlace de Google Maps
-        $googleMapsLink = "https://www.google.com/maps?q={$request->latitude},{$request->longitude}";
+        $googleMapsLink = "https://www.google.com/maps?q={$request->latitud},{$request->longitud}";
         
         $competencia = new Competencia();
 
@@ -133,8 +133,9 @@ class CompetenciaController extends Controller
         $competencia->duracion = $request->duracion;
         $competencia->tipo = $request->tipo;
         $competencia->sede = $request->sede;
-        $competencia->latitud = $request->latitude;
-        $competencia->longitud = $request->longitude;
+        $competencia->ubicacion = $request->ubicacion;
+        $competencia->latitud = $request->latitud;
+        $competencia->longitud = $request->longitud;
         $competencia->mapa_link = $googleMapsLink;
         $competencia->ubicacion_imagen = $request->file('imagen')->storeAs('public/imagenes_competencias', 'Portada_'.$request->name.'.'. $request->file('imagen')->extension());
 
@@ -154,7 +155,7 @@ class CompetenciaController extends Controller
     {
         //$competencias = Competencia::all();
 
-        if (Gate::allows('only-superadmin')) {
+        /*if (Gate::allows('only-superadmin')) {
             $equipos = Equipo::where('competencia_id',$competencia->id)->get(); 
             $proyectos = Proyecto::where('competencia_id',$competencia->id)->get(); 
             
@@ -162,11 +163,13 @@ class CompetenciaController extends Controller
         }
         else{
             return view('competencia/showCompetencia',compact('competencia'));
-        }
+        }*/
 
         //$asesor = Asesor::where('id',$equipo->asesor_id)->first();
 
         //return view('competencia/showCompetencia',compact('competencia')); //asesor es el usuario actual a mostrar
+
+        return view('competencia/showCompetencia',compact('competencia'));
     }
 
     /**
@@ -174,9 +177,13 @@ class CompetenciaController extends Controller
      */
     public function edit(Competencia $competencia)
     {
-        $categorias = Categoria::all();
-
-        return view('competencia/editcompetencia',compact('competencia', 'categorias')); //formulario para editar la base, asesor es el usuario a editar
+        if($competencia->publicada){
+            $competencia->enProgreso = Carbon::parse($competencia->fecha)->lte(Carbon::now()->startOfDay());
+        
+            return view('competencia/editcompetencia',compact('competencia')); //formulario para editar la base, asesor es el usuario a editar
+        }else{
+            return redirect('/competencia/draft');
+        }
     }
 
     /**
@@ -186,29 +193,54 @@ class CompetenciaController extends Controller
     {
         //dd($request);
 
+        //dd($request->all());
+
+        if ($request->hasFile('imagen')) {
+            // Guardar archivo en la sesión si existe            
+            session()->flash('imagen_cargada', true);
+
+            /*$archivo = $request->file('imagen');
+            session()->flash('imagen_info', [
+                'nombre' => $archivo->getClientOriginalName(),
+                'tipo' => $archivo->getMimeType(),
+            ]);*/
+        }
+
+        // Agregar la validación condicional
+        if ($competencia->enProgreso) {
+            if(!$request->fecha){
+                session()->flash('missing_fecha', true);
+            }
+        }
+
         $request->validate([ ///Validar datos, si los datos recibidos no cumplen estas regresas no les permite la entrada a la base de datos y regresa a la pagina original
-            'identificador' => ['required', 'string', 'min:5', 'max:50', Rule::unique('competencias')->ignore($competencia)],
-            'fecha' => ['required', 'date', 'before_or_equal:' . now()->addYears(2)->format('Y-m-d')],
+            'name' => ['required', 'string', 'min:5', 'max:50', Rule::unique('competencias')->ignore($competencia)],
+            'fecha' => ['date', 'before_or_equal:' . now()->addYears(2)->format('Y-m-d')],
             'duracion' => ['required','integer','min:1','max:100'],
             //'asesor_id' => ['required', 'not_in:Selecciona una opción'],
             'tipo' => ['required'],
-            'categoria_id' => ['required'],
-            'imagen' => ['file', 'mimes:png,jpg,jpeg', 'max:5120'], // Máximo 5 Mb
+            //'categoria_id' => ['required'],
+            'imagen' => ['image', 'mimes:png,jpg,jpeg', 'max:5120'], // Máximo 5 Mb
         ]);
+
+        // Generar el enlace de Google Maps
+        $googleMapsLink = "https://www.google.com/maps?q={$request->latitud},{$request->longitud}";
+    
 
         if ($request->hasFile('imagen')) {
             //dd($request);
             $request -> merge([
-                'nombre_original_imagen' =>  $request->file('imagen')->getClientOriginalName(),
-                //'ubicacion_imagen' =>  $request->file('imagen')->store('imagenes_competencias'),
-                'ubicacion_imagen' =>  $request->file('imagen')->storeAs('public/imagenes_competencias', 'Logo_'.$request->identificador.'.'. $request->file('imagen')->extension()),
+                'ubicacion_imagen' => $request->file('imagen')->storeAs('public/imagenes_competencias', 'Portada_'.$request->name.'.'. $request->file('imagen')->extension()),
+                'mapa_link' => $googleMapsLink,
             ]);
-        } 
+        }         
+        
+        //dd($request->all());
 
-        Competencia::where('id', $competencia->id)->update($request->except('_token','_method','categoria_id','imagen'));
+        Competencia::where('id', $competencia->id)->update($request->except('_token','_method','imagen'));
 
         // Actualizar tabla pivote con los nuevos registros  
-        $competencia->categorias()->sync($request->input('categoria_id'));
+        //$competencia->categorias()->sync($request->input('categoria_id'));
 
         // Insertar en la tabla pivote relacion m:n --> PENDIENTE FINAL
         //$competencia->categorias()->attach($request->categoria_id); //detach() elimina de la lista el usuario que le pasemos
@@ -220,7 +252,10 @@ class CompetenciaController extends Controller
         
         //return redirect() -> route('competencia.index'); //esto corresponde a el listado de route:list 
 
-        return redirect() -> route('competencia.show', $competencia);
+        $previousUrl = session('_custom_previous.url');
+
+        //return redirect() -> route('competencia.show', $competencia);
+        return redirect($previousUrl);
     }
 
 
@@ -251,6 +286,18 @@ class CompetenciaController extends Controller
         //$competencias = Competencia::with('categorias')->get(); // Hace una consulta más
 
         return view('competencia/draftCompetencia', compact('competencias', 'expiradas', 'borradoscount'));
+    }
+
+    public function editdraft(Competencia $competencia)
+    {
+        if(!$competencia->publicada){
+            $competencia->enProgreso = Carbon::parse($competencia->fecha)->lte(Carbon::now()->startOfDay());
+        
+            return view('competencia/editcompetencia',compact('competencia')); //formulario para editar la base, asesor es el usuario a editar
+        }
+        else{
+            return redirect('/competencia');
+        }
     }
 
     public function showdraft($id)

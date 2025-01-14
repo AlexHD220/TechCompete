@@ -19,7 +19,7 @@
         @else
             @if($superstaffs->count() > 0)
                 <div style="margin-bottom: 20px;">
-                    <h3>SuperStaffs deshabilitados</h3>
+                    <h3 style="margin-bottom: 15px;">SuperStaffs deshabilitados</h3>
 
                     @foreach ($superstaffs as $superstaff) <!--Listar todos los datos de la tabla user-->
                         
@@ -56,7 +56,7 @@
 
             @if($staffs->count() > 0)
                 <div>
-                    <h3>Staffs deshabilitados</h3>
+                    <h3 style="margin-bottom: 15px;">Staffs deshabilitados</h3>
 
                     @foreach ($staffs as $staff) <!--Listar todos los datos de la tabla user-->
                         

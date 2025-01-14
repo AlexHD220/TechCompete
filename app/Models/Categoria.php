@@ -14,7 +14,7 @@ class Categoria extends Model
 
     public $timestamps = false; //--> ignorar una valor de la tabla
 
-    protected $fillable = ['nombre','descripcion']; // <-- columnas llenables por el usuario (fillable) opuesto es guarded ES MEJOR ESTE
+    protected $fillable = ['name', 'descripcion']; // <-- columnas llenables por el usuario (fillable) opuesto es guarded ES MEJOR ESTE
 
     public function competencias() // --> Relacion Muchos a Muchos
     {
@@ -24,6 +24,11 @@ class Categoria extends Model
     public function competenciacategorias() // --> Relacion Muchos a 1
     {
         return $this->hasMany (CompetenciaCategoria::class);
+    }
+
+    public function subcategorias() // --> Relacion Muchos a 1
+    {
+        return $this->hasMany (Subcategoria::class);
     }
 
 

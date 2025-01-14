@@ -2,7 +2,7 @@
 <html lang="es">
 
 <x-plantilla-head>
-    <title>Competencia | Formulario</title>
+    <title>Crear Competencia</title>
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -13,6 +13,19 @@
         #map {
             height: 300px; /* Ajusta el tamaño del mapa */
             width: 60%;
+        }
+
+        /* Pantallas pequeñas: celulares en orientación vertical */
+        /*@media (max-width: 768px) {*/
+        @media (max-width: 500px) {
+            #map {
+                width: 100%;
+            }
+        }
+
+        .leaflet-container {
+            position: relative; /* Cambiar a relativa si la barra lateral está encima */
+            z-index: 900; /* Mantener por detrás de la barra */
         }
     </style>
 
@@ -55,6 +68,26 @@
             margin-top: 10px;            
         }
     </style>
+
+    <style>
+        .width-descripcion {
+            width: 50%;
+        }
+
+        /* Pantallas pequeñas: celulares en orientación vertical */
+        /*@media (max-width: 768px) {*/
+        @media (max-width: 700px) {
+            .width-descripcion {
+                width: 70%;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .width-descripcion {
+                width: 90%;
+            }
+        }
+    </style>
 </x-plantilla-head>
 
 <x-plantilla-body>
@@ -63,8 +96,8 @@
 
     <!--<form action = "{{ route('competencia.store') }}">-->
 
-                                              <!-- Agregar archivos al formulario -->
-    <form id="formulario" action="/competencia" method="post" enctype="multipart/form-data" id = "createCompetencia"> <!--la diagonal me envia al principio de la url "techcompete.test/"-->
+                                                <!-- Agregar archivos al formulario -->
+    <form id="formulario" action="/competencia" method="post" enctype="multipart/form-data"> <!-- id = "createCompetencia" --> <!--la diagonal me envia al principio de la url "techcompete.test/"-->
 
         <!--Mostrar errores-->
         @if ($errors->any())
@@ -75,9 +108,13 @@
                     @endforeach
                 </ul>
 
-                <div style="margin-left: 12px;">Debido a este error:</div>
+                @if($errors->count() == 1)             
+                    <div style="margin-left: 12px;">Debido a este error:</div>
+                @else
+                    <div style="margin-left: 12px;">Debido a estos errores:</div>
+                @endif
                 <ul>
-                    <li>Por favor, seleccione nuevamente la ubicación en el mapa.</li>
+                    <!--<li>Por favor, seleccione nuevamente la ubicación en el mapa.</li>-->
                     <li>Por favor, cargue nuevamente la imagen.</li>
                 </ul>
             </div>
@@ -90,7 +127,7 @@
         <input type="text" id="name" name="name" style="width: 250px" placeholder="Identificador" required value = "{{ old('name') }}" autofocus><br><br> <!--value = "{{old('name')}}"-->
 
         <label for="descripcion" style="margin-bottom: 5px;"><b> Descripción: </b></label><br>
-        <textarea id="descripcion" name="descripcion" rows="4" style="resize: none; width: 50%;" minlength="1" maxlength="600" required>{{ old('descripcion') }}</textarea><br><br>
+        <textarea class="width-descripcion" id="descripcion" name="descripcion" rows="4" style="resize: none;" minlength="1" maxlength="600" required>{{ old('descripcion') }}</textarea><br><br>
 
         <label for = "fecha"><b>Fecha: </b></label>
         <input type="date" name="fecha" required value = "{{ old('fecha') }}" min="{{ now()->toDateString() }}" max="{{ now()->addYears(2)->toDateString() }}"><br><br>
@@ -98,21 +135,25 @@
         <label for = "duracion"><b>Duración: </b></label>
         <input type="number" name="duracion" id="duracion" required value = "{{ old('duracion') }}" min="1" max="31" step="1" style="width: 50px;"> días <br><br>
 
-        <label for="tipo"><b>Tipo de inscripciones: </b></label><br>
-        <select name="tipo" required style="width: 90px;">
+        <label for="tipo" style="margin-bottom: 5px;"><b>Tipo de inscripciones: </b></label><br>
+        <select name="tipo" required style="width: 110px; height: 30px;">
             <option selected disabled value=""> - </option>
+            <option value="Cualquiera" @selected(old('tipo') == 'Cualquiera')>Cualquiera</option>
             <option value="Equipos" @selected(old('tipo') == 'Equipos')>Equipos</option>
-            <option value="Proyectos" @selected(old('tipo') == 'Proyectos')>Proyectos</option>
+            <option value="Proyectos" @selected(old('tipo') == 'Proyectos')>Proyectos</option>            
         </select><br><br>
 
         <!--Seleccion multiple []-->
 
         <label for="sede"><b> Sede: </b></label>
-        <input type="text" id="sede" name="sede" style="width: 250px" placeholder="Nombre del lugar" required value = "{{ old('sede') }}"><br><br> <!--value = "{{old('name')}}"-->
-
+        <input type="text" id="sede" name="sede" style="width: 250px" placeholder="Ubicación geográfica" required value = "{{ old('sede') }}"><br><br> <!--value = "{{old('name')}}"-->
+        
+        <label for="ubicacion"><b> Ubicación: </b></label>
+        <input type="text" id="ubicacion" name="ubicacion" style="width: 250px" placeholder="Nombre del lugar" required value = "{{ old('ubicacion') }}"><br><br> <!--value = "{{old('name')}}"-->
+        
         <div style="width: 60%; display: flex; justify-content: space-between; align-items: end; margin-bottom: 5px;">
             <!-- Texto 1 alineado a la izquierda -->
-            <label for="map"><b>Ubicación:</b></label>
+            <label for="map"><b>Dirección:</b></label>
             
             <!-- Texto 2 alineado a la derecha -->
             <a href="https://maps.google.com/intl/es/" style="font-size: 13px;" target="_blank" rel="noopener noreferrer" title="Apoyo de Búsqueda">
@@ -124,8 +165,8 @@
         <div id="map" name="map"></div>
         <div id="error-mapa" class="error-message"><i class="fa fa-exclamation-triangle"></i> Campo obligatorio, por favor seleccione una ubicación en el mapa.</div>
 
-        <input type="hidden" id="latitude" name="latitude"/>
-        <input type="hidden" id="longitude" name="longitude"/>
+        <input type="hidden" id="latitud" name="latitud" value = "{{ old('latitud') }}"/>
+        <input type="hidden" id="longitud" name="longitud" value = "{{ old('longitud') }}"/>
 
         <label for="imagen" style="margin-top: 30px; margin-bottom: 5px;"><b> Cargar imagen: </b></label><br>
         <div>
@@ -138,7 +179,7 @@
 
             <b><div id="file-name" class="file-name" style="margin-left: 10px;">Ningún archivo seleccionado</div></b>
             <div id="error-imagen" class="error-message"><i class="fa fa-exclamation-triangle"></i> Campo obligatorio, por favor cargue una imagen.</div>
-        </div>
+        </div>        
 
 
         <input type="submit" value="Registrar competencia" style="margin-top: 30px;"> 
@@ -155,20 +196,60 @@
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
     <script>
-        // Inicializar el mapa centrado en Guadalajara
-        var map = L.map('map', {
+
+        // Obtener las coordenadas iniciales desde los inputs ocultos
+        var initialLat = document.getElementById('latitud').value;
+        var initialLng = document.getElementById('longitud').value;
+
+
+        // Configurar el mapa centrado en la ubicación almacenada o en una ubicación predeterminada
+        var mapCenter = initialLat || initialLng ? [initialLat, initialLng] : [20.659698, -103.349609];
+        
+        var map = L.map('map',{
+            scrollWheelZoom: false, // Deshabilita el zoom con la rueda del ratón
+            zoomControl: false, // Desactivar el control de zoom predeterminado
+            attributionControl: false, // Deshabilita los créditos del mapa.
+            preferCanvas: true, // Optimizar mapa en celulares
+        }).setView(mapCenter, 10); // 10 --> Zoom
+
+        // Inicializar el mapa centrado en Guadalajara (Original)        
+        /*var map = L.map('map', {
             scrollWheelZoom: false // Deshabilita el zoom con la rueda del ratón
-        }).setView([20.659698, -103.349609], 10); // 10 --> Zoom
+        }).setView([20.659698, -103.349609], 10);*/ // 10 --> Zoom  
+
 
         // Cargar las capas del mapa desde OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        /*L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            //maxZoom: 18, // Zoom maximo del mapa
             //attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+        }).addTo(map);*/
+
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
 
         // Variables para marcador y coordenadas iniciales
-        var marker = null; // No se crea un marcador inicialmente
-        var latitudeInput = document.getElementById('latitude');
-        var longitudeInput = document.getElementById('longitude');
+        var marker = null; // No se crea un marcador inicialmente              
+        var latitudeInput = document.getElementById('latitud');
+        var longitudeInput = document.getElementById('longitud');
+
+         // Si hay coordenadas iniciales, ajustar el mapa al área encontrada
+        if (initialLat || initialLng) {
+            
+            // Almacenar coordenadas de la ubicación
+            var latLng = L.latLng(initialLat, initialLng);
+
+            // Crear un "bounding box" alrededor de las coordenadas para ajustar el zoom
+            var bounds = latLng.toBounds(500); // 500 metros alrededor del punto
+
+            // Ajustar el mapa al área
+            map.fitBounds(bounds);
+
+            // Crear el marcador en la ubicación inicial
+            marker = L.marker(latLng, { draggable: true }).addTo(map);
+            
+        }
+        
 
         // Actualizar marcador al hacer clic en el mapa
         map.on('click', function (e) {
@@ -195,8 +276,12 @@
         // Agregar el control de búsqueda con autocompletado
         var geocoder = L.Control.geocoder({
             defaultMarkGeocode: false, // No marca automáticamente el lugar, solo muestra sugerencias
-            placeholder: 'Buscar domicilio (Presiona Enter).', // Texto de la caja de búsqueda
-            collapsed: false // No colapsar el buscador
+            placeholder: 'Buscar (Enter).', // Texto de la caja de búsqueda
+            collapsed: false, // No colapsar el buscador
+            
+            resultsLimit: 4, // Limitar a 5 resultados 
+            showResultIcons: true, // Mostrar íconos para los resultados                     
+            autoComplete: true, // Activar autocompletado  
         })
         .on('markgeocode', function (e) {
             var bbox = e.geocode.bbox;
@@ -228,6 +313,18 @@
         .addTo(map);
 
 
+        // Personalizar el control de zoom
+        L.control.zoom({
+            position: 'bottomleft', // Colocar en la parte superior derecha
+            zoomInText: '+', // Texto del botón de acercar
+            zoomOutText: '-', // Texto del botón de alejar
+            zoomInTitle: 'Acercar', // Título del botón de acercar
+            zoomOutTitle: 'Alejar' // Título del botón de alejar
+        }).addTo(map);
+
+
+        //-------------------------------------------------------------> Mensaje de error
+
         // Ocultar el mensaje de error cuando ambos valores sean válidos
         function verificarCampos() {
             if (latitudeInput.value || longitudeInput.value) {
@@ -236,8 +333,8 @@
         }
 
         document.getElementById('formulario').addEventListener('submit', function (event) {
-            var latitude = document.getElementById('latitude');
-            var longitude = document.getElementById('longitude');
+            var latitude = document.getElementById('latitud');
+            var longitude = document.getElementById('longitud');
 
             // Validar si están vacíos
             if (!latitude.value && !longitude.value) {          
@@ -250,6 +347,8 @@
    
 
     <script>
+
+        // Validar imágen
         document.getElementById('imagen').addEventListener('change', function () {
             var fileName = this.files[0] ? this.files[0].name : "Ningún archivo seleccionado";
             document.getElementById('file-name').textContent = fileName;
@@ -260,6 +359,7 @@
             }
         });
 
+        // Imagen required
         document.getElementById('formulario').addEventListener('submit', function (event) {
             var inputImagen = document.getElementById('imagen');
 
@@ -272,6 +372,9 @@
             }
             
         });
+
+
+        //--------------------------------------> Agregar icono de imagen correcta
 
         function circleCheckIcon() {
             var input = document.getElementById('imagen');
@@ -289,7 +392,7 @@
                 icono.style.opacity = "0";         // Cambia la opacidad para ocultar
                 setTimeout(() => {
                     icono.style.visibility = "hidden"; // Oculta completamente después de la transición
-                }, 50); // Ajusta este tiempo según el valor de `transition` (0.5 seg)
+                }, 100); // Ajusta este tiempo según el valor de `transition` (1 seg)
             }
         }
         

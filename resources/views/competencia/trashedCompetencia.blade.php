@@ -85,10 +85,14 @@ $timestampNow = now()->toDateString();
                         </div>
 
                         <div class="text-center" style="margin-top: 0px;">
-                            <a href="{{ $competencia->mapa_link }}" style="text-decoration: none;" target="_blank" rel="noopener noreferrer" title="Sede">
-                                <h style="font-size: 15px;">{{ $competencia->sede }}</h>
+                            <a href="{{ $competencia->mapa_link }}" style="text-decoration: none;" target="_blank" rel="noopener noreferrer" title="Ubicación">
+                                <h style="font-size: 15px;">{{ $competencia->ubicacion }}</h>
                             </a>
                         </div>
+
+                        <!--<div class="text-center" style="margin-top: 0px;">                            
+                            <h style="font-size: 15px;">{{ $competencia->sede }}</h>                            
+                        </div>-->
 
                         <div class="text-center" style="margin-top: 5px; font-size: 16px;">
                             <b>Fecha:</b> {{ date('d/m/Y', strtotime($competencia->fecha)) }}
@@ -165,8 +169,8 @@ $timestampNow = now()->toDateString();
                         <b style="font-size: 20px;">{{ $expirada -> name }}</b>
                     </a>
 
-                    (<a href="{{ $expirada->mapa_link }}" style="text-decoration: none;" target="_blank" rel="noopener noreferrer" title="Sede">
-                        <h style="font-size: 15px;">{{ $expirada->sede }}</h>
+                    (<a href="{{ $expirada->mapa_link }}" style="text-decoration: none;" target="_blank" rel="noopener noreferrer" title="Ubicación">
+                        <h style="font-size: 15px;">{{ $expirada->ubicacion }}</h>
                     </a>)
 
                     <b style="font-size: 20px;"> | </b>

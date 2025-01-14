@@ -78,7 +78,7 @@
 
         <!-- Imagen de perfil -->
         @if (!is_null($juez->user->profile_photo_path))
-            <img src="{{ $juez->user->profile_photo_url }}" alt="{{ $juez->user->name }}"style="height: 100px; margin-right: 15px; border-radius: 15%; object-fit: cover; cursor: pointer;" onclick="showModal()">
+            <img src="{{ $juez->user->profile_photo_url }}" alt="{{ $juez->user->name }}"style="height: 100px; margin-right: 15px; border-radius: 10px; object-fit: cover; cursor: pointer;" onclick="showModal()">
         @endif
         
         
@@ -89,7 +89,7 @@
         </div>
     </div>
 
-    <h3> Correo electronico: </h3>
+    <h4> Correo electronico: </h4>
     <p style="margin-left: 15px; margin-bottom: 20px; font-size: 18px;"> <a href="mailto:{{ $juez -> email }}">{{ $juez -> email }}</a> </p>
 
     @if (!empty($juez->telefono))
@@ -117,7 +117,7 @@
     @endif
 
     <div style="margin-top: 25px;">
-        <a href="/juez">Regresar</a> 
+        <!--<a href="/juez">Regresar</a>-->
     </div>
 
 </x-plantilla-body>

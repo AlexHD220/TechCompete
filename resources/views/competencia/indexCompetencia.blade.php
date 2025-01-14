@@ -33,8 +33,6 @@
             }
         }
 
-   
-
         .sombra {
             /*box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.5);*/
             box-shadow: 0px 0px 5px 3px rgba(255,255,255,0.2);
@@ -103,9 +101,13 @@ $timestampNow = now()->toDateString();
                         </div>
 
                         <div class="text-center" style="margin-top: 0px;">
-                            <a href="{{ $actual->mapa_link }}" style="text-decoration: none;" target="_blank" rel="noopener noreferrer" title="Sede">
-                                <h style="font-size: 15px;">{{ $actual->sede }}</h>
+                            <a href="{{ $actual->mapa_link }}" style="text-decoration: none;" target="_blank" rel="noopener noreferrer" title="Ubicación">
+                                <h style="font-size: 15px;">{{ $actual->ubicacion }}</h>
                             </a>
+                        </div>
+
+                        <div class="text-center" style="margin-top: 0px;">                            
+                            <h style="font-size: 15px;">{{ $actual->sede }}</h>                            
                         </div>
 
                         <!--<div class="text-center" style="margin-top: 5px; font-size: 16px;">
@@ -183,9 +185,13 @@ $timestampNow = now()->toDateString();
                         </div>
 
                         <div class="text-center" style="margin-top: 0px;">
-                            <a href="{{ $competencia->mapa_link }}" style="text-decoration: none;" target="_blank" rel="noopener noreferrer" title="Sede">
-                                <h style="font-size: 15px;">{{ $competencia->sede }}</h>
+                            <a href="{{ $competencia->mapa_link }}" style="text-decoration: none;" target="_blank" rel="noopener noreferrer" title="Ubicación">
+                                <h style="font-size: 15px;">{{ $competencia->ubicacion }}</h>
                             </a>
+                        </div>
+
+                        <div class="text-center" style="margin-top: 0px;">                            
+                            <h style="font-size: 15px;">{{ $competencia->sede }}</h>                            
                         </div>
 
                         <!--<div class="text-center" style="margin-top: 5px; font-size: 16px;">
@@ -214,7 +220,8 @@ $timestampNow = now()->toDateString();
                                         <button type="submit" onclick="return confirm('¿Está seguro que desea desactivar esta publicación?')" onmouseover="this.style.backgroundColor='#f97c3e';" onmouseout="this.style.backgroundColor='#ff5500';"  
                                         style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: #ff5500; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
                                         title="Desctivar Publicación">
-                                            <i class="fas fa-ban" style="font-size: 20px;"></i> <!-- Ícono de FontAwesome -->
+                                            <!--<i class="fas fa-ban" style="font-size: 20px;"></i>--> <!-- Ícono de FontAwesome -->
+                                            <i class="fa-solid fa-right-to-bracket" style="font-size: 20px;"></i> <!-- Ícono de FontAwesome -->                                            
                                         </button>
                                     </form>
                                     

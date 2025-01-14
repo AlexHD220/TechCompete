@@ -24,7 +24,7 @@ Este código de activación es único e intransferible, y está vinculado al cor
 
 Para crear tu cuenta deberas ingresar a la siguiente página y llenar el formulario de registro con tus datos.
 
-<a href="{{route('juez.createjuez', $registro->codigo) }}" style="font-size: 15px;">Página de Registro</a>
+<a href="{{route('juez.create', $registro->codigo) }}" style="font-size: 15px;">Página de Registro</a>
 
 <b><i>*Recuerda que tienes hasta antes del <u> {{ \Carbon\Carbon::parse($registro->expiracion_date)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}</u> para registrar tu cuenta o de lo contrario este código habrá expirado.</i></b>
 

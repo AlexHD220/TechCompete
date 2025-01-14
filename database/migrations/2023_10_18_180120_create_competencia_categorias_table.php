@@ -17,12 +17,12 @@ return new class extends Migration
             $table->foreignId('categoria_id')->constrained();
             
             $table->date('inicio_registros');
-            $table->date('fin_registros')->nullable();
+            $table->date('fin_registros');
 
             $table->string('nivel');
             $table->unsignedBigInteger('costo');
 
-            $table->unsignedBigInteger('limite_inscripciones');
+            $table->unsignedBigInteger('limite_inscripciones')->nullable();
             $table->unsignedBigInteger('min_participantes');
             $table->unsignedBigInteger('max_participantes');
 

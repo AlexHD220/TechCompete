@@ -108,10 +108,10 @@ class registrojuezController extends Controller
     /**
      * Genera un código único que no exista en la base de datos.
      */
-    private function generateUniqueCode($length = 15)
+    private function generateUniqueCode($length = 14)
     {
         do {
-            $codigo = Str::random($length); // Genera un código aleatorio alfanumérico
+            $codigo = "J" . Str::random($length); // Genera un código aleatorio alfanumérico
         } while (registrojuez::where('codigo', $codigo)->exists()); // Verifica si el código ya existe
 
         return $codigo;

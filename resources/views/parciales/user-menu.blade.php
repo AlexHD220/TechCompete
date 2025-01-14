@@ -87,7 +87,7 @@
 
                             <div style="text-align: center; font-size: 15px;">
                                 <a href="/dashboard" class="dropdown-item">Mi Perfil</a>
-                                <a href="/user/profile" class="dropdown-item">Configuración del Perfil</a>
+                                <a href="/user/profile" class="dropdown-item" style="padding-bottom: 6px;">Configuración del Perfil</a>
                                 <!--<a href="#" class="dropdown-item">Settings</a>-->
                                 <!--<a href="#" class="dropdown-item">Log Out</a> -->
                                 

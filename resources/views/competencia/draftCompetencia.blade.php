@@ -105,9 +105,13 @@ $timestampNow = now()->toDateString();
                         </div>
 
                         <div class="text-center" style="margin-top: 0px;">
-                            <a href="{{ $competencia->mapa_link }}" style="text-decoration: none;" target="_blank" rel="noopener noreferrer" title="Sede">
-                                <h style="font-size: 15px;">{{ $competencia->sede }}</h>
+                            <a href="{{ $competencia->mapa_link }}" style="text-decoration: none;" target="_blank" rel="noopener noreferrer" title="Ubicación">
+                                <h style="font-size: 15px;">{{ $competencia->ubicacion }}</h>
                             </a>
+                        </div>
+
+                        <div class="text-center" style="margin-top: 0px;">                            
+                            <h style="font-size: 15px;">{{ $competencia->sede }}</h>                            
                         </div>
 
                         <div class="text-center" style="margin-top: 5px; font-size: 16px;">
@@ -118,7 +122,7 @@ $timestampNow = now()->toDateString();
                             @can('only-superadmin')
                             <div class="text-center" style="margin-top: 10px;">
                                     <!-- Botón para Editar -->
-                                    <a href="{{ route('competencia.edit', $competencia) }}" onmouseover="this.style.backgroundColor='#818284';" onmouseout="this.style.backgroundColor='#434851';" 
+                                    <a href="{{ route('competencia.editdraft', $competencia) }}" onmouseover="this.style.backgroundColor='#818284';" onmouseout="this.style.backgroundColor='#434851';" 
                                     style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: #434851; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
                                     title="Editar Borrador">                                
                                         <i class="fas fa-edit" style="font-size: 20px;"></i> <!-- Ícono de FontAwesome -->
@@ -184,8 +188,8 @@ $timestampNow = now()->toDateString();
                         <b style="font-size: 20px;">{{ $expirada -> name }}</b>
                     </a>
 
-                    (<a href="{{ $expirada->mapa_link }}" style="text-decoration: none;" target="_blank" rel="noopener noreferrer" title="Sede">
-                        <h style="font-size: 15px;">{{ $expirada->sede }}</h>
+                    (<a href="{{ $expirada->mapa_link }}" style="text-decoration: none;" target="_blank" rel="noopener noreferrer" title="Ubicación">
+                        <h style="font-size: 15px;">{{ $expirada->ubicacion }}</h>
                     </a>)
 
                     <b style="font-size: 20px;"> | </b>

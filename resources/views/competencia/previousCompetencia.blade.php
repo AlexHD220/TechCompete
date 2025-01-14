@@ -89,9 +89,13 @@ $timestampNow = now()->toDateString();
                                 </div>
 
                                 <div class="text-center" style="margin-top: 0px;">
-                                    <a href="{{ $competencia->mapa_link }}" style="text-decoration: none;" target="_blank" rel="noopener noreferrer" title="Sede">
-                                        <h style="font-size: 15px;">{{ $competencia->sede }}</h>
+                                    <a href="{{ $competencia->mapa_link }}" style="text-decoration: none;" target="_blank" rel="noopener noreferrer" title="Ubicación">
+                                        <h style="font-size: 15px;">{{ $competencia->ubicacion }}</h>
                                     </a>
+                                </div>
+
+                                <div class="text-center" style="margin-top: 0px;">                            
+                                    <h style="font-size: 15px;">{{ $competencia->sede }}</h>                            
                                 </div>
 
                                 @if($competencia->duracion == 1)

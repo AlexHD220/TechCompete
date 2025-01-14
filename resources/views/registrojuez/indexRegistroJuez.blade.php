@@ -45,7 +45,7 @@
 
                         <b style="font-size: 20px;"> | </b>
 
-                        @if
+                        @if($registrojuez->creacion_date == $registrojuez->expiracion_date)
                             <b style="font-size: 17px; cursor: pointer;" 
                                 onmouseover="this.style.color='#9294a1';" 
                                 onmouseout="this.style.color='#6c7293';"                                
