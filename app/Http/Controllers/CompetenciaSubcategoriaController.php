@@ -75,11 +75,11 @@ class CompetenciaSubcategoriaController extends Controller
             $costo_errors = false;
         }
 
-        dd($request->all());
+        //dd($request->all());
 
         $request->validate([
             'costo' => ['integer','min:0',],
-            'limite_inscripciones' => ['nullable|integer','min:2',],
+            'limite_inscripciones' => ['nullable', 'integer','min:2',],
             'min_participantes' => ['required','integer','min:1',],  
             'max_participantes' => ['required','integer','min:1',],          
             'fecha' => 'required'
