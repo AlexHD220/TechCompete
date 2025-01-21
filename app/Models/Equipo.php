@@ -37,6 +37,11 @@ class Equipo extends Model
         return $this->belongsTo(CompetenciaCategoria::class);
     }
 
+    public function competencia_subcategoria() // --> Relacion Uno a x
+    {
+        return $this->belongsTo(CompetenciaSubcategoria::class);
+    }
+
     public static function boot()
     {
         parent::boot();

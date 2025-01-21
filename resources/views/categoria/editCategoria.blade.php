@@ -53,7 +53,7 @@
         <label for="tipo" style="margin-bottom: 5px;"><b>Tipo de inscripciones: </b></label><br>
         <select name="tipo" id="tipo" required style="width: 110px; height: 30px;">
             <option selected disabled value=""> - </option>
-            <option value="Cualquiera" @selected((old('tipo') ?? $categoria->tipo) == 'Cualquiera')>Cualquiera</option>
+            <!--<option value="Cualquiera" @selected((old('tipo') ?? $categoria->tipo) == 'Cualquiera')>Cualquiera</option>-->
             <option value="Equipos" @selected((old('tipo') ?? $categoria->tipo)== 'Equipos')>Equipos</option>
             <option value="Proyectos" @selected((old('tipo') ?? $categoria->tipo)== 'Proyectos')>Proyectos</option>            
             <!--<option value="Individual" @selected(old('tipo') == 'Individual')>Individual</option>-->

@@ -93,16 +93,18 @@
     <!--editar formulario por medio de la direccion de route:list, esto porque como no tengo un archivo, necesito mandar llamar a la ruta de la lista asesor.update-->
     <form id="formulario" action="{{ route('competencia.update', $competencia)}}" method="post"  enctype="multipart/form-data"> <!--la diagonal me envia al principio de la url "solacyt.test/"-->
         <!--Mostrar errores-->
-        @if ($errors->any())
+        @if ($errors->any() || session('missing_fecha'))
             <div class="msgAlerta">                
                 <ul>
                     @if(session('missing_fecha'))
-                        <li>El campo de fecha es obligatorio.</li>
+                        <li>El campo "Fecha" es obligatorio.</li>
                     @endif
 
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
+                    @if ($errors->any())
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    @endif
                 </ul>
 
                 <!--session('imagen_info')-->
@@ -135,11 +137,11 @@
         @if($competencia->enProgreso)
             {{ date('d/m/Y', strtotime($competencia->fecha)) }}<br><br> 
         @else
-            <input type="date" name="fecha" required value = "{{old('fecha') ?? $competencia -> fecha}}" min="{{ now()->toDateString() }}" max="{{ now()->addYears(2)->toDateString() }}"><br><br>                
+            <input type="date" id="fecha_competencia" name="fecha" required value = "{{old('fecha') ?? $competencia -> fecha}}" min="{{ now()->addDays(1)->toDateString() }}" max="{{ now()->addYears(2)->toDateString() }}"><br><br>                
         @endif
 
         <label for = "duracion"><b>Duración: </b></label>
-        <input type="number" name="duracion" id="duracion" required value = "{{old('duracion') ?? $competencia -> duracion}}" min="1" max="31" step="1" style="width: 50px;"> días <br><br>        
+        <input type="number" name="duracion" id="duracion" required value = "{{old('duracion') ?? $competencia -> duracion}}" min="1" step="1" style="width: 50px;"> días <br><br>        
 
         <label for="tipo" style="margin-bottom: 5px;"><b>Tipo de inscripciones: </b></label><br>
         <select name="tipo" required style="width: 110px; height: 30px;">
@@ -148,6 +150,15 @@
             <option value="Equipos" @selected((old('tipo') ?? $competencia->tipo)== 'Equipos')>Equipos</option>
             <option value="Proyectos" @selected((old('tipo') ?? $competencia->tipo)== 'Proyectos')>Proyectos</option>            
         </select><br><br>
+
+
+        <label for = "inicio_registros" style="margin-bottom: 10px;"><b>Fecha de registros: </b></label><br>    
+
+        <label for = "inicio_registros" style="margin-bottom: 15px;"><b> - Inicio: </b></label>       
+        <input type="date" id="inicio_registros" name="inicio_registros" required value = "{{old('inicio_registros') ?? $competencia -> inicio_registros}}" min="{{ now()->toDateString() }}" max="{{ \Carbon\Carbon::parse($competencia->fecha)->subDay(1)->format('Y-m-d') }}"><br>
+
+        <label for = "fin_registros"><b> - Cierre: </b></label>
+        <input type="date" id="fin_registros" name="fin_registros" required value = "{{ old('fin_registros') ?? $competencia -> fin_registros }}" min="{{ \Carbon\Carbon::parse($competencia->inicio_registros)->addDay(1)->format('Y-m-d') }}" max="{{ $competencia->fecha }}"><br><br>
 
         <!--Seleccion multiple []-->
 
@@ -214,7 +225,7 @@
             zoomControl: false, // Desactivar el control de zoom predeterminado
             attributionControl: false, // Deshabilita los créditos del mapa.
             preferCanvas: true, // Optimizar mapa en celulares
-        }).setView(mapCenter, 10); // 10 --> Zoom
+        }).setView(mapCenter, 11); // 11 --> Zoom
 
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
@@ -236,6 +247,14 @@
 
         // Crear el marcador en la ubicación inicial
         marker = L.marker(latLng, { draggable: true }).addTo(map);        
+        
+        // Evento para actualizar coordenadas al arrastrar el marcador
+        marker.on('dragend', function (event) {
+            var position = marker.getLatLng();
+            latitudeInput.value = position.lat;
+            longitudeInput.value = position.lng;
+            verificarCampos(); // Verificar los campos después de actualizar los valores
+        });
             
             
         // Actualizar marcador al hacer clic en el mapa

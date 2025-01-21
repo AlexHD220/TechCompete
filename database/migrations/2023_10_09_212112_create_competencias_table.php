@@ -19,8 +19,12 @@ return new class extends Migration
 
             $table->date('fecha');
             $table->date('fecha_fin');
-            $table->unsignedInteger('duracion');            
-            $table->string('tipo');            
+            $table->unsignedInteger('duracion');   
+
+            $table->string('tipo');    
+            $table->date('inicio_registros');
+            $table->date('fin_registros');
+            
             $table->string('sede');
             $table->string('ubicacion');
 

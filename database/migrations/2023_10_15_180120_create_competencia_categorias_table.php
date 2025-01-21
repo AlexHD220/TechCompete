@@ -16,17 +16,20 @@ return new class extends Migration
             $table->foreignId('competencia_id')->constrained();
             $table->foreignId('categoria_id')->constrained();
             
-            $table->date('inicio_registros');
-            $table->date('fin_registros');
+            $table->boolean('registro_personalizado')->default(false);            
+            $table->date('inicio_registros')->nullable();
+            $table->date('fin_registros')->nullable();
 
-            $table->string('nivel');
             $table->unsignedBigInteger('costo');
 
-            $table->unsignedBigInteger('limite_inscripciones')->nullable();
-            $table->unsignedBigInteger('min_participantes');
-            $table->unsignedBigInteger('max_participantes');
+            //$table->string('nivel');
+            //$table->unsignedBigInteger('costo');
 
-            $table->unsignedBigInteger('total_inscritos')->default(0);
+            //$table->unsignedBigInteger('limite_inscripciones')->nullable();
+            //$table->unsignedBigInteger('min_participantes');
+            //$table->unsignedBigInteger('max_participantes');
+
+            //$table->unsignedBigInteger('total_inscritos')->default(0);
             
             $table->softDeletes();
             //$table->timestamps();

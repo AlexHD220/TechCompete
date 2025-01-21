@@ -9,13 +9,12 @@
     <div>
         <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
             <h1 style="display: inline;">Listado de Subcategorías</h1>            
-            @auth <!--Cuando el usuario este logueado muestrame lo sigiente-->            
+            <!--@auth        
                 @can('only-superadmin')  
                 <button class="btn btn-primary" id="btn-nueva-subcategoria">Registrar nueva subcategoría</button>
                 @endcan
-            @endauth
+            @endauth-->
         </div>
-
 
 
         @if($subcategorias->count() == 0)
@@ -23,8 +22,41 @@
 
             <div style="margin-left: 20px;" >
         @else
-            
             <div style="margin-top: 15px;">
+        @endif
+            
+        <form action="/subcategoria" method="post"> <!--la diagonal me envia al principio de la url "techcompete.test/"-->
+                <!--Mostrar errores-->
+                @if ($errors->any())
+                    <div class="msgAlerta">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    <br>
+                @endif
+
+                @csrf <!--permite entrar al formulario muy importante agregar-->
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">                    
+
+                    <div style="position: relative; display: inline-block;">
+                        <input type="text" id="nivel" name="nivel" style="width: 250px; padding-right: 30px; margin-right: 5px;" placeholder="Nueva Subcategoría" required value = "{{ old('nivel') }}"><!--value = "{{old('nivel')}}"-->                        
+                        
+                        <i class="fas fa-times" id="limpiar" title="Limpiar Input" style="position: absolute; top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer; visibility: hidden; color: gray;"></i>
+                    </div><br><br>
+
+                    <input type="submit" id="submitButton" value="Registrar Subcategoría" disabled> 
+                    <!--<a href="{{ route('subcategoria.create') }}" style="margin-left:10px;">Cancelar</a>-->
+                </div>
+            </form>                       
+        </div>
+
+
+        @if($subcategorias->count() > 0)            
+            <div style="margin-top: 20px;">
 
                 @foreach ($subcategorias as $subcategoria) <!--Listar todos los datos de la tabla user-->
                     
@@ -52,36 +84,9 @@
                     </li><br>
                     
                 @endforeach                
-            </div>            
-
-            <div>
+            </div><br>                      
         @endif
-
-            <form action="/subcategoria" method="post"> <!--la diagonal me envia al principio de la url "techcompete.test/"-->
-                <!--Mostrar errores-->
-                @if ($errors->any())
-                    <div class="msgAlerta">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    <br>
-                @endif
-
-                @csrf <!--permite entrar al formulario muy importante agregar-->
-                
-                <div style="display: flex; flex-wrap: wrap; align-items: center;">
-                    <input type="text" id="nivel" name="nivel" style="width: 250px;" placeholder="Nueva Subcategoría" required value = "{{ old('nivel') }}"><!--value = "{{old('nivel')}}"-->
-
-                    <input type="submit" id="submitButton" value="Registrar Subcategoría" style="margin-left: 15px;" disabled> 
-                    <!--<a href="{{ route('subcategoria.create') }}" style="margin-left:10px;">Cancelar</a>-->
-                </div>
-            </form>   
-            <br>         
-        </div>
-
+            
         <!--<br>
         <button onclick="window.location.href = '/subcategoria/create';">Registrar nuevo subcategoria</button>-->
     </div>
@@ -94,7 +99,7 @@
     </script>-->
 
     <!-- Script -->
-    <script>
+    <!--<script>
         document.getElementById('btn-nueva-subcategoria').addEventListener('click', function(event) {            
             
             // Desplázate al fondo de la página
@@ -109,18 +114,31 @@
                 input.focus();
             }
         });
-    </script>
+    </script>-->
 
     <script>
         document.getElementById('nivel').addEventListener('input', function() {
             var submitButton = document.getElementById('submitButton');
+            var limpiarInput = document.getElementById('limpiar');
+
             if (this.value.trim() !== '') {
                 submitButton.removeAttribute('disabled');
+                limpiarInput.style.visibility = "visible";
             } else {
                 submitButton.setAttribute('disabled', 'true');
+                limpiarInput.style.visibility = "hidden";
             }
         });
+
+        document.getElementById("limpiar").addEventListener("click", function () {
+            var limpiarInput = document.getElementById('limpiar');
+            var nivelInput = document.getElementById('nivel');
+
+            limpiarInput.style.visibility = "hidden";
+            nivelInput.value = "";
+        });
     </script>
+
 </x-plantilla-body>
 
 </html>

@@ -85,7 +85,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(Competencia::class, 'acceso_competencias', 'user_id', 'competencia_id');
     }
 
-    public function competenciacategorias() // --> Relacion Muchos a Muchos
+    public function competencia_categorias() // --> Relacion Muchos a Muchos
     {
         return $this->belongsToMany(CompetenciaCategoria::class);
     }

@@ -64,36 +64,6 @@
             box-shadow: 0px 0px 5px 3px rgba(255,255,255,0.2);
         }
     </style>
-
-<style>
-        .categorias-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* Dos columnas por defecto */
-            /*gap: 25px;*/ /* Espaciado entre columnas y filas */
-            row-gap: 30px;   /* Espaciado entre filas */
-            column-gap: 25px; /* Espaciado entre columnas */
-            
-            
-            justify-items: center; /* Centra horizontalmente */
-            align-items: center; /* Centra verticalmente */
-        }
-
-        /* Pantallas intermedias: tabletas o celulares horizontales */
-        /*@media (max-width: 1024px) {*/
-        @media (max-width: 991.98px) {
-            .categorias-container {
-                grid-template-columns: repeat(2, 1fr); /* Cambiar a dos columnas por fila */
-            }
-        }
-
-        /* Pantallas pequeñas: celulares en orientación vertical */
-        /*@media (max-width: 768px) {*/
-        @media (max-width: 650px) {
-            .categorias-container {
-                grid-template-columns: 1fr; /* Cambiar a una columna por fila */
-            }
-        }
-    </style>
 </x-plantilla-head>
 
 <x-plantilla-body>    
@@ -114,8 +84,8 @@
     </div>
 
     <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 0px; justify-content: center;">
-        
-        <h1 style="margin-top: 8px;"> {{ $competencia -> name }}</h1> 
+                            
+        <h1 style="margin-top: 8px;"> {{ $competencia -> name }} (Borrador)</h1>         
 
         @auth <!--Cuando el usuario este logueado muestrame lo sigiente-->            
             @can('only-superadmin')   
@@ -126,7 +96,7 @@
                                 disponibles para esta competencia.</i></a>
                     </div>   
                 @elseif($categoriascount > 0)             
-                    <button class="btn btn-primary" link="{{ route('competenciacategoria.create', $competencia) }}" 
+                    <button class="btn btn-primary" link="{{ route('competenciacategoria.createdraft', $competencia) }}" 
                     onclick="window.location.href = this.getAttribute('link');">
                         Agregar categoría
                     </button> <!-- Link pendiente --> 
@@ -194,7 +164,7 @@
 
     <h2>Categorías</h2>
 
-    @if($competenciaCategorias->count() == 0) <!-- Si no hay competencia_categorias --> <!-- [!] Evaluar si las categorias registradas es igual al total de categorias y mostrar que no hya categorias nuevas por agregar -->
+    @if(1) <!-- Si no hay competencia_categorias --> <!-- [!] Evaluar si las categorias registradas es igual al total de categorias y mostrar que no hya categorias nuevas por agregar -->
         @if(Gate::allows('only-superadmin')) 
             @if($categoriascount > 0)
                 <p style="margin-left: 20px;"><i>Aún no se ha registrado ninguna 
@@ -209,79 +179,10 @@
         @else
             <p style="margin-left: 20px;"><i>Próximamente podras ver el listado de categorías en este apartado.</i></p>
         @endif
-    @else <!-- Cuando hay categorias mostrarlas -->
-        <!-- Contenedor con grid -->
-        <div class="categorias-container" style="margin-top: 15px;  margin-bottom: 15px;">
-            @foreach ($competenciaCategorias as $competenciaCategoria)            
-                    <!--<div class="categorias-card" style="border: 1px solid #ccc; padding: 15px; border-radius: 10px;">-->
-                    <div class="categorias-card">
-
-                        <div class="text-center" style="margin-top: 0px;">
-                            <a href="{{ route('competenciacategoria.show', [$competencia, $competenciaCategoria]) }}" style="text-decoration: none; color: inherit;">
-                                <b style="font-size: 25px;">"{{ $competenciaCategoria->categoria->name }}"</b>
-                            </a>
-                        </div>
-
-                        <div class="text-center" style="margin-top: 5px; font-size: 16px;">                            
-
-                            @if($competenciaCategoria->registro_personalizado)
-                                @if(\Carbon\Carbon::parse($competenciaCategoria->fin_registros)->isBefore(\Carbon\Carbon::now()->startOfDay()))                                  
-                                    <i>Inscripciones Cerradas</i>
-                                @else
-                                    @if(\Carbon\Carbon::parse($competenciaCategoria->inicio_registros)->isBefore(\Carbon\Carbon::now()->startOfDay()))  
-                                        <b>Cierre de inscripciones:</b><br>
-                                        {{ \Carbon\Carbon::parse($competenciaCategoria->fin_registros)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
-                                    @else
-                                        <b>Inicio de inscripciones:</b><br>
-                                        {{ \Carbon\Carbon::parse($competenciaCategoria->inicio_registros)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
-                                    @endif
-                                @endif
-                            @else
-                                @if(\Carbon\Carbon::parse($competenciaCategoria->competencia->fin_registros)->isBefore(\Carbon\Carbon::now()->startOfDay()))                                  
-                                    <i>Inscripciones Cerradas</i>
-                                @else
-                                    @if(\Carbon\Carbon::parse($competenciaCategoria->competencia->inicio_registros)->isBefore(\Carbon\Carbon::now()->startOfDay()))  
-                                        <b>Cierre de inscripciones:</b><br>
-                                        {{ \Carbon\Carbon::parse($competenciaCategoria->competencia->fin_registros)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
-                                    @else
-                                        <b>Inicio de inscripciones:</b><br>
-                                        {{ \Carbon\Carbon::parse($competenciaCategoria->competencia->inicio_registros)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
-                                    @endif
-                                @endif
-                            @endif
-                        </div>
-
-                        @auth
-                            @can('only-superadmin')
-
-                                <div class="text-center" style="margin-top: 10px;">
-                                    <!-- Botón para Editar -->
-                                    <a href="{{ route('competenciacategoria.edit', [$competencia, $competenciaCategoria]) }}" onmouseover="this.style.backgroundColor='#818284';" onmouseout="this.style.backgroundColor='#434851';" 
-                                    style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: #434851; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
-                                    title="Editar Categoría">                                
-                                        <i class="fas fa-edit" style="font-size: 20px;"></i> <!-- Ícono de FontAwesome -->
-                                    </a>    
-                                    
-                                    <form action="{{route('competenciacategoria.destroy', [$competencia, $competenciaCategoria])}}" method = "POST" style="display: inline-block;">
-                                        @csrf
-                                        @method('DELETE')
-
-                                        <input id="ruta" type="hidden" name="ruta" value="{{ request()->path() }}">
-                                        
-                                        <button type="submit" onclick="return confirm('¿Está seguro que desea eliminar esta categoría de la competencia?')" onmouseover="this.style.backgroundColor='#ff6666';" onmouseout="this.style.backgroundColor='red';"  
-                                        style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: red; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
-                                        title="Eliminar Categoría de la Competencia">
-                                            <i class="fas fa-trash" style="font-size: 20px;"></i> <!-- Ícono de FontAwesome -->
-                                        </button>
-                                    </form>   
-                                </div>
-                            @endcan
-                        @endauth
-                    </div>
-            @endforeach
-        </div>
+    @else
+        <!-- Cuando hay categorias mostrarlas -->
     @endif
-    <br>
+
 
     <div style="margin-top: 25px;">
         <!--<a href="/juez">Regresar</a>-->

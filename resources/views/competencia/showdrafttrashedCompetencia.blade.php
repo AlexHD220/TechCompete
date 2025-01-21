@@ -10,7 +10,7 @@
     <h1> {{ $competencia -> identificador }}</h1> <!--Mostrar detalles-->
     <h4> Duración: {{ $competencia->duracion }} días</h4>
     <h4> Inauguración: {{ date('d/m/Y', strtotime($competencia->fecha)) }} </h4>
-    <h4> Cierre: {{ date('d/m/Y', strtotime($competencia->fecha . '+' . ($competencia->duracion)-1 . 'days')) }}</h4>
+    <h4> Clausura: {{ date('d/m/Y', strtotime($competencia->fecha . '+' . ($competencia->duracion)-1 . 'days')) }}</h4>
 
 
     <br>

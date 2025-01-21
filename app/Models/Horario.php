@@ -20,4 +20,9 @@ class Horario extends Model
     {
         return $this->belongsTo(CompetenciaCategoria::class);
     }
+
+    public function competencia_subcategoria() // --> Relacion Uno a x
+    {
+        return $this->belongsTo(CompetenciaSubcategoria::class);
+    }
 }

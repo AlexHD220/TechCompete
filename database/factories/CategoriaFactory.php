@@ -18,7 +18,7 @@ class CategoriaFactory extends Factory
     {
         return [
             //'nombre' => $this->faker->word . ' ' . $this->faker->numberBetween(date('Y'), 2025),
-            'nombre' => $this->faker->word,
+            'name' => $this->faker->word,
             'tipo' => $this->faker->word,
             'descripcion' => $this->faker->text(),
         ];

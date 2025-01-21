@@ -79,4 +79,9 @@ class CompetenciaCategoria extends Model
     {
         return $this->hasMany (JuecesCompetencia::class);
     }
+
+    public function competencia_subcategorias() // --> Relacion Muchos a Uno (Tiene muchos)
+    {
+        return $this->hasMany (CompetenciaSubcategoria::class);
+    }
 }

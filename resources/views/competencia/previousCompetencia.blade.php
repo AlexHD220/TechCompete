@@ -62,7 +62,7 @@ $timestampNow = now()->toDateString();
     </div>
 
     @if ($competencias->count() == 0)
-        <p style="margin-left: 20px;"><i>Aún no se ha llevado a cabo ninguna competencia registrada.</i></p>
+        <p style="margin-left: 20px;"><i>Aún no se ha llevado a cabo ninguna competencia.</i></p>
     @else
 
         <h2 style="margin-bottom: 20px;">Historial</h2>

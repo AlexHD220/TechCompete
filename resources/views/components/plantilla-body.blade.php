@@ -126,19 +126,19 @@
                 @endif
 
                 @if(0)
-                    <b style="font-size: 10px;">{{ $previousUrl }}</b>
+                    <b style="font-size: 10px;" title="_custom_previous">{{ $previousUrl }}</b>
 
                      | 
         
-                    <h  style="font-size: 10px;">{{ url()->previous(); }}</h>
+                    <h  style="font-size: 10px;" title="url()->previous();">{{ url()->previous(); }}</h>
 
                      |
         
-                    <b style="font-size: 10px;">{{ $respaldo }}</b>                    
+                    <b style="font-size: 10px;" title="_respaldo_previous">{{ $respaldo }}</b>                    
 
                      |
         
-                    <h style="font-size: 10px;">{{ $custom }}</h>                    
+                    <h style="font-size: 10px;" title="_current_custom_previous">{{ $custom }}</h>                    
                 @endif
 
 
@@ -219,6 +219,8 @@
     <script src="/dark/js/main.js"></script>
     <script src="/dark/js/codigo.js" defer></script>
     <script src="/dark/js/notificacion.js"></script>
+    <script src="/dark/js/fechas.js" defer></script>
+    <script src="/dark/js/scripts.js" defer></script>
 
     <!-- SweetAlert CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

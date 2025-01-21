@@ -218,3 +218,29 @@ document.getElementById('registroForm').addEventListener('submit', function (eve
         confirmPassword.setCustomValidity(''); // Limpia el mensaje de validación
     }
 });
+
+
+//======================================================================================>
+
+function sweetAlertPersistent(titulo, texto, icono) {  
+    
+  // Usando SweetAlert para notificación
+  Swal.fire({
+      title: titulo,
+      text: texto,
+      icon: icono,
+  });
+}
+
+function sweetAlertNotification(titulo, texto, icono, tiempo, botonConfirmacion) {  
+    
+  // Usando SweetAlert para notificación
+  Swal.fire({
+      title: titulo,
+      text: texto,
+      icon: icono,
+      timer: tiempo,
+      showConfirmButton: botonConfirmacion
+  });
+}
+

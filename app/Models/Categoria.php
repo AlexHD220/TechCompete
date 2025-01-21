@@ -21,9 +21,14 @@ class Categoria extends Model
         return $this->belongsToMany(Competencia::class);
     }
 
-    public function competenciacategorias() // --> Relacion Muchos a 1
+    public function competencia_categorias() // --> Relacion Muchos a 1
     {
         return $this->hasMany (CompetenciaCategoria::class);
+    }
+
+    public function competencia_subcategorias() // --> Relacion Muchos a 1
+    {
+        return $this->hasMany (CompetenciaSubcategoria::class);
     }
 
     public function subcategorias() // --> Relacion Muchos a 1

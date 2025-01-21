@@ -37,7 +37,7 @@ class registrojuezController extends Controller
         ->orderBy('expiracion_date', 'asc')->get(); // Si quiero ordenarlos de mayor a menos usar desc
 
         foreach ($registrojueces as $registro) {
-            $registro->diasrestantes = Carbon::now()->diffInDays(Carbon::parse($registro->expiracion_date), false);
+            $registro->diasrestantes = Carbon::now()->startOfDay()->diffInDays(Carbon::parse($registro->expiracion_date), false);
 
             /*if($registro->diasrestantes == 0){                
                 $registro->horasrestantes = Carbon::now()->diffInHours(Carbon::parse($registro->expiracion_date), false);

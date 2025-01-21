@@ -6,6 +6,7 @@ use App\Http\Controllers\AsesorController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\CompetenciaCategoriaController;
 use App\Http\Controllers\CompetenciaController;
+use App\Http\Controllers\CompetenciaSubcategoriaController;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\InstitucionController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\RegistroJuezController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SubcategoriaController;
 use App\Http\Controllers\UsuarioController;
+use App\Models\CompetenciaSubcategoria;
 use App\Models\Staff;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
@@ -290,12 +292,78 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
 
 //------------------------------------------------------------------------------------|
 
+//------------------------------------------------------------------------------------> Categorias
+
+    Route::resource('categoria', CategoriaController::class)->parameters([
+        'categoria' => 'categoria',
+    ]);
+
+//------------------------------------------------------------------------------------|
+
+//------------------------------------------------------------------------------------> Subcategorias
+
     Route::get('subcategoria', [SubcategoriaController::class, 'index'])
     ->name('subcategoria.create');
 
     Route::resource('subcategoria', SubcategoriaController::class)->parameters([
         'subcategoria' => 'subcategoria', //Corregir error {competencium} en -> php artisan route:list
     ])->except(['index','create','show']);
+
+//------------------------------------------------------------------------------------|
+
+//------------------------------------------------------------------------------------> Competencia_Categoria
+
+    Route::get('competencia/{competencia}/categoria/attach', [CompetenciaCategoriaController::class, 'create'])
+    ->name('competenciacategoria.create');
+
+    Route::get('competencia/draft/{competencia}/categoria/attach', [CompetenciaCategoriaController::class, 'createdraft'])
+    ->name('competenciacategoria.createdraft');
+
+    Route::post('competencia/{competencia}/categoria', [CompetenciaCategoriaController::class, 'store'])
+    ->name('competenciacategoria.store');
+    
+
+    // Ruta para mostrar los detalles de registros no publicados
+    Route::get('competencia/{competencia}/categoria/{competenciaCategoria}', [CompetenciaCategoriaController::class, 'show'])
+    ->name('competenciacategoria.show');
+
+    
+    //---------------------------------------> Pendientes de inplementar [!]
+
+    // Ruta para mostrar los detalles de registros no publicados
+    Route::get('competencia/draft/{competencia}/categoria/{competenciaCategoria}', [CompetenciaCategoriaController::class, 'showdraft'])
+    ->name('competenciacategoria.showdraft');
+    
+
+    // Ruta para mostrar los registros pendientes de publicar
+    Route::get('competencia/{competencia}/categoria/{competenciaCategoria}/edit', [CompetenciaCategoriaController::class, 'edit'])
+    ->name('competenciacategoria.edit');
+
+    // Ruta para mostrar los registros pendientes de publicar
+    Route::get('competencia/draft/{competencia}/categoria/{competenciaCategoria}/edit', [CompetenciaCategoriaController::class, 'editdraft'])
+    ->name('competenciacategoria.editdraft');
+
+
+    // Ruta Destroy mofificada
+    Route::delete('competencia/{competencia}/categoria/{competenciaCategoria}', [CompetenciaCategoriaController::class, 'destroy'])
+    ->name('competenciacategoria.destroy');
+
+//------------------------------------------------------------------------------------|
+
+//------------------------------------------------------------------------------------> Competencia_Subcategoria
+
+    Route::get('competencia/{competencia}/categoria/{competenciaCategoria}/attach', [CompetenciaSubcategoriaController::class, 'create'])
+    ->name('competenciasubcategoria.create');
+
+    //---------------------------------------> Pendientes de inplementar [!]
+
+    Route::get('competencia/draft/{competencia}/categoria/{competenciaCategoria}/attach', [CompetenciaSubcategoriaController::class, 'createdraft'])
+    ->name('competenciasubcategoria.createdraft');
+
+    Route::post('competencia/{competencia}/categoria/{competenciaCategoria}/subcategoria', [CompetenciaSubcategoriaController::class, 'store'])
+    ->name('competenciasubcategoria.store');
+
+//------------------------------------------------------------------------------------|
 
 }); //--------------------------------------------------------------------------------------------> Fin Middleware
 
@@ -317,17 +385,9 @@ Route::resource('competencia', CompetenciaController::class)->parameters([
 
 //------------------------------------------------------------------------------------|
 
-//------------------------------------------------------------------------------------> Categorias
-
-Route::resource('categoria', CategoriaController::class)->parameters([
-    'categoria' => 'categoria',
-]);
-
-//------------------------------------------------------------------------------------|
-
-Route::resource('competenciacategoria', CompetenciaCategoriaController::class)->parameters([
+/*Route::resource('competenciacategoria', CompetenciaCategoriaController::class)->parameters([
     'competenciacategoria' => 'competenciacategoria', //Corregir error {competencium} en -> php artisan route:list
-]);
+]);*/
 
 
 Route::resource('institucion', InstitucionController::class);

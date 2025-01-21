@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
 
             $table->foreignId('competencia_id')->constrained();
-            $table->foreignId('competencia_categoria_id')->constrained();
+            $table->foreignId('competencia_subcategoria_id')->constrained();
             $table->boolean('pagado')->default(false);
 
             $table->string('comprobante_path', 2048)->nullable();

@@ -17,6 +17,16 @@ class Participante extends Model
         return $this->morphTo(); // Esto maneja la relación polimórfica
     }
 
+    public function competencia_categoria() // --> Relacion Uno a x
+    {
+        return $this->belongsTo(CompetenciaCategoria::class);
+    }
+
+    public function competencia_subcategoria() // --> Relacion Uno a x
+    {
+        return $this->belongsTo(CompetenciaSubcategoria::class);
+    }
+
     /*public function equipo() // --> Relacion Uno a x
     {
         return $this->belongsTo(Equipo::class);

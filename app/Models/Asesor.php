@@ -30,7 +30,7 @@ class Asesor extends Model
         return $this->belongsTo(institucion::class);
     }
 
-    public function competenciacategorias() // --> Relacion Muchos a Muchos
+    public function competencia_categorias() // --> Relacion Muchos a Muchos
     {
         return $this->belongsToMany(CompetenciaCategoria::class);
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Asesor;
 use App\Models\Categoria;
 use App\Models\Competencia;
+use App\Models\CompetenciaCategoria;
 use App\Models\Equipo;
 use App\Models\Proyecto;
 use Carbon\Carbon;
@@ -86,7 +87,7 @@ class CompetenciaController extends Controller
             'duracion' => ['required','integer','min:1','max:100'],
             //'asesor_id' => ['required', 'not_in:Selecciona una opción'],
             'tipo' => ['required', 'not_in:-'],
-            'categoria_id' => ['required'],
+            //'categoria_id' => ['required'],
             'imagen' => ['required', 'image', 'mimes:png,jpg,jpeg', 'max:15360'], // Máximo 15 Mb
         ]);
 
@@ -129,9 +130,12 @@ class CompetenciaController extends Controller
         $competencia->name = $request->name;
         $competencia->descripcion = $request->descripcion;
         $competencia->fecha = $request->fecha;
-        $competencia->fecha_fin = Carbon::parse($request->fecha)->addDays($request->duracion);       
+        $competencia->fecha_fin = Carbon::parse($request->fecha)->addDays(($request->duracion)-1);       
         $competencia->duracion = $request->duracion;
         $competencia->tipo = $request->tipo;
+        $competencia->inicio_registros = $request->inicio_registros;
+        $competencia->fin_registros = $request->fin_registros;
+
         $competencia->sede = $request->sede;
         $competencia->ubicacion = $request->ubicacion;
         $competencia->latitud = $request->latitud;
@@ -168,8 +172,49 @@ class CompetenciaController extends Controller
         //$asesor = Asesor::where('id',$equipo->asesor_id)->first();
 
         //return view('competencia/showCompetencia',compact('competencia')); //asesor es el usuario actual a mostrar
+        
 
-        return view('competencia/showCompetencia',compact('competencia'));
+        if($competencia->publicada){
+            if($competencia->tipo == 'Cualquiera'){
+                $categorias = Categoria::all();
+            }
+            elseif($competencia->tipo == 'Equipos'){
+                $categorias = Categoria::where('tipo','Equipos')->get();
+            }
+            elseif($competencia->tipo == 'Proyectos'){
+                $categorias = Categoria::where('tipo','Proyectos')->get();
+            }
+
+            if($categorias->count() > 0){
+                // Recuperar los IDs de categorías ya registradas en competenciacategorias
+                $competenciacategorias = CompetenciaCategoria::pluck('categoria_id')->toArray();
+        
+                // Filtrar las categorías para excluir las que ya están registradas
+                $categorias = $categorias->filter(function ($categoria) use ($competenciacategorias) {
+                    return !in_array($categoria->id, $competenciacategorias);
+                });  
+
+                if($categorias->count() == 0){
+                    $todasregistradas = true;
+                }
+                else{
+                    $todasregistradas = false;
+                }
+            }   
+            else{
+                $todasregistradas = false;
+            }   
+    
+            $categoriascount = $categorias->count();
+
+            $competenciaCategorias = CompetenciaCategoria::where('competencia_id',$competencia->id)
+            ->orderBy('inicio_registros', 'asc')->orderBy('fin_registros', 'asc')->get();
+    
+            return view('competencia/showCompetencia',compact('competencia', 'categoriascount', 'todasregistradas', 'competenciaCategorias'));
+        }
+        else{
+            return redirect('/competencia/draft');
+        }
     }
 
     /**
@@ -226,12 +271,14 @@ class CompetenciaController extends Controller
         // Generar el enlace de Google Maps
         $googleMapsLink = "https://www.google.com/maps?q={$request->latitud},{$request->longitud}";
     
+        $request -> merge([            
+            'mapa_link' => $googleMapsLink,
+        ]);
 
         if ($request->hasFile('imagen')) {
             //dd($request);
             $request -> merge([
-                'ubicacion_imagen' => $request->file('imagen')->storeAs('public/imagenes_competencias', 'Portada_'.$request->name.'.'. $request->file('imagen')->extension()),
-                'mapa_link' => $googleMapsLink,
+                'ubicacion_imagen' => $request->file('imagen')->storeAs('public/imagenes_competencias', 'Portada_'.$request->name.'.'. $request->file('imagen')->extension()),                
             ]);
         }         
         
@@ -252,10 +299,19 @@ class CompetenciaController extends Controller
         
         //return redirect() -> route('competencia.index'); //esto corresponde a el listado de route:list 
 
-        $previousUrl = session('_custom_previous.url');
+        /*$previousUrl = session('_custom_previous.url');
 
         //return redirect() -> route('competencia.show', $competencia);
-        return redirect($previousUrl);
+        return redirect($previousUrl);*/
+
+        //return redirect($request->ruta);         
+        
+        if($competencia->publicada == 1){
+            return redirect() -> route('competencia.show', $competencia);    
+        }
+        else{
+            return redirect() -> route('competencia.showdraft', $competencia);    
+        }
     }
 
 
@@ -300,9 +356,52 @@ class CompetenciaController extends Controller
         }
     }
 
-    public function showdraft($id)
+    public function showdraft(Competencia $competencia)
     {
-        //
+        if(!$competencia->publicada){
+            if($competencia->tipo == 'Cualquiera'){
+                $categorias = Categoria::all();
+            }
+            elseif($competencia->tipo == 'Equipos'){
+                $categorias = Categoria::where('tipo','Equipos')->get();
+            }
+            elseif($competencia->tipo == 'Proyectos'){
+                $categorias = Categoria::where('tipo','Proyectos')->get();
+            }      
+            
+            if($categorias->count() > 0){
+                // Recuperar los IDs de categorías ya registradas en competenciacategorias
+                $competenciacategorias = CompetenciaCategoria::pluck('categoria_id')->toArray();
+        
+                // Filtrar las categorías para excluir las que ya están registradas
+                $categorias = $categorias->filter(function ($categoria) use ($competenciacategorias) {
+                    return !in_array($categoria->id, $competenciacategorias);
+                });  
+
+                if($categorias->count() == 0){
+                    $todasregistradas = true;
+                }
+                else{
+                    $todasregistradas = false;
+                }
+            }
+            else{
+                $todasregistradas = false;
+            }             
+    
+            $categoriascount = $categorias->count();            
+
+            $competenciaCategorias = CompetenciaCategoria::where('categoria_id',$competencia->id)
+            ->orderBy('inicio_registros', 'asc')->orderBy('fin_registros', 'asc')->get();
+    
+            return view('competencia/showdraftcompetencia',compact('competencia', 'categoriascount', 'todasregistradas', 'competenciaCategorias'));
+        }        
+        elseif(!$competencia->publicada && $competencia->fecha <= Carbon::now()->startOfDay()){
+            return view('competencia/showexpiredcompetencia',compact('competencia'));
+        }
+        else{
+            return redirect('/competencia/draft');
+        }
     }
 
     public function publicar(Competencia $competencia) 

@@ -128,12 +128,14 @@
 
         <label for="descripcion" style="margin-bottom: 5px;"><b> Descripción: </b></label><br>
         <textarea class="width-descripcion" id="descripcion" name="descripcion" rows="4" style="resize: none;" minlength="1" maxlength="600" required>{{ old('descripcion') }}</textarea><br><br>
+        
 
         <label for = "fecha"><b>Fecha: </b></label>
-        <input type="date" name="fecha" required value = "{{ old('fecha') }}" min="{{ now()->toDateString() }}" max="{{ now()->addYears(2)->toDateString() }}"><br><br>
+        <input type="date" id="fecha_competencia" name="fecha" required value = "{{ old('fecha') }}" min="{{ now()->addDays(1)->toDateString() }}" max="{{ now()->addYears(2)->toDateString() }}"><br><br>
 
         <label for = "duracion"><b>Duración: </b></label>
-        <input type="number" name="duracion" id="duracion" required value = "{{ old('duracion') }}" min="1" max="31" step="1" style="width: 50px;"> días <br><br>
+        <input type="number" name="duracion" id="duracion" required value = "{{ old('duracion') }}" min="1" step="1" style="width: 50px;"> días <br><br>
+        
 
         <label for="tipo" style="margin-bottom: 5px;"><b>Tipo de inscripciones: </b></label><br>
         <select name="tipo" required style="width: 110px; height: 30px;">
@@ -143,6 +145,18 @@
             <option value="Proyectos" @selected(old('tipo') == 'Proyectos')>Proyectos</option>            
         </select><br><br>
 
+
+        <label for = "inicio_registros" style="margin-bottom: 10px;"><b>Fecha de registros: </b></label><br>    
+
+        <label for = "inicio_registros" style="margin-bottom: 15px;"><b> - Inicio: </b></label>        
+        <input type="date" id="inicio_registros" name="inicio_registros" required value = "{{ old('inicio_registros') }}" min="{{ now()->toDateString() }}" max="{{ now()->addDays(1)->toDateString() }}" disabled><br>
+
+        <label for = "fin_registros"><b> - Cierre: </b></label>
+        <input type="date" id="fin_registros" name="fin_registros" required value = "{{ old('fin_registros') }}" min="{{ now()->addDays(1)->toDateString() }}" max="{{ now()->addDays(1)->toDateString() }}" disabled><br><br>
+        
+        
+        <!-- <hr style="border: none; border-top: 2px solid #4b5563; margin: 30px 0;"> -->
+        
         <!--Seleccion multiple []-->
 
         <label for="sede"><b> Sede: </b></label>
@@ -167,6 +181,7 @@
 
         <input type="hidden" id="latitud" name="latitud" value = "{{ old('latitud') }}"/>
         <input type="hidden" id="longitud" name="longitud" value = "{{ old('longitud') }}"/>
+        
 
         <label for="imagen" style="margin-top: 30px; margin-bottom: 5px;"><b> Cargar imagen: </b></label><br>
         <div>
@@ -210,7 +225,7 @@
             zoomControl: false, // Desactivar el control de zoom predeterminado
             attributionControl: false, // Deshabilita los créditos del mapa.
             preferCanvas: true, // Optimizar mapa en celulares
-        }).setView(mapCenter, 10); // 10 --> Zoom
+        }).setView(mapCenter, 11); // 11 --> Zoom
 
         // Inicializar el mapa centrado en Guadalajara (Original)        
         /*var map = L.map('map', {
@@ -248,6 +263,13 @@
             // Crear el marcador en la ubicación inicial
             marker = L.marker(latLng, { draggable: true }).addTo(map);
             
+            // Evento para actualizar coordenadas al arrastrar el marcador
+            marker.on('dragend', function (event) {
+                var position = marker.getLatLng();
+                latitudeInput.value = position.lat;
+                longitudeInput.value = position.lng;
+                verificarCampos(); // Verificar los campos después de actualizar los valores
+            });            
         }
         
 
@@ -296,6 +318,7 @@
             if (!marker) {
                 // Crear marcador si no existe
                 marker = L.marker(center, { draggable: true }).addTo(map);
+
                 marker.on('dragend', function (event) {
                     var position = marker.getLatLng();
                     latitudeInput.value = position.lat;
@@ -347,6 +370,9 @@
    
 
     <script>
+
+        var latitude = document.getElementById('latitud');
+        var longitude = document.getElementById('longitud');
 
         // Validar imágen
         document.getElementById('imagen').addEventListener('change', function () {
