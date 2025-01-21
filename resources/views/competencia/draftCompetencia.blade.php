@@ -99,7 +99,7 @@ $timestampNow = now()->toDateString();
                         </div>
 
                         <div class="text-center" style="margin-top: 10px;">
-                            <a href="{{ route('competencia.showdraft', $competencia) }}" style="text-decoration: none; color: inherit;">
+                            <a onmouseover="this.style.color='white'" onmouseout="this.style.color='#6c7293'" href="{{ route('competencia.showdraft', $competencia) }}" style="text-decoration: none; color: inherit;">
                                 <b style="font-size: 25px;">{{ $competencia->name }}</b>
                             </a>
                         </div>

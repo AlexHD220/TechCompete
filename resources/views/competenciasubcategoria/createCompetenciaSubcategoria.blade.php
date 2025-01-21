@@ -34,24 +34,30 @@
     <form action="{{ route('competenciasubcategoria.store', [$competencia, $competenciaCategoria]) }}" method="post">
 
         <!--Mostrar errores-->
-        @if ($errors->any())
+        @if ($errors->any() || session('missing_costo'))
             <div class="msgAlerta">
-                <ul>                    
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach                    
+                <ul>
+                    @if(session('missing_costo'))
+                        <li>El campo "Costo" es obligatorio.</li>
+                    @endif
+
+                    @if ($errors->any())
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    @endif
                 </ul>
             </div>
             <br>
-        @endif    
+        @endif     
 
         @csrf <!--permite entrar al formulario muy importante agregar-->
 
-        <label for="subcategoria_id" style="margin-bottom: 5px;"><b> Subcategoría: </b></label><br>
-        <select id="subcategoria_id" name="subcategoria_id" required style="min-width:100px; " autofocus>
+        <label for="nivel" style="margin-bottom: 5px;"><b> Subcategoría: </b></label><br>
+        <select id="nivel" name="nivel" required style="min-width:100px; " autofocus>
             <option selected disabled value="">Selecciona una opción</option>            
             @foreach($subcategorias as $subcategoria)
-                <option value="{{ $subcategoria -> id }}" @if(old('subcategoria_id') == $subcategoria->id) selected @endif">
+                <option value="{{ $subcategoria -> nivel }}" @if(old('nivel') == $subcategoria->nivel) selected @endif">
                     Nivel {{ $subcategoria->nivel }}
                 </option>
             @endforeach
@@ -69,7 +75,7 @@
             <label for = "costo_personalizado"><b>Costo de inscripción personalizado: </b></label>
         </div><br>
 
-        <div id="personalizar_costo" class="disabled-input">            
+        <div id="personalizar_costo" class="disabled-input">
 
             <label for = "costo"><b>Costo: $</b></label>
             <input type="number" name="costo" id="costo" required value = "{{ old('costo') }}" min="0" step="1" style="width: 75px;" disabled> pesos mexicanos <br><br>
@@ -109,79 +115,36 @@
         </div>
     </form>
 
-    <script>    
-
-        if(document.getElementById('inicio_registros').value){
-            document.getElementById('fin_registros').removeAttribute('disabled');
-        }
-        
-        document.getElementById('inicio_registros').addEventListener('input', function() {
-            var fechaFin = document.getElementById('fin_registros');
-            if (this.value.trim() !== '') {
-                fechaFin.removeAttribute('disabled');
-                fechaFin.value = ""; // Limpia el valor de fecha_fin si se deshabilita
-            } else {
-                fechaFin.setAttribute('disabled', 'true');
-                fechaFin.value = ""; // Limpia el valor de fecha_fin si se deshabilita
-            }
-        });
-
-        
-        const fechaInput = document.getElementById('inicio_registros');
-        const fechaFinInput = document.getElementById('fin_registros');
-
-        // Actualizar el mínimo de fecha_fin al cambiar fecha
-        fechaInput.addEventListener('change', function () {
-            if (fechaInput.value) {
-                const fechaSeleccionada = new Date(fechaInput.value);
-                fechaSeleccionada.setDate(fechaSeleccionada.getDate() + 1); // Sumar 1 día
-                const minimoFechaFin = fechaSeleccionada.toISOString().split('T')[0]; // Formatear a YYYY-MM-DD
-
-                fechaFinInput.min = minimoFechaFin;
-            } else {                
-                const tomorrow = new Date();
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
-                
-                fechaFinInput.min = tomorrowFormatted;          
-            }
-        });
-
-    </script>
-
     <script>
         // Referencias al checkbox y al input de fecha
         const checkbox = document.getElementById('costo_personalizado');
-        const inicioRegistrosCheckbox = document.getElementById('inicio_registros');
-        const finRegistrosCheCkbox = document.getElementById('fin_registros');
+        const costoCheckbox = document.getElementById('costo');        
 
         // Referencias al checkbox y al input de fecha        
-        const fechaPerzonalizadaCheckbox = document.getElementById('personalizar_costo');
+        const personalizarCostoCheckbox = document.getElementById('personalizar_costo');
 
         if(checkbox.checked){
-            inicioRegistrosCheckbox.removeAttribute('disabled'); // Habilitar el input                
+            costoCheckbox.removeAttribute('disabled'); // Habilitar el input                
 
-            fechaPerzonalizadaCheckbox.classList.remove('disabled-input'); // Quitar opacidad del 50%
-            fechaPerzonalizadaCheckbox.classList.add('enabled-input'); // Aplicar opacidad del 100%
+            personalizarCostoCheckbox.classList.remove('disabled-input'); // Quitar opacidad del 50%
+            personalizarCostoCheckbox.classList.add('enabled-input'); // Aplicar opacidad del 100%
         }
 
         // Escuchar cambios en el checkbox
         checkbox.addEventListener('change', function () {
             if (this.checked) {
-                inicioRegistrosCheckbox.removeAttribute('disabled'); // Habilitar el input                
+                costoCheckbox.removeAttribute('disabled'); // Habilitar el input   
+                costoCheckbox.value = 0; // Limpia el valor de fecha_inicio               
 
-                fechaPerzonalizadaCheckbox.classList.remove('disabled-input'); // Quitar opacidad del 50%
-                fechaPerzonalizadaCheckbox.classList.add('enabled-input'); // Aplicar opacidad del 100%
+                personalizarCostoCheckbox.classList.remove('disabled-input'); // Quitar opacidad del 50%
+                personalizarCostoCheckbox.classList.add('enabled-input'); // Aplicar opacidad del 100%
             } 
             else {
-                fechaPerzonalizadaCheckbox.classList.remove('enabled-input'); // Quitar opacidad del 100%
-                fechaPerzonalizadaCheckbox.classList.add('disabled-input'); // Aplicar opacidad del 50%
+                personalizarCostoCheckbox.classList.remove('enabled-input'); // Quitar opacidad del 100%
+                personalizarCostoCheckbox.classList.add('disabled-input'); // Aplicar opacidad del 50%
 
-                inicioRegistrosCheckbox.setAttribute('disabled', 'true'); // Deshabilitar el input
-                finRegistrosCheCkbox.setAttribute('disabled', 'true'); // Deshabilitar el input
-
-                inicioRegistrosCheckbox.value = ""; // Limpia el valor de fecha_inicio
-                finRegistrosCheCkbox.value = ""; // Limpia el valor de fecha_fin                
+                costoCheckbox.setAttribute('disabled', 'true'); // Deshabilitar el input                
+                costoCheckbox.value = ""; // Limpia el valor de fecha_inicio                
             }
         });
     </script>

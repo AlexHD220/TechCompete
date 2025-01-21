@@ -217,7 +217,7 @@
                     <div class="categorias-card">
 
                         <div class="text-center" style="margin-top: 0px;">
-                            <a href="{{ route('competenciacategoria.show', [$competencia, $competenciaCategoria]) }}" style="text-decoration: none; color: inherit;">
+                            <a onmouseover="this.style.color='white'" onmouseout="this.style.color='#6c7293'" href="{{ route('competenciacategoria.show', [$competencia, $competenciaCategoria]) }}" style="text-decoration: none; color: inherit;">
                                 <b style="font-size: 25px;">"{{ $competenciaCategoria->categoria->name }}"</b>
                             </a>
                         </div>

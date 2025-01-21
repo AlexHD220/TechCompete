@@ -34,15 +34,15 @@ class PreviousUrlButton
 
 
         // Si hubo un error en el envio del formulario BETA
-        if ((str_contains($currentUrl, '/create') || str_contains($currentUrl, '/edit')) && ($customPreviousUrl == $respaldoPrevious)) { // BETA
+        if ((str_contains($currentUrl, '/create') || str_contains($currentUrl, '/edit') || str_contains($currentUrl, '/attach')) && ($customPreviousUrl == $respaldoPrevious)) { // BETA
             Session::put('_current_custom_previous.url', $currentUrl);  //
             
             Session::put('_custom_previous.url', $errorForm); //
 
             Session::put('_respaldo_previous.url', $respaldoPrevious);  //
         }
-        // Si la URL anterior contiene '/create' o '/edit'
-        else if (str_contains($currentCustomPrevious, '/create') || str_contains($currentCustomPrevious, '/edit')) {                        
+        // Si la URL anterior contiene '/create' o '/edit' o '/attach'
+        else if (str_contains($currentCustomPrevious, '/create') || str_contains($currentCustomPrevious, '/edit') || str_contains($currentCustomPrevious, '/attach')) {                        
 
             // Si la URL previa es diferente a la actual, la guardamos
             if ($currentUrl !== $currentCustomPrevious){ // Si se recarga la pagina     

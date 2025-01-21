@@ -65,7 +65,91 @@ class CompetenciaSubcategoriaController extends Controller
      */
     public function store(Request $request, Competencia $competencia, CompetenciaCategoria $competenciaCategoria)
     {
-        //
+        // Agregar la validación condicional
+        if($request->costo_personalizado){
+            if(!$request->costo && $request->costo != 0){
+                session()->flash('missing_costo', true);
+                $costo_errors = true;
+            }         
+        }else{
+            $costo_errors = false;
+        }
+
+        dd($request->all());
+
+        $request->validate([
+            'costo' => ['integer','min:0',],
+            'limite_inscripciones' => ['nullable|integer','min:2',],
+            'min_participantes' => ['required','integer','min:1',],  
+            'max_participantes' => ['required','integer','min:1',],          
+            'fecha' => 'required'
+        ]);
+        
+        if ($costo_errors) {
+            //dd($request->all());                  
+            return redirect()->back()->withInput();
+        }
+
+        $competenciasubcategoria = new CompetenciaSubcategoria();
+
+        // Crear el registro en la base de datos
+        
+        $competenciasubcategoria->competencia_categoria_id = $competenciaCategoria->id;
+        $competenciasubcategoria->nivel = $request->nivel;
+        $competenciasubcategoria->min_participantes = $request->min_participantes;
+        $competenciasubcategoria->max_participantes = $request->max_participantes;
+
+        if($request->costo_personalizado){
+            $competenciasubcategoria->costo_personalizado = true;
+            $competenciasubcategoria->costo = $request->costo;            
+        }else{
+            $competenciasubcategoria->costo_personalizado = false;
+        }   
+
+        if($request->limite_inscripciones){
+            $competenciasubcategoria->limite_inscripciones = $request->limite_inscripciones;                   
+        }  
+
+        //dd($registrojuez->id);
+        
+        $competenciasubcategoria->save();
+
+
+        /*if($competencia->publicada == 1){ // RECUERDA DE ENVIAR A CATEGORIA SHOW EN EL EDIT
+            return redirect() -> route('competencia.show', $competencia);    
+        }
+        else{
+            return redirect() -> route('competencia.showdraft', $competencia);    
+        }  */   
+ 
+
+        // Verificar la acción seleccionada
+        if ($request->action == "Registrar Subcategoría") {
+            if($competencia->publicada == 1){ // RECUERDA DE ENVIAR A CATEGORIA SHOW EN EL EDIT                
+                return redirect()->route('competenciacategoria.show', [$competencia, $competenciaCategoria]);  
+            }
+            else{
+                return redirect()->route('competenciacategoria.showdraft', [$competencia, $competenciaCategoria]);   
+            } 
+        }
+        else{            
+
+            // Configura los datos para la notificación
+            session()->flash('alerta', [
+                'titulo' => '"' . $request->nivel . '"',
+                'texto' => 'Nivel de participación Agregado Exitosamente!',
+                'icono' => 'success',
+                'tiempo' => 2000,
+                'botonConfirmacion' => false,
+            ]);
+
+            if($competencia->publicada == 1){ // RECUERDA DE ENVIAR A CATEGORIA SHOW EN EL EDIT
+                return redirect()->route('competenciasubcategoria.create', [$competencia, $competenciaCategoria]);  
+            }
+            else{
+                return redirect()->route('competenciasubcategoria.createdraft', [$competencia, $competenciaCategoria]);      
+            }      
+        }
     }
 
     /**

@@ -181,33 +181,33 @@ class CompetenciaCategoriaController extends Controller
  
 
         // Verificar la acción seleccionada
-    if ($request->action == "Registrar Categoría") {
-        if($competencia->publicada == 1){ // RECUERDA DE ENVIAR A CATEGORIA SHOW EN EL EDIT
-            return redirect('/competencia');    
+        if ($request->action == "Registrar Categoría") {
+            if($competencia->publicada == 1){ // RECUERDA DE ENVIAR A CATEGORIA SHOW EN EL EDIT
+                return redirect()->route('competencia.show', $competencia);  
+            }
+            else{
+                return redirect()->route('competencia.showdraft', $competencia);
+            } 
         }
         else{
-            return redirect('/competencia/draft');   
-        } 
-    }
-    else{
-        $categoria = Categoria::findOrFail($request->categoria_id);
+            $categoria = Categoria::findOrFail($request->categoria_id);
 
-        // Configura los datos para la notificación
-        session()->flash('alerta', [
-            'titulo' => '"' . $categoria->name . '"',
-            'texto' => '¡Categoría Agregada Exitosamente!',
-            'icono' => 'success',
-            'tiempo' => 2000,
-            'botonConfirmacion' => false,
-        ]);
+            // Configura los datos para la notificación
+            session()->flash('alerta', [
+                'titulo' => '"' . $categoria->name . '"',
+                'texto' => '¡Categoría Agregada Exitosamente!',
+                'icono' => 'success',
+                'tiempo' => 2000,
+                'botonConfirmacion' => false,
+            ]);
 
-        if($competencia->publicada == 1){ // RECUERDA DE ENVIAR A CATEGORIA SHOW EN EL EDIT
-            return redirect()->route('competenciacategoria.create', $competencia);  
+            if($competencia->publicada == 1){ // RECUERDA DE ENVIAR A CATEGORIA SHOW EN EL EDIT
+                return redirect()->route('competenciacategoria.create', $competencia);  
+            }
+            else{
+                return redirect()->route('competenciacategoria.createdraft', $competencia);      
+            }      
         }
-        else{
-            return redirect()->route('competenciacategoria.createdraft', $competencia);      
-        }      
-    }
 
     }
 
