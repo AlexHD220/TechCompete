@@ -40,8 +40,8 @@ class CompetenciaCategoriaController extends Controller
             }
     
             if($categorias->count() > 0){
-                // Recuperar los IDs de categorías ya registradas en competenciacategorias
-                $competenciacategorias = CompetenciaCategoria::pluck('categoria_id')->toArray();
+                // Recuperar los IDs de categorías ya registradas en competenciacategorias                                
+                $competenciacategorias = CompetenciaCategoria::where('competencia_id',$competencia->id)->pluck('categoria_id')->toArray();
         
                 // Filtrar las categorías para excluir las que ya están registradas
                 $categorias = $categorias->filter(function ($categoria) use ($competenciacategorias) {
@@ -87,8 +87,8 @@ class CompetenciaCategoriaController extends Controller
             }
 
             if($categorias->count() > 0){
-                // Recuperar los IDs de categorías ya registradas en competenciacategorias
-                $competenciacategorias = CompetenciaCategoria::pluck('categoria_id')->toArray();
+                // Recuperar los IDs de categorías ya registradas en competenciacategorias                
+                $competenciacategorias = CompetenciaCategoria::where('competencia_id',$competencia->id)->pluck('categoria_id')->toArray();
         
                 // Filtrar las categorías para excluir las que ya están registradas
                 $categorias = $categorias->filter(function ($categoria) use ($competenciacategorias) {
@@ -121,8 +121,9 @@ class CompetenciaCategoriaController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request, Competencia $competencia)
-    {
-
+    {        
+        $fecha_errors = false;
+        
         // Agregar la validación condicional
         if($request->registro_personalizado){
             if(!$request->inicio_registros){
@@ -133,9 +134,7 @@ class CompetenciaCategoriaController extends Controller
             if(!$request->fin_registros){
                 session()->flash('missing_fecha_fin', true);
                 $fecha_errors = true;
-            }            
-        }else{
-            $fecha_errors = false;
+            }                      
         }
 
         $request->validate([
@@ -197,7 +196,7 @@ class CompetenciaCategoriaController extends Controller
                 'titulo' => '"' . $categoria->name . '"',
                 'texto' => '¡Categoría Agregada Exitosamente!',
                 'icono' => 'success',
-                'tiempo' => 2000,
+                'tiempo' => 2500,
                 'botonConfirmacion' => false,
             ]);
 
@@ -221,8 +220,8 @@ class CompetenciaCategoriaController extends Controller
             $subcategorias = Subcategoria::all();                        
 
             if($subcategorias->count() > 0){
-                // Recuperar los IDs de categorías ya registradas en competenciacategorias
-                $competenciasubcategorias = CompetenciaSubcategoria::pluck('nivel')->toArray();
+                // Recuperar los IDs de categorías ya registradas en competenciacategorias                
+                $competenciasubcategorias = CompetenciaSubcategoria::where('competencia_categoria_id',$competenciaCategoria->id)->pluck('nivel')->toArray();
         
                 // Filtrar las categorías para excluir las que ya están registradas
                 $subcategorias = $subcategorias->filter(function ($subcategoria) use ($competenciasubcategorias) {
@@ -272,24 +271,130 @@ class CompetenciaCategoriaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(CompetenciaCategoria $competenciaCategoria)
+    public function edit(Competencia $competencia, CompetenciaCategoria $competenciaCategoria)
     {
-        //
+        if($competencia->publicada){                        
+
+            if($competencia->tipo == 'Cualquiera'){
+                $categorias = Categoria::orderBy('tipo', 'asc')->orderBy('name', 'asc')->get();
+            }
+            elseif($competencia->tipo == 'Equipos'){
+                $categorias = Categoria::where('tipo','Equipos')
+                ->orderBy('name', 'asc')->get();
+            }
+            elseif($competencia->tipo == 'Proyectos'){
+                $categorias = Categoria::where('tipo','Proyectos')
+                ->orderBy('name', 'asc')->get();
+            }
+    
+            if($categorias->count() > 0){
+                // Recuperar los IDs de categorías ya registradas en competenciacategorias excepto el actual
+                $competenciacategorias = CompetenciaCategoria::where('competencia_id',$competencia->id)
+                ->where('categoria_id', '!=', $competenciaCategoria->categoria_id)->pluck('categoria_id')->toArray();
+        
+                // Filtrar las categorías para excluir las que ya están registradas
+                $categorias = $categorias->filter(function ($categoria) use ($competenciacategorias) {
+                    return !in_array($categoria->id, $competenciacategorias);
+                });  
+                
+                return view('competenciacategoria/editcompetenciacategoria', compact('competencia', 'competenciaCategoria', 'categorias'));
+            }   
+            else{
+                    return redirect() -> route('competencia.show', $competencia);    
+            }                      
+        }
+        else{
+            return redirect('/competencia/draft');
+        } 
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, CompetenciaCategoria $competenciaCategoria)
+    public function update(Request $request, Competencia $competencia, CompetenciaCategoria $competenciaCategoria)
     {
-        //
+        //dd($request->all());
+
+        $fecha_errors = false;
+        
+        // Agregar la validación condicional
+        if($request->registro_personalizado){
+            if(!$request->inicio_registros){
+                session()->flash('missing_fecha', true);
+                $fecha_errors = true;
+            }
+
+            if(!$request->fin_registros){
+                session()->flash('missing_fecha_fin', true);
+                $fecha_errors = true;
+            }                      
+        }
+
+        $request->validate([
+            'inicio_registros' => ['date','before:' . \Carbon\Carbon::parse($competencia->fecha)->format('Y-m-d'),],
+            'fin_registros' => 'date|after:fecha',
+            //'fecha' => 'required'
+        ]);
+        
+        if ($fecha_errors) {
+            //dd($request->all());                  
+            return redirect()->back()->withInput();
+        }
+        
+
+        if($request->registro_personalizado){
+            $request -> merge([            
+                'registro_personalizado' => true,
+            ]);
+        }else{
+            $request -> merge([            
+                'registro_personalizado' => false,
+                'inicio_registros' => null,
+                'fin_registros' => null,
+            ]);
+        }   
+
+        CompetenciaCategoria::where('id', $competenciaCategoria->id)->update($request->except('_token','_method','action'));     
+
+        // Configura los datos para la notificación
+        session()->flash('alerta', [                
+            'texto' => '¡Categoría Actualizada Exitosamente!',
+            'icono' => 'success',
+            'tiempo' => 2500,
+            'botonConfirmacion' => false,
+        ]);
+        
+        if($competencia->publicada == 1){            
+            return redirect() -> route('competenciacategoria.show', [$competencia, $competenciaCategoria]);  
+        }
+        else{                           
+            return redirect() -> route('competenciacategoria.showdraft', [$competencia, $competenciaCategoria]); 
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CompetenciaCategoria $competenciaCategoria)
-    {
-        //
+    public function destroy(Competencia $competencia, CompetenciaCategoria $competenciaCategoria)
+    {        
+        $categoria = Categoria::find($competenciaCategoria->categoria_id);
+
+        $competenciaCategoria -> delete();
+
+        // Configura los datos para la notificación
+        session()->flash('alerta', [
+            'titulo' => '"' . $categoria->name . '"',
+            'texto' => '¡Categoría Eliminada Exitosamente!',
+            'icono' => 'success',
+            'tiempo' => 2500,
+            'botonConfirmacion' => false,
+        ]);
+
+        if($competencia->publicada == 1){ // RECUERDA DE ENVIAR A CATEGORIA SHOW EN EL EDIT
+            return redirect()->route('competencia.show', $competencia);  
+        }
+        else{
+            return redirect()->route('competencia.showdraft', $competencia);
+        } 
     }
 }

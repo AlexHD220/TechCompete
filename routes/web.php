@@ -332,46 +332,56 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
     Route::post('competencia/{competencia}/categoria', [CompetenciaCategoriaController::class, 'store'])
     ->name('competenciacategoria.store');
     
-
     // Ruta para mostrar los detalles de registros no publicados
     Route::get('competencia/{competencia}/categoria/{competenciaCategoria}', [CompetenciaCategoriaController::class, 'show'])
     ->name('competenciacategoria.show');
-
     
+    // Ruta para mostrar los registros pendientes de publicar
+    Route::get('competencia/{competencia}/categoria/{competenciaCategoria}/edit', [CompetenciaCategoriaController::class, 'edit'])
+    ->name('competenciacategoria.edit');
+
+    Route::patch('competencia/{competencia}/categoria/{competenciaCategoria}', [CompetenciaCategoriaController::class, 'update'])
+    ->name('competenciacategoria.update');
+
+    // Ruta Destroy 
+    Route::delete('competencia/{competencia}/categoria/{competenciaCategoria}', [CompetenciaCategoriaController::class, 'destroy'])
+    ->name('competenciacategoria.destroy');
+
     //---------------------------------------> Pendientes de inplementar [!]
 
     // Ruta para mostrar los detalles de registros no publicados
     Route::get('competencia/draft/{competencia}/categoria/{competenciaCategoria}', [CompetenciaCategoriaController::class, 'showdraft'])
-    ->name('competenciacategoria.showdraft');
-    
-
-    // Ruta para mostrar los registros pendientes de publicar
-    Route::get('competencia/{competencia}/categoria/{competenciaCategoria}/edit', [CompetenciaCategoriaController::class, 'edit'])
-    ->name('competenciacategoria.edit');
+    ->name('competenciacategoria.showdraft');    
 
     // Ruta para mostrar los registros pendientes de publicar
     Route::get('competencia/draft/{competencia}/categoria/{competenciaCategoria}/edit', [CompetenciaCategoriaController::class, 'editdraft'])
     ->name('competenciacategoria.editdraft');
 
-
-    // Ruta Destroy mofificada
-    Route::delete('competencia/{competencia}/categoria/{competenciaCategoria}', [CompetenciaCategoriaController::class, 'destroy'])
-    ->name('competenciacategoria.destroy');
-
 //------------------------------------------------------------------------------------|
 
 //------------------------------------------------------------------------------------> Competencia_Subcategoria
 
-    Route::get('competencia/{competencia}/categoria/{competenciaCategoria}/attach', [CompetenciaSubcategoriaController::class, 'create'])
+    Route::get('competencia/{competencia}/categoria/{competenciaCategoria}/subcategoria/attach', [CompetenciaSubcategoriaController::class, 'create'])
     ->name('competenciasubcategoria.create');
-
-    //---------------------------------------> Pendientes de inplementar [!]
-
-    Route::get('competencia/draft/{competencia}/categoria/{competenciaCategoria}/attach', [CompetenciaSubcategoriaController::class, 'createdraft'])
-    ->name('competenciasubcategoria.createdraft');
 
     Route::post('competencia/{competencia}/categoria/{competenciaCategoria}/subcategoria', [CompetenciaSubcategoriaController::class, 'store'])
     ->name('competenciasubcategoria.store');
+
+    // Ruta para mostrar los registros pendientes de publicar
+    Route::get('competencia/{competencia}/categoria/{competenciaCategoria}/subcategoria/{competenciaSubcategoria}/edit', [CompetenciaSubcategoriaController::class, 'edit'])
+    ->name('competenciasubcategoria.edit');
+
+    Route::patch('competencia/{competencia}/categoria/{competenciaCategoria}/subcategoria/{competenciaSubcategoria}', [CompetenciaSubcategoriaController::class, 'update'])
+    ->name('competenciasubcategoria.update');
+
+    // Ruta Destroy 
+    Route::delete('competencia/{competencia}/categoria/{competenciaCategoria}/subcategoria/{competenciaSubcategoria}', [CompetenciaSubcategoriaController::class, 'destroy'])
+    ->name('competenciasubcategoria.destroy');
+
+    //---------------------------------------> Pendientes de inplementar [!]
+
+    Route::get('competencia/draft/{competencia}/categoria/{competenciaCategoria}/subcategoria/attach', [CompetenciaSubcategoriaController::class, 'createdraft'])
+    ->name('competenciasubcategoria.createdraft');    
 
 //------------------------------------------------------------------------------------|
 

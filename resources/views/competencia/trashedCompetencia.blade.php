@@ -53,6 +53,15 @@ $timestampNow = now()->toDateString();
     $rutaActual = request()->path();
 @endphp-->
 
+    @if (session('alerta'))
+        <script>                
+            document.addEventListener('DOMContentLoaded', function () {            
+                    // Captura los datos de la sesión y llama a la función                        
+                    sweetAlertNotification("{{ session('alerta.titulo') }}", "{{ session('alerta.texto') }}", "{{ session('alerta.icono') }}", "{{ session('alerta.tiempo') }}", "{{ session('alerta.botonConfirmacion') }}");
+            });
+        </script>
+    @endif
+
 <div>
 
     <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">

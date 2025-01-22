@@ -37,6 +37,15 @@
 
 <x-plantilla-body>    
 
+    @if (session('alerta'))
+        <script>                
+            document.addEventListener('DOMContentLoaded', function () {            
+                    // Captura los datos de la sesión y llama a la función                        
+                    sweetAlertNotification("{{ session('alerta.titulo') }}", "{{ session('alerta.texto') }}", "{{ session('alerta.icono') }}", "{{ session('alerta.tiempo') }}", "{{ session('alerta.botonConfirmacion') }}");
+            });
+        </script>
+    @endif
+
     <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 0px; justify-content: center;">
         
         <h1 style="margin-top: 8px;"> {{ $categoria -> name }}</h1> 
@@ -65,7 +74,7 @@
                     <button class="btn btn-primary" link="{{ route('competenciacategoria.create', $competencia) }}" 
                     onclick="window.location.href = this.getAttribute('link');">
                         Inscribirse
-                    </button> <!-- Link pendiente --> 
+                    </button> <!-- RUTA PENDIENTE PARA INSCRIPCIONES --> 
                 @else
                     <div style="text-align: center;">
                         <a style="font-size: 14px; color: #eb1616;">
@@ -147,7 +156,7 @@
 
                         <div class="text-center" style="margin-top: 5px; margin-top: 0px;">                            
                             @if($competenciaSubcategoria->max_participantes == 1)
-                                <h style="font-size: 15px;">Individualmente</h>
+                                <h style="font-size: 15px;">(Individualmente)</h>
                             @else
                                 <h style="font-size: 15px;">({{ $competenciaSubcategoria->min_participantes }} a {{ $competenciaSubcategoria->max_participantes }} participantes)</h>
                             @endif
@@ -191,21 +200,19 @@
 
                                 <div class="text-center" style="margin-top: 10px;">
                                     <!-- Botón para Editar -->
-                                    <a href="{{ route('competenciacategoria.edit', [$competencia, $competenciaSubcategoria]) }}" onmouseover="this.style.backgroundColor='#818284';" onmouseout="this.style.backgroundColor='#434851';" 
+                                    <a href="{{ route('competenciasubcategoria.edit', [$competencia, $competenciaCategoria, $competenciaSubcategoria]) }}" onmouseover="this.style.backgroundColor='#818284';" onmouseout="this.style.backgroundColor='#434851';" 
                                     style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: #434851; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
-                                    title="Editar Categoría">                                
+                                    title="Editar Nivel de Participación">                                
                                         <i class="fas fa-edit" style="font-size: 20px;"></i> <!-- Ícono de FontAwesome -->
                                     </a>    
                                     
-                                    <form action="{{route('competenciacategoria.destroy', [$competencia, $competenciaSubcategoria])}}" method = "POST" style="display: inline-block;">
+                                    <form action="{{route('competenciasubcategoria.destroy', [$competencia, $competenciaCategoria, $competenciaSubcategoria])}}" method = "POST" style="display: inline-block;">
                                         @csrf
-                                        @method('DELETE')
-
-                                        <input id="ruta" type="hidden" name="ruta" value="{{ request()->path() }}">
+                                        @method('DELETE')                                        
                                         
-                                        <button type="submit" onclick="return confirm('¿Está seguro que desea eliminar esta categoría de la competencia?')" onmouseover="this.style.backgroundColor='#ff6666';" onmouseout="this.style.backgroundColor='red';"  
+                                        <button type="submit" onclick="return confirm('¿Está seguro que desea eliminar este nivel de participación?')" onmouseover="this.style.backgroundColor='#ff6666';" onmouseout="this.style.backgroundColor='red';"  
                                         style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: red; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
-                                        title="Eliminar Categoría de la Competencia">
+                                        title="Eliminar Nivel de Participación">
                                             <i class="fas fa-trash" style="font-size: 20px;"></i> <!-- Ícono de FontAwesome -->
                                         </button>
                                     </form>   

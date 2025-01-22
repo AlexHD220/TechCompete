@@ -29,8 +29,8 @@ class CompetenciaSubcategoriaController extends Controller
             $subcategorias = Subcategoria::orderBy('nivel', 'asc')->get();                      
 
             if($subcategorias->count() > 0){
-                // Recuperar los IDs de categorías ya registradas en competenciacategorias
-                $competenciasubcategorias = CompetenciaSubcategoria::pluck('nivel')->toArray();
+                // Recuperar los IDs de categorías ya registradas en competenciacategorias                
+                $competenciasubcategorias = CompetenciaSubcategoria::where('competencia_categoria_id',$competenciaCategoria->id)->pluck('nivel')->toArray();
         
                 // Filtrar las categorías para excluir las que ya están registradas
                 $subcategorias = $subcategorias->filter(function ($subcategoria) use ($competenciasubcategorias) {
@@ -65,14 +65,14 @@ class CompetenciaSubcategoriaController extends Controller
      */
     public function store(Request $request, Competencia $competencia, CompetenciaCategoria $competenciaCategoria)
     {
+        $costo_errors = false;
+
         // Agregar la validación condicional
         if($request->costo_personalizado){
             if(!$request->costo && $request->costo != 0){
                 session()->flash('missing_costo', true);
                 $costo_errors = true;
-            }         
-        }else{
-            $costo_errors = false;
+            }       
         }
 
         //dd($request->all());
@@ -82,7 +82,7 @@ class CompetenciaSubcategoriaController extends Controller
             'limite_inscripciones' => ['nullable', 'integer','min:2',],
             'min_participantes' => ['required','integer','min:1',],  
             'max_participantes' => ['required','integer','min:1',],          
-            'fecha' => 'required'
+            //'fecha' => 'required'
         ]);
         
         if ($costo_errors) {
@@ -137,9 +137,9 @@ class CompetenciaSubcategoriaController extends Controller
             // Configura los datos para la notificación
             session()->flash('alerta', [
                 'titulo' => '"' . $request->nivel . '"',
-                'texto' => 'Nivel de participación Agregado Exitosamente!',
+                'texto' => '¡Nivel de participación Agregado Exitosamente!',
                 'icono' => 'success',
-                'tiempo' => 2000,
+                'tiempo' => 2500,
                 'botonConfirmacion' => false,
             ]);
 
@@ -155,7 +155,7 @@ class CompetenciaSubcategoriaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(CompetenciaSubcategoria $competenciaSubcategoria)
+    public function show(Competencia $competencia, CompetenciaCategoria $competenciaCategoria, CompetenciaSubcategoria $competenciaSubcategoria)
     {
         //
     }
@@ -163,15 +163,39 @@ class CompetenciaSubcategoriaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(CompetenciaSubcategoria $competenciaSubcategoria)
+    public function edit(Competencia $competencia, CompetenciaCategoria $competenciaCategoria, CompetenciaSubcategoria $competenciaSubcategoria)
     {
-        //
+        if($competencia->publicada){              
+            
+            $subcategorias = Subcategoria::orderBy('nivel', 'asc')->get();         
+
+            if($subcategorias->count() > 0){
+                // Recuperar los IDs de categorías ya registradas en competenciacategorias                
+                $competenciasubcategorias = CompetenciaSubcategoria::where('competencia_categoria_id',$competenciaCategoria->id)
+                ->where('nivel', '!=', $competenciaSubcategoria->nivel)->pluck('nivel')->toArray();
+        
+                // Filtrar las categorías para excluir las que ya están registradas
+                $subcategorias = $subcategorias->filter(function ($subcategoria) use ($competenciasubcategorias) {
+                    return !in_array($subcategoria->nivel, $competenciasubcategorias);
+                });  
+                
+                $categoria = Categoria::findOrFail($competenciaCategoria->competencia_id);                
+
+                return view('competenciasubcategoria/editcompetenciasubcategoria', compact('competencia', 'competenciaCategoria', 'competenciaSubcategoria', 'categoria', 'subcategorias'));              
+            }   
+            else{
+                return redirect() -> route('competenciacategoria.show', [$competencia, $competenciaCategoria]); 
+            } 
+        }
+        else{
+            return redirect('/competencia/draft');
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, CompetenciaSubcategoria $competenciaSubcategoria)
+    public function update(Request $request, Competencia $competencia, CompetenciaCategoria $competenciaCategoria, CompetenciaSubcategoria $competenciaSubcategoria)
     {
         //
     }
@@ -179,7 +203,7 @@ class CompetenciaSubcategoriaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CompetenciaSubcategoria $competenciaSubcategoria)
+    public function destroy(Competencia $competencia, CompetenciaCategoria $competenciaCategoria, CompetenciaSubcategoria $competenciaSubcategoria)
     {
         //
     }

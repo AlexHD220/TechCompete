@@ -2,7 +2,7 @@
 <html lang="es">
 
 <x-plantilla-head>
-    <title>Agregar Subcategoría</title>
+    <title>Editar Subcategoría</title>
 
     <style>    
         .disabled-input {
@@ -29,9 +29,9 @@
         </script>
     @endif
 
-    <h1 style="margin-bottom: 15px;">Nueva Subcategoría ({{ $competencia->publicada ? '' : 'Borrador ' }}{{$competencia->name}})</h1>
+    <h1 style="margin-bottom: 15px;">Editar Subcategoría ({{ $competencia->publicada ? '' : 'Borrador ' }}{{$competencia->name}})</h1>
 
-    <form action="{{ route('competenciasubcategoria.store', [$competencia, $competenciaCategoria]) }}" method="post">
+    <form action="{{ route('competenciasubcategoria.update', [$competencia, $competenciaCategoria, $competenciaSubcategoria]) }}" method="post"  enctype="multipart/form-data">    
 
         <!--Mostrar errores-->
         @if ($errors->any() || session('missing_costo'))
@@ -52,12 +52,13 @@
         @endif     
 
         @csrf <!--permite entrar al formulario muy importante agregar-->
+        @method ('PATCH') <!--permite truquear nuestro formulario para editar la informacion-->
 
         <label for="nivel" style="margin-bottom: 5px;"><b> Subcategoría: </b></label><br>
         <select id="nivel" name="nivel" required style="min-width:100px; " autofocus>
             <option selected disabled value="">Selecciona una opción</option>            
-            @foreach($subcategorias as $subcategoria)
-                <option value="{{ $subcategoria -> nivel }}" @if(old('nivel') == $subcategoria->nivel) selected @endif">
+            @foreach($subcategorias as $subcategoria)                
+                <option value="{{ $subcategoria -> nivel }}" @if(old('nivel') == $subcategoria->nivel || $competenciaSubcategoria->nivel == $subcategoria->nivel) selected @endif>
                     Nivel {{ $subcategoria->nivel }}
                 </option>
             @endforeach
@@ -67,7 +68,7 @@
         <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 10px;">
             <div>
                 <label class="switch">
-                <input type="checkbox" id="costo_personalizado" name="costo_personalizado" {{ old('costo_personalizado') ? 'checked' : '' }}>
+                <input type="checkbox" id="costo_personalizado" name="costo_personalizado" {{ old('costo_personalizado') ? 'checked' : ($competenciaSubcategoria->costo_personalizado ? 'checked' : '') }}>
                 <span class="slider"></span>
                 </label>
             </div>
@@ -78,11 +79,11 @@
         <div id="personalizar_costo" class="disabled-input">
 
             <label for = "costo"><b>Costo: $</b></label>
-            <input type="number" name="costo" id="costo" required value = "{{ old('costo') }}" min="0" step="1" style="width: 75px;" disabled> pesos mexicanos <br><br>
+            <input type="number" name="costo" id="costo" required value = "{{ old('costo') ?? $competenciaSubcategoria -> costo }}" min="0" step="1" style="width: 75px;" disabled> pesos mexicanos <br><br>
         </div>   
         
         <label for = "limite_inscripciones"><b>Limite de inscripciones: </b></label>
-        <input type="number" name="limite_inscripciones" id="limite_inscripciones" value = "{{ old('limite_inscripciones') }}" min="2" step="1" style="width: 75px;"> lugares <br><br>
+        <input type="number" name="limite_inscripciones" id="limite_inscripciones" value = "{{ old('limite_inscripciones') ?? $competenciaSubcategoria -> limite_inscripciones }}" min="2" step="1" style="width: 75px;"> lugares <br><br>
 
 
         @if($categoria->tipo == 'Equipos')
@@ -90,28 +91,22 @@
         @elseif($categoria->tipo == 'Proyectos')
             <label for = "min_participantes"><b>Mínimo de participantes por proyecto: </b></label>
         @endif
-        <input type="number" name="min_participantes" id="min_participantes" required value = "{{ old('min_participantes') ? old('min_participantes') : 1 }}" min="1" step="1" style="width: 50px;"><br><br>
+        <input type="number" name="min_participantes" id="min_participantes" required value = "{{ old('min_participantes') ?? $competenciaSubcategoria -> min_participantes ?? 1 }}" min="1" step="1" style="width: 50px;"><br><br>
         
         @if($categoria->tipo == 'Equipos')
             <label for = "max_participantes"><b>Máximo de participantes por equipo: </b></label> 
         @elseif($categoria->tipo == 'Proyectos')
             <label for = "max_participantes"><b>Máximo de participantes por proyecto: </b></label>
         @endif
-        <input type="number" name="max_participantes" id="max_participantes" required value = "{{ old('max_participantes') }}" min="1" step="1" style="width: 50px;"><br><br>
+        <input type="number" name="max_participantes" id="max_participantes" required value = "{{ old('max_participantes') ?? $competenciaSubcategoria -> max_participantes }}" min="1" step="1" style="width: 50px;"><br><br>        
                 
-        <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">            
-            @if($subcategorias->count() > 1)
-                <input type="submit" name="action" value="Registrar subcategoría&#10;y agregar nueva" style="width: 184.44px; text-align: center;">          
-            @endif
-
-            <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
-                <input type="submit" name="action" value="Registrar subcategoría">
-                @if($competencia->publicada) 
-                    <a href="{{ route('competenciacategoria.show', [$competencia, $competenciaCategoria]) }}">Cancelar</a>
-                @else
-                    <a href="{{ route('competenciacategoria.showdraft', [$competencia, $competenciaCategoria]) }}">Cancelar</a>
-                @endif
-            </div>
+        <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">                        
+            <input type="submit" name="action" value="Actualizar subcategoría">
+            @if($competencia->publicada) 
+                <a href="{{ route('competenciacategoria.show', [$competencia, $competenciaCategoria]) }}">Cancelar</a>
+            @else
+                <a href="{{ route('competenciacategoria.showdraft', [$competencia, $competenciaCategoria]) }}">Cancelar</a>
+            @endif            
         </div>
     </form>
 

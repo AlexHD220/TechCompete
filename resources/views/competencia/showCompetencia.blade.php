@@ -98,6 +98,15 @@
 
 <x-plantilla-body>    
 
+    @if (session('alerta'))
+        <script>                
+            document.addEventListener('DOMContentLoaded', function () {            
+                    // Captura los datos de la sesión y llama a la función                        
+                    sweetAlertNotification("{{ session('alerta.titulo') }}", "{{ session('alerta.texto') }}", "{{ session('alerta.icono') }}", "{{ session('alerta.tiempo') }}", "{{ session('alerta.botonConfirmacion') }}");
+            });
+        </script>
+    @endif
+
     <!-- Modal Imagen -->
     <div id="imageModal" class="modal" style="display: none;">
         <span class="close" onclick="closeModal()">&times;</span>

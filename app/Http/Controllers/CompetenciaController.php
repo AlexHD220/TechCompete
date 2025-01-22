@@ -186,8 +186,8 @@ class CompetenciaController extends Controller
             }
 
             if($categorias->count() > 0){
-                // Recuperar los IDs de categorías ya registradas en competenciacategorias
-                $competenciacategorias = CompetenciaCategoria::pluck('categoria_id')->toArray();
+                // Recuperar los IDs de categorías ya registradas en competenciacategorias                
+                $competenciacategorias = CompetenciaCategoria::where('competencia_id',$competencia->id)->pluck('categoria_id')->toArray();
         
                 // Filtrar las categorías para excluir las que ya están registradas
                 $categorias = $categorias->filter(function ($categoria) use ($competenciacategorias) {
@@ -252,7 +252,7 @@ class CompetenciaController extends Controller
         }
 
         // Agregar la validación condicional
-        if ($competencia->enProgreso) {
+        if (!$competencia->enProgreso) {
             if(!$request->fecha){
                 session()->flash('missing_fecha', true);
             }
@@ -304,7 +304,15 @@ class CompetenciaController extends Controller
         //return redirect() -> route('competencia.show', $competencia);
         return redirect($previousUrl);*/
 
-        //return redirect($request->ruta);         
+        //return redirect($request->ruta); 
+        
+        // Configura los datos para la notificación
+        session()->flash('alerta', [                
+            'texto' => '¡Categoría Actualizada Exitosamente!',
+            'icono' => 'success',
+            'tiempo' => 2500,
+            'botonConfirmacion' => false,
+        ]);
         
         if($competencia->publicada == 1){
             return redirect() -> route('competencia.show', $competencia);    
@@ -370,8 +378,8 @@ class CompetenciaController extends Controller
             }      
             
             if($categorias->count() > 0){
-                // Recuperar los IDs de categorías ya registradas en competenciacategorias
-                $competenciacategorias = CompetenciaCategoria::pluck('categoria_id')->toArray();
+                // Recuperar los IDs de categorías ya registradas en competenciacategorias                                
+                $competenciacategorias = CompetenciaCategoria::where('competencia_id',$competencia->id)->pluck('categoria_id')->toArray();
         
                 // Filtrar las categorías para excluir las que ya están registradas
                 $categorias = $categorias->filter(function ($categoria) use ($competenciacategorias) {
@@ -411,11 +419,29 @@ class CompetenciaController extends Controller
             $competencia->publicada = false; 
             $competencia->save();
 
+            // Configura los datos para la notificación
+            session()->flash('alerta', [
+                'titulo' => '"' . $competencia->name . '"',
+                'texto' => '¡Competencia Publicada Exitosamente!',
+                'icono' => 'success',
+                'tiempo' => 2500,
+                'botonConfirmacion' => false,
+            ]);
+
             return redirect('/competencia'); // Pendiente enviar a show
         }
         else{
             $competencia->publicada = true; 
             $competencia->save();
+
+            // Configura los datos para la notificación
+            session()->flash('alerta', [
+                'titulo' => '"' . $competencia->name . '"',
+                'texto' => '¡Competencia Desactivada Exitosamente!',
+                'icono' => 'success',
+                'tiempo' => 2500,
+                'botonConfirmacion' => false,
+            ]);
 
             return redirect('/competencia/draft'); // Pendiente enviar a show
         }        
@@ -513,12 +539,24 @@ class CompetenciaController extends Controller
 
         
         //$juez->user->delete();  //Relacion 1:1
+        
+        $nombreCompetencia = $competencia->name;
+
 
         $competencia->publicada = false; // Cambia publicada de true a false
         
         $competencia->save();
 
-        $competencia -> delete();
+        $competencia -> delete();        
+
+        // Configura los datos para la notificación
+        session()->flash('alerta', [
+            'titulo' => '"' . $nombreCompetencia . '"',
+            'texto' => '¡Competencia Eliminada Exitosamente!',
+            'icono' => 'success',
+            'tiempo' => 2500,
+            'botonConfirmacion' => false,
+        ]);
 
         return redirect($request->ruta);
     } 
@@ -574,7 +612,17 @@ class CompetenciaController extends Controller
         //dd($juez->user()->withTrashed()->first());
 
         // Restaura el registro
-        $competencia->restore();         
+        $competencia->restore();      
+        
+        
+        // Configura los datos para la notificación
+        session()->flash('alerta', [
+            'titulo' => '"' . $competencia->name . '"',
+            'texto' => '¡Competencia Restaurada Exitosamente!',
+            'icono' => 'success',
+            'tiempo' => 2500,
+            'botonConfirmacion' => false,
+        ]);
 
         return redirect('/competencia/trashed');
     }

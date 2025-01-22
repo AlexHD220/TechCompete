@@ -196,9 +196,12 @@
             <div id="error-imagen" class="error-message"><i class="fa fa-exclamation-triangle"></i> Campo obligatorio, por favor cargue una imagen.</div>
         </div>        
 
+        <div style="margin-top: 30px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">            
+                <input type="submit" name="action" value="Registrar competencia">
 
-        <input type="submit" value="Registrar competencia" style="margin-top: 30px;"> 
-        <a href="{{ route('competencia.draft') }}" style="margin-left:10px;">Cancelar</a> 
+                <a href="{{ route('competencia.draft') }}">Cancelar</a>
+            </div>
+        </div>
 
     </form>
 

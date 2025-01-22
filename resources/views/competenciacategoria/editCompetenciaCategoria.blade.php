@@ -2,7 +2,7 @@
 <html lang="es">
 
 <x-plantilla-head>
-    <title>Agregar Categoría</title>
+    <title>Editar Categoría</title>
 
     <style>    
         .disabled-input {
@@ -20,18 +20,9 @@
 
 <x-plantilla-body>
 
-    @if (session('alerta'))
-        <script>                
-            document.addEventListener('DOMContentLoaded', function () {            
-                    // Captura los datos de la sesión y llama a la función                        
-                    sweetAlertNotification("{{ session('alerta.titulo') }}", "{{ session('alerta.texto') }}", "{{ session('alerta.icono') }}", "{{ session('alerta.tiempo') }}", "{{ session('alerta.botonConfirmacion') }}");
-            });
-        </script>
-    @endif
-
-    <h1 style="margin-bottom: 15px;">Nueva Categoría ({{ $competencia->publicada ? '' : 'Borrador ' }}{{$competencia->name}})</h1>
-
-    <form action="{{ route('competenciacategoria.store', $competencia) }}" method="post">
+    <h1 style="margin-bottom: 15px;">Editar Categoría ({{ $competencia->publicada ? '' : 'Borrador ' }}{{$competencia->name}})</h1>
+    
+    <form action="{{ route('competenciacategoria.update', [$competencia, $competenciaCategoria]) }}" method="post"  enctype="multipart/form-data">
 
         <!--Mostrar errores-->
         @if ($errors->any() || session('missing_fecha') || session('missing_fecha_fin'))
@@ -56,25 +47,26 @@
         @endif    
 
         @csrf <!--permite entrar al formulario muy importante agregar-->
+        @method ('PATCH') <!--permite truquear nuestro formulario para editar la informacion-->
 
         <label for="categoria_id" style="margin-bottom: 5px;"><b> Categoría: </b></label><br>
         <select id="categoria_id" name="categoria_id" required style="min-width:100px; " autofocus>
             <option selected disabled value="">Selecciona una opción</option>            
-            @foreach($categorias as $categoria)
-                <option value="{{ $categoria -> id }}" @if(old('categoria_id') == $categoria->id) selected @endif title="Tipo {{$categoria->tipo}}">
+            @foreach($categorias as $categoria)                
+                <option value="{{ $categoria -> id }}" @if(old('categoria_id') == $categoria->id || $competenciaCategoria->categoria_id == $categoria->id) selected @endif title="Tipo {{$categoria->tipo}}">
                     {{ $categoria->name }}
                 </option>
             @endforeach
         </select><br><br>            
 
         <label for = "costo"><b>Costo: $</b></label>
-        <input type="number" name="costo" id="costo" required value = "{{ old('costo') ? old('costo') : 0 }}" min="0" step="1" style="width: 75px;"> pesos mexicanos <br><br>
+        <input type="number" name="costo" id="costo" required value = "{{ old('costo') ?? $competenciaCategoria -> costo ?? 0 }}" min="0" step="1" style="width: 75px;"> pesos mexicanos <br><br>
 
 
         <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 10px;">
             <div>
                 <label class="switch">
-                <input type="checkbox" id="registro_personalizado" name="registro_personalizado" {{ old('registro_personalizado') ? 'checked' : '' }}>
+                <input type="checkbox" id="registro_personalizado" name="registro_personalizado" {{ old('registro_personalizado') ? 'checked' : ($competenciaCategoria->registro_personalizado ? 'checked' : '') }}>
                 <span class="slider"></span>
                 </label>
             </div>
@@ -84,25 +76,20 @@
 
         <div id="fecha_personalizada" class="disabled-input">
             <label for = "inicio_registros"><b>Inicio de registros: </b></label>        
-            <input type="date" id="inicio_registros" name="inicio_registros" required value = "{{ old('inicio_registros') }}" min="{{ now()->toDateString() }}" max="{{ \Carbon\Carbon::parse($competencia->fecha)->subDay(1)->format('Y-m-d') }}" disabled><br><br>
+            <input type="date" id="inicio_registros" name="inicio_registros" required value = "{{ old('inicio_registros') ?? $competenciaCategoria -> inicio_registros }}" min="{{ now()->toDateString() }}" max="{{ \Carbon\Carbon::parse($competencia->fecha)->subDay(1)->format('Y-m-d') }}" disabled><br><br>
 
             <label for = "fin_registros"><b>Cierre de registros: </b></label>
-            <input type="date" id="fin_registros" name="fin_registros" required value = "{{ old('fin_registros') }}" min="{{ now()->addDays(1)->toDateString() }}" max="{{ $competencia->fecha }}" disabled><br><br>
+            <input type="date" id="fin_registros" name="fin_registros" required value = "{{ old('fin_registros') ?? $competenciaCategoria -> fin_registros }}" min="{{ now()->addDays(1)->toDateString() }}" max="{{ $competencia->fecha }}" disabled><br><br>
         </div>      
                 
         <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">            
-            @if($categorias->count() > 1)
-                <input type="submit" name="action" value="Registrar categoría&#10;y agregar nueva" style="width: 158.48px; text-align: center;">          
+            <input type="submit" name="action" value="Actualizar categoría">
+            @if($competencia->publicada) 
+                <a href="{{ route('competencia.show', $competencia) }}">Cancelar</a>
+            @else
+                <a href="{{ route('competencia.showdraft', $competencia) }}">Cancelar</a>
             @endif
-
-            <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
-                <input type="submit" name="action" value="Registrar Categoría">
-                @if($competencia->publicada) 
-                    <a href="{{ route('competencia.show', $competencia) }}">Cancelar</a>
-                @else
-                    <a href="{{ route('competencia.showdraft', $competencia) }}">Cancelar</a>
-                @endif
-            </div>
+            
         </div>
     </form>
 

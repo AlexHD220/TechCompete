@@ -42,6 +42,15 @@
 
 <x-plantilla-body>
 
+    @if (session('alerta'))
+        <script>                
+            document.addEventListener('DOMContentLoaded', function () {            
+                    // Captura los datos de la sesión y llama a la función                        
+                    sweetAlertNotification("{{ session('alerta.titulo') }}", "{{ session('alerta.texto') }}", "{{ session('alerta.icono') }}", "{{ session('alerta.tiempo') }}", "{{ session('alerta.botonConfirmacion') }}");
+            });
+        </script>
+    @endif
+
 <!--@php
 $timestampNow = now()->toDateString();
 @endphp

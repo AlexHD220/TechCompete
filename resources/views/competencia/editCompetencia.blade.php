@@ -152,13 +152,15 @@
         </select><br><br>
 
 
-        <label for = "inicio_registros" style="margin-bottom: 10px;"><b>Fecha de registros: </b></label><br>    
+        @if(!$competencia->enProgreso)
+            <label for = "inicio_registros" style="margin-bottom: 10px;"><b>Fecha de registros: </b></label><br>    
 
-        <label for = "inicio_registros" style="margin-bottom: 15px;"><b> - Inicio: </b></label>       
-        <input type="date" id="inicio_registros" name="inicio_registros" required value = "{{old('inicio_registros') ?? $competencia -> inicio_registros}}" min="{{ now()->toDateString() }}" max="{{ \Carbon\Carbon::parse($competencia->fecha)->subDay(1)->format('Y-m-d') }}"><br>
+            <label for = "inicio_registros" style="margin-bottom: 15px;"><b> - Inicio: </b></label>       
+            <input type="date" id="inicio_registros" name="inicio_registros" required value = "{{old('inicio_registros') ?? $competencia -> inicio_registros}}" min="{{ now()->toDateString() }}" max="{{ \Carbon\Carbon::parse($competencia->fecha)->subDay(1)->format('Y-m-d') }}"><br>
 
-        <label for = "fin_registros"><b> - Cierre: </b></label>
-        <input type="date" id="fin_registros" name="fin_registros" required value = "{{ old('fin_registros') ?? $competencia -> fin_registros }}" min="{{ \Carbon\Carbon::parse($competencia->inicio_registros)->addDay(1)->format('Y-m-d') }}" max="{{ $competencia->fecha }}"><br><br>
+            <label for = "fin_registros"><b> - Cierre: </b></label>
+            <input type="date" id="fin_registros" name="fin_registros" required value = "{{ old('fin_registros') ?? $competencia -> fin_registros }}" min="{{ \Carbon\Carbon::parse($competencia->inicio_registros)->addDay(1)->format('Y-m-d') }}" max="{{ $competencia->fecha }}"><br><br>
+        @endif
 
         <!--Seleccion multiple []-->
 
@@ -195,10 +197,17 @@
 
             <b><div id="file-name" class="file-name" style="margin-left: 10px;">Ningún archivo seleccionado</div></b>            
         </div>        
+        
 
-
-        <input type="submit" value="Actualizar competencia" style="margin-top: 30px;"> 
-        <a href="{{ $previousUrl }}" style="margin-left:10px;">Cancelar</a> 
+        <div style="margin-top: 30px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">            
+            <input type="submit" value="Actualizar competencia">
+            @if($competencia->publicada) 
+                <a href="{{ route('competencia.index') }}">Cancelar</a>
+            @else
+                <a href="{{ route('competencia.draft') }}">Cancelar</a>
+            @endif
+            
+        </div>
 
     </form>
 
