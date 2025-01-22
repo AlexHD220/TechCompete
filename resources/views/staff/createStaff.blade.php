@@ -31,8 +31,8 @@
         <label for="rol"><b>Tipo de cuenta: </b></label>
         <select name="rol" style="width: 200px; margin: 5px;" autofocus required>
             <option selected disabled value=""> - </option>
-            <option value=3 @selected(old('rol') == 'SuperStaff')>SuperStaff</option>
-            <option value=4 @selected(old('rol') == 'Staff')>Staff</option>
+            <option value=3 @selected(old('rol') == 3)>SuperStaff</option>
+            <option value=4 @selected(old('rol') == 4)>Staff</option>
         </select><br><br>
 
         <label for="name"><b> Nombre(s): </b></label>

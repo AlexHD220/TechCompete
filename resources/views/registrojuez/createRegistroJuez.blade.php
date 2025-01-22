@@ -39,8 +39,8 @@
         <label for="expiration_type"><b>Tipo de Fecha Límite: </b></label>
         <select id="expiration_type" name="expiration_type" onchange="toggleExpirationInputs()" style="width: 200px; margin: 5px;" required>        
             <option selected disabled value=""> - </option>
-            <option value="days">Por número de días</option>
-            <option value="specific_date">Por fecha específica</option>            
+            <option value="days" @selected(old('expiration_type') == 'days')>Por número de días</option>
+            <option value="specific_date" @selected(old('expiration_type') == 'specific_date')>Por fecha específica</option>                         
         </select><br><br>
 
         <!-- Entrada para días -->
@@ -60,6 +60,16 @@
     </form>
 
     <script>
+
+        if(document.getElementById('expiration_type').value == 'days'){
+            document.getElementById('days_input').style.display = 'block';
+            daysInput.setAttribute('required', 'required');
+        }
+        else if(document.getElementById('expiration_type').value == 'specific_date'){
+            document.getElementById('specific_date_input').style.display = 'block';
+            specificDateInput.setAttribute('required', 'required');
+        }
+
         function toggleExpirationInputs() {
             const type = document.getElementById('expiration_type').value;
 
@@ -88,7 +98,7 @@
         }
 
         // Inicializar la vista
-        toggleExpirationInputs();
+        //toggleExpirationInputs();
     </script>
 
     </x-plantilla-body>

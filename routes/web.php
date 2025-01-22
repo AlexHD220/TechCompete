@@ -80,6 +80,16 @@ Route::get('/correo', function () {
 //Route::get('usuario/pdf',[usuarioController::class,'pdf']) -> name('usuario.pdf'); //Ruta agregada de forma manual
 //cabiar el nombre de mis rutas
 
+
+Route::get('/pruebas', function () {
+    if (Gate::allows('only-superadmin', auth()->user())) {
+        return view('pruebas');
+    } else {
+        return redirect('/');
+    }
+});
+    
+
 Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar sesion y estar verificados (mail)
 
     Route::resource('equipo', EquipoController::class);

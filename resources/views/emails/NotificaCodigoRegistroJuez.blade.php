@@ -10,10 +10,19 @@
 A continuacion te mostramos el código de activación que debes utilizar para crear tu cuenta de usuario. <br>
 
 
-<div style="font-family: Arial, sans-serif; margin: 20px 0;">
+<!--<div style="font-family: Arial, sans-serif; margin: 20px 0;">
     <hr style="border: none; border-top: 2px solid #4b5563; margin: 10px 0;">
     <div style="font-size: 24px; font-weight: bold; color: #333;">
         <h1>{{ $registro -> codigo }}</h1>
+    </div>
+    <hr style="border: none; border-top: 2px solid #4b5563; margin: 10px 0;">
+</div>-->
+
+
+<div style="font-family: Arial, sans-serif; margin: 20px 0;">
+    <hr style="border: none; border-top: 2px solid #4b5563; margin: 10px 0;">
+    <div style="display: flex; justify-content: center; align-items: center; text-align: center;">                            
+        <h1 style="font-size: 28px; font-weight: bold; color: #333; margin-bottom: 0px;">{{ $registro -> codigo }}</h1>                                   
     </div>
     <hr style="border: none; border-top: 2px solid #4b5563; margin: 10px 0;">
 </div>

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             
             $table->string('codigo')->unique();
-            $table->string('email')->unique();
+            $table->string('email');
             $table->boolean('validado')->default(false);
 
             $table->unsignedBigInteger('creado_by'); //--> crear columna dentro de la tabla registro jueces            

@@ -25,10 +25,12 @@
                 <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
             </div>
 
-            <div class="flex items-center justify-end mt-4">
+            <div class="flex items-center justify-end mt-4" style="gap: 10px;">                             
                 <x-button>
-                    {{ __('Enlace de restablecimiento de contraseña') }}
+                    {{ __('Restablecer contraseña') }}
                 </x-button>
+                
+                <a href="/login">Cancelar</a>                
             </div>
         </form>
     </x-authentication-card>

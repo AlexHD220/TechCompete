@@ -37,7 +37,10 @@ class registrojuezController extends Controller
         ->orderBy('expiracion_date', 'asc')->get(); // Si quiero ordenarlos de mayor a menos usar desc
 
         foreach ($registrojueces as $registro) {
-            $registro->diasrestantes = Carbon::now()->startOfDay()->diffInDays(Carbon::parse($registro->expiracion_date), false);
+            //$registro->diasrestantes = Carbon::now()->startOfDay()->diffInDays(Carbon::parse($registro->expiracion_date), false);
+
+            $registro->diasrestantes = Carbon::now()->diffInDays(Carbon::parse($registro->expiracion_date), false);
+
 
             /*if($registro->diasrestantes == 0){                
                 $registro->horasrestantes = Carbon::now()->diffInHours(Carbon::parse($registro->expiracion_date), false);
@@ -70,6 +73,16 @@ class registrojuezController extends Controller
             'email' => 'required|email|unique:users,email',
             // Otras reglas de validación para otros campos
         ]);
+
+        
+        $correoRegistrado = registrojuez::where('email', $request->email)->where('expiracion_date', '>', Carbon::now())->first();
+
+        //dd($correoRegistrado);
+
+        // Verificar que el correo ingresado coincida con el correo vinculado al código
+        if ($correoRegistrado && $correoRegistrado->expiracion_date > Carbon::now()) {
+            return redirect()->back()->withErrors(['email' => 'Este correo electrónico ya está vinculado a un código de registro vigente.'])->withInput();
+        }
 
         $registrojuez = new registrojuez();
 

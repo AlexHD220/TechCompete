@@ -183,6 +183,12 @@ return [
     'attributes' => [
         'title' => 'título',
         'content' => 'contenido',
+
+        'name' => 'nombre',
+        'username' => 'usuario',
+        'email' => 'correo electrónico',
+        'first_name' => 'nombre',
+        'last_name' => 'apellido',
     ],
 
 ];
