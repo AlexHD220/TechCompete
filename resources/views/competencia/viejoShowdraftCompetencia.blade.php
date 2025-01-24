@@ -184,9 +184,7 @@
     @endif
 
 
-    <div style="margin-top: 25px;">
-        <!--<a href="/juez">Regresar</a>-->
-    </div>
+    
 
 </x-plantilla-body>
 

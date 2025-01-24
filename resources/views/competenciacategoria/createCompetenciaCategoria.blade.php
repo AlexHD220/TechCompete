@@ -29,7 +29,8 @@
         </script>
     @endif
 
-    <h1 style="margin-bottom: 15px;">Nueva Categoría ({{ $competencia->publicada ? '' : 'Borrador ' }}{{$competencia->name}})</h1>
+    <h1 style="margin-bottom: 10px;">{{ $competencia->publicada ? '' : 'Borrador ' }}{{$competencia->name}}</h1>
+    <h2 style="margin-bottom: 15px;">Nueva Categoría</h2>
 
     <form action="{{ route('competenciacategoria.store', $competencia) }}" method="post">
 
@@ -96,7 +97,7 @@
             @endif
 
             <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
-                <input type="submit" name="action" value="Registrar Categoría">
+                <input type="submit" name="action" value="Registrar categoría">
                 @if($competencia->publicada) 
                     <a href="{{ route('competencia.show', $competencia) }}">Cancelar</a>
                 @else
@@ -107,7 +108,8 @@
     </form>
 
     <script>    
-
+        
+        // Pagina recargada
         if(document.getElementById('inicio_registros').value){
             document.getElementById('fin_registros').removeAttribute('disabled');
         }
@@ -126,6 +128,15 @@
         
         const fechaInput = document.getElementById('inicio_registros');
         const fechaFinInput = document.getElementById('fin_registros');
+
+        // Pagina recargada
+        if (fechaInput.value) {
+            const fechaSeleccionada = new Date(fechaInput.value);
+            fechaSeleccionada.setDate(fechaSeleccionada.getDate() + 1); // Sumar 1 día
+            const minimoFechaFin = fechaSeleccionada.toISOString().split('T')[0]; // Formatear a YYYY-MM-DD
+
+            fechaFinInput.min = minimoFechaFin;
+        }
 
         // Actualizar el mínimo de fecha_fin al cambiar fecha
         fechaInput.addEventListener('change', function () {
@@ -155,6 +166,7 @@
         // Referencias al checkbox y al input de fecha        
         const fechaPerzonalizadaCheckbox = document.getElementById('fecha_personalizada');
 
+        // Pagina recargada
         if(checkbox.checked){
             inicioRegistrosCheckbox.removeAttribute('disabled'); // Habilitar el input                
 

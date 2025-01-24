@@ -20,7 +20,16 @@
 
 <x-plantilla-body>
 
-    <h1 style="margin-bottom: 15px;">Editar Categoría ({{ $competencia->publicada ? '' : 'Borrador ' }}{{$competencia->name}})</h1>
+    <?php
+        // Obtener la fecha actual
+        $hoy = date('Y-m-d'); 
+
+        // Determinar el valor mínimo
+        $fechaRegistroMinima = ($competencia->inicio_registros < $hoy) ? $competencia->inicio_registros : $hoy;
+    ?>
+
+    <h1 style="margin-bottom: 15px;">{{ $competencia->publicada ? '' : 'Borrador ' }}{{$competencia->name}}</h1>
+    <h2 style="margin-bottom: 15px;">Editar Categoría</h2>    
     
     <form action="{{ route('competenciacategoria.update', [$competencia, $competenciaCategoria]) }}" method="post"  enctype="multipart/form-data">
 
@@ -76,10 +85,10 @@
 
         <div id="fecha_personalizada" class="disabled-input">
             <label for = "inicio_registros"><b>Inicio de registros: </b></label>        
-            <input type="date" id="inicio_registros" name="inicio_registros" required value = "{{ old('inicio_registros') ?? $competenciaCategoria -> inicio_registros }}" min="{{ now()->toDateString() }}" max="{{ \Carbon\Carbon::parse($competencia->fecha)->subDay(1)->format('Y-m-d') }}" disabled><br><br>
+            <input type="date" id="inicio_registros" name="inicio_registros" required value = "{{ old('inicio_registros') ?? $competenciaCategoria -> inicio_registros }}" min="{{ $fechaRegistroMinima }}" max="{{ \Carbon\Carbon::parse($competencia->fecha)->subDay(1)->format('Y-m-d') }}" disabled><br><br>            
 
             <label for = "fin_registros"><b>Cierre de registros: </b></label>
-            <input type="date" id="fin_registros" name="fin_registros" required value = "{{ old('fin_registros') ?? $competenciaCategoria -> fin_registros }}" min="{{ now()->addDays(1)->toDateString() }}" max="{{ $competencia->fecha }}" disabled><br><br>
+            <input type="date" id="fin_registros" name="fin_registros" required value = "{{ old('fin_registros') ?? $competenciaCategoria -> fin_registros }}" min="{{ \Carbon\Carbon::parse($competenciaCategoria->inicio_registros)->addDay(1)->format('Y-m-d') }}" max="{{ $competencia->fecha }}" disabled><br><br>            
         </div>      
                 
         <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">            

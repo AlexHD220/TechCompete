@@ -70,7 +70,7 @@ class registrojuezController extends Controller
     {
 
         $request->validate([
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email|unique:users,email', // | new ValidateUniqueInTables(['users', 'registro_jueces']),
             // Otras reglas de validación para otros campos
         ]);
 
@@ -79,8 +79,9 @@ class registrojuezController extends Controller
 
         //dd($correoRegistrado);
 
-        // Verificar que el correo ingresado coincida con el correo vinculado al código
-        if ($correoRegistrado && $correoRegistrado->expiracion_date > Carbon::now()) {
+        // Verificar que el correo ingresado no este registrado dentro de la base de datos vigente
+        //if ($correoRegistrado && $correoRegistrado->expiracion_date > Carbon::now()) {
+            if ($correoRegistrado){
             return redirect()->back()->withErrors(['email' => 'Este correo electrónico ya está vinculado a un código de registro vigente.'])->withInput();
         }
 

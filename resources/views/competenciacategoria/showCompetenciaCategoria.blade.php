@@ -47,40 +47,103 @@
     @endif
 
     <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 0px; justify-content: center;">
-        
-        <h1 style="margin-top: 8px;"> {{ $categoria -> name }}</h1> 
+                
+        <div>                            
+            <div style="display: flex; gap: 6px;">
+                <h1 style="margin-bottom: 10px;">{{ $competencia->publicada ? '' : 'Borrador ' }}{{$competencia->name}}</h1>  
+            </div>
 
-        @auth <!--Cuando el usuario este logueado muestrame lo sigiente-->            
-            @if(Gate::allows('only-superadmin'))  
-                @if($subcategoriascount == 0 && $todasregistradas == true)
-                    <div style="text-align: center;">
-                        <a href="/subcategoria" style="font-size: 14px;">
-                            <i>Ya se han registrado todos las niveles<br>
-                                    de participación disponibles.</i></a>
-                    </div>   
-                @elseif($subcategoriascount > 0)             
-                    <button class="btn btn-primary" link="{{ route('competenciasubcategoria.create', [$competencia, $competenciaCategoria]) }}" 
-                    onclick="window.location.href = this.getAttribute('link');">
-                        Agregar nivel de participación
-                    </button> <!-- Link pendiente -->             
-                @else
-                    <div style="text-align: center;">
-                        <a href="/subcategoria" style="font-size: 14px;">
-                            <i>Aún no se ha creado ningún nivel de participación.</i></a>
-                    </div>
-                @endif 
-            @elseif(Gate::allows('only-asesor'))
-                @if($cuposrestantes > 0 || $cupo_ilimitado == True)
-                    <button class="btn btn-primary" link="{{ route('competenciacategoria.create', $competencia) }}" 
-                    onclick="window.location.href = this.getAttribute('link');">
-                        Inscribirse
-                    </button> <!-- RUTA PENDIENTE PARA INSCRIPCIONES --> 
-                @else
-                    <div style="text-align: center;">
-                        <a style="font-size: 14px; color: #eb1616;">
-                            <i>Ahora mismo no hay cupos<br> 
-                              de inscripción disponibles.</i></a>
-                    </div>
+            <div style="display: flex; gap: 6px;">
+                <h2> {{ $categoria -> name }}</h2> 
+            </div>
+        </div>
+
+        @auth <!--Cuando el usuario este logueado muestrame lo sigiente-->   
+            @if(!$competencia->enProgreso && !$competencia->pasada)  
+                @if(Gate::allows('only-superadmin'))  
+                    @if($subcategoriascount == 0 && $todasregistradas == true)
+                        <div style="text-align: center;">
+                            <a href="/subcategoria" style="font-size: 14px;">
+                                <i>Ya se han registrado todos las niveles<br>
+                                        de participación disponibles</i></a>
+                        </div>   
+                    @elseif($subcategoriascount > 0 && $competencia->publicada)             
+                        <button class="btn btn-primary" link="{{ route('competenciasubcategoria.create', [$competencia, $competenciaCategoria]) }}" 
+                        onclick="window.location.href = this.getAttribute('link');">
+                            Agregar nivel de participación
+                        </button> <!-- Link pendiente -->  
+                    @elseif($subcategoriascount > 0 && !$competencia->publicada)             
+                        <button class="btn btn-primary" link="{{ route('competenciasubcategoria.createdraft', [$competencia, $competenciaCategoria]) }}" 
+                        onclick="window.location.href = this.getAttribute('link');">
+                            Agregar nivel de participación
+                        </button> <!-- Link pendiente -->             
+                    @else
+                        <div style="text-align: center;">
+                            <a href="/subcategoria" style="font-size: 14px;">
+                                <i>Aún no se ha creado ningún nivel de participación</i></a>
+                        </div>
+                    @endif 
+
+                @elseif(Gate::allows('only-asesor'))
+                    @if($competenciaCategoria->registro_personalizado)
+
+                        @if (\Carbon\Carbon::parse($competenciaCategoria->inicio_registros) >= \Carbon\Carbon::now()->startOfDay() 
+                            && \Carbon\Carbon::parse($competenciaCategoria->fin_registros) < \Carbon\Carbon::now()->endOfDay())
+
+                            @if($cuposrestantes > 0 || $cupo_ilimitado == True)
+                                <button class="btn btn-primary" link="{{ route('competenciacategoria.create', $competencia) }}" 
+                                onclick="window.location.href = this.getAttribute('link');">
+                                    Inscribirse
+                                </button> <!-- RUTA PENDIENTE PARA INSCRIPCIONES --> 
+                            @else
+                                <div style="text-align: center;">
+                                    <a style="font-size: 14px; color: #eb1616;">
+                                        <i>Se han ocupado todos los cupos<br> 
+                                            de inscripción disponibles</i></a>
+                                </div>
+                            @endif
+
+                        @elseif(\Carbon\Carbon::parse($competenciaCategoria->inicio_registros) < \Carbon\Carbon::now()->startOfDay())
+                            <div style="text-align: center;">  
+                                <a style="font-size: 14px; color: #eb1616;">                          
+                                    <i>Inscripciones Cerradas</i></a>
+                            </div>
+                        @elseif(\Carbon\Carbon::parse($competenciaCategoria->fin_registros) > \Carbon\Carbon::now()->endOfDay())                                               
+                            <div style="text-align: center;">   
+                                <a style="font-size: 14px; color: #eb1616;">                         
+                                    <i>Inscripciones Próximamente</i></a>
+                            </div>
+                        @endif                
+                        
+                    @elseif(!$competenciaCategoria->registro_personalizado)
+                        @if(\Carbon\Carbon::parse($competencia->inicio_registros) >= \Carbon\Carbon::now()->startOfDay() 
+                            && \Carbon\Carbon::parse($competencia->fin_registros) < \Carbon\Carbon::now()->endOfDay())
+
+                            @if($cuposrestantes > 0 || $cupo_ilimitado == True)
+                                <button class="btn btn-primary" link="{{ route('competenciacategoria.create', $competencia) }}" 
+                                onclick="window.location.href = this.getAttribute('link');">
+                                    Inscribirse
+                                </button> <!-- RUTA PENDIENTE PARA INSCRIPCIONES --> 
+                            @else
+                                <div style="text-align: center;">
+                                    <a style="font-size: 14px; color: #eb1616;">
+                                        <i>Se han ocupado todos los cupos<br> 
+                                            de inscripción disponibles</i></a>
+                                </div>
+                            @endif
+                        @elseif(\Carbon\Carbon::parse($competencia->inicio_registros) < \Carbon\Carbon::now()->startOfDay())                        
+                            <div style="text-align: center;">  
+                                <a style="font-size: 14px; color: #eb1616;">                          
+                                    <i>Inscripciones Cerradas</i></a>
+                            </div>
+                        @elseif(\Carbon\Carbon::parse($competencia->fin_registros) > \Carbon\Carbon::now()->endOfDay())
+                            <div style="text-align: center;">   
+                                <a style="font-size: 14px; color: #eb1616;">                         
+                                    <i>Inscripciones Próximamente</i></a>
+                            </div>
+                        @endif
+
+                    @endif
                 @endif
             @endif
         @endauth
@@ -115,16 +178,17 @@
                 </p>
             </div>
         </div>           
-
-                      
-        <button class="btn btn-primary" onMouseOver="this.style.backgroundColor='#053482'" onmouseout="this.style.backgroundColor='#004ecf'" style="font-size: 14px; background-color: #004ecf; border:0px; box-shadow: none; padding-top: 8px; padding-bottom: 8px;" 
-        onclick="window.location.href = '/';">
-            @if($categoria->tipo == 'Equipos')
-                <b>Equipos Inscritos</b>
-            @elseif($categoria->tipo == 'Proyectos')
-                <b>Proyectos Inscritos</b>
-            @endif
-        </button> <!-- Ruta pendiente -->
+                
+        @if($competencia->publicada)
+            <button class="btn btn-primary" onMouseOver="this.style.backgroundColor='#053482'" onmouseout="this.style.backgroundColor='#004ecf'" style="font-size: 14px; background-color: #004ecf; border:0px; box-shadow: none; padding-top: 8px; padding-bottom: 8px;" 
+            onclick="window.location.href = '/';">
+                @if($categoria->tipo == 'Equipos')
+                    <b>Equipos Inscritos</b>
+                @elseif($categoria->tipo == 'Proyectos')
+                    <b>Proyectos Inscritos</b>
+                @endif
+            </button> <!-- Ruta pendiente -->
+        @endif    
 
     </div>    
 
@@ -197,26 +261,30 @@
 
                         @auth <!-- PENDIENTE -->
                             @can('only-superadmin')
+                                @if(!$competencia->enProgreso && !$competencia->pasada) 
 
-                                <div class="text-center" style="margin-top: 10px;">
-                                    <!-- Botón para Editar -->
-                                    <a href="{{ route('competenciasubcategoria.edit', [$competencia, $competenciaCategoria, $competenciaSubcategoria]) }}" onmouseover="this.style.backgroundColor='#818284';" onmouseout="this.style.backgroundColor='#434851';" 
-                                    style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: #434851; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
-                                    title="Editar Nivel de Participación">                                
-                                        <i class="fas fa-edit" style="font-size: 20px;"></i> <!-- Ícono de FontAwesome -->
-                                    </a>    
-                                    
-                                    <form action="{{route('competenciasubcategoria.destroy', [$competencia, $competenciaCategoria, $competenciaSubcategoria])}}" method = "POST" style="display: inline-block;">
-                                        @csrf
-                                        @method('DELETE')                                        
+                                    <div class="text-center" style="margin-top: 10px;">
+                                        <!-- Botón para Editar -->
+                                        <a href="{{ $competencia->publicada ? route('competenciasubcategoria.edit', [$competencia, $competenciaCategoria, $competenciaSubcategoria]) : route('competenciasubcategoria.editdraft', [$competencia, $competenciaCategoria, $competenciaSubcategoria]) }}" 
+                                        onmouseover="this.style.backgroundColor='#818284';" onmouseout="this.style.backgroundColor='#434851';" 
+                                        style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: #434851; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
+                                        title="Editar Nivel de Participación">                                
+                                            <i class="fas fa-edit" style="font-size: 20px;"></i> <!-- Ícono de FontAwesome -->
+                                        </a>    
                                         
-                                        <button type="submit" onclick="return confirm('¿Está seguro que desea eliminar este nivel de participación?')" onmouseover="this.style.backgroundColor='#ff6666';" onmouseout="this.style.backgroundColor='red';"  
-                                        style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: red; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
-                                        title="Eliminar Nivel de Participación">
-                                            <i class="fas fa-trash" style="font-size: 20px;"></i> <!-- Ícono de FontAwesome -->
-                                        </button>
-                                    </form>   
-                                </div>
+                                        <form action="{{route('competenciasubcategoria.destroy', [$competencia, $competenciaCategoria, $competenciaSubcategoria])}}" method = "POST" style="display: inline-block;">
+                                            @csrf
+                                            @method('DELETE')                                        
+                                            
+                                            <button type="submit" onclick="return confirm('¿Está seguro que desea eliminar este nivel de participación?')" onmouseover="this.style.backgroundColor='#ff6666';" onmouseout="this.style.backgroundColor='red';"  
+                                            style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: red; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
+                                            title="Eliminar Nivel de Participación">
+                                                <i class="fas fa-trash" style="font-size: 20px;"></i> <!-- Ícono de FontAwesome -->
+                                            </button>
+                                        </form>   
+                                    </div>
+
+                                @endif
                             @endcan
                         @endauth
                     </div>
@@ -225,9 +293,7 @@
     @endif
     <br>
 
-    <div style="margin-top: 25px;">
-        <!--<a href="/juez">Regresar</a>-->
-    </div>
+    
 
 </x-plantilla-body>
 

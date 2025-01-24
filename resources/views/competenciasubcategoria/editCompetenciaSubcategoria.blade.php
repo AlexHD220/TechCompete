@@ -29,7 +29,8 @@
         </script>
     @endif
 
-    <h1 style="margin-bottom: 15px;">Editar Subcategoría ({{ $competencia->publicada ? '' : 'Borrador ' }}{{$competencia->name}})</h1>
+    <h1 style="margin-bottom: 15px;">{{ $competencia->publicada ? '' : 'Borrador ' }}{{$competencia->name}}</h1>
+    <h2 style="margin-bottom: 15px;">Editar Subcategoría ({{$categoria->name}})</h2>    
 
     <form action="{{ route('competenciasubcategoria.update', [$competencia, $competenciaCategoria, $competenciaSubcategoria]) }}" method="post"  enctype="multipart/form-data">    
 

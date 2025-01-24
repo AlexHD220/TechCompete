@@ -22,7 +22,7 @@
         }
     });
     $('.back-to-top').click(function () {
-        $('html, body').animate({scrollTop: 0}, 1000, 'easeInOutExpo'); /*1500*/ 
+        $('html, body').animate({scrollTop: 0}, 1500, 'easeInOutExpo'); /*1500*/ 
         return false;
     });
 

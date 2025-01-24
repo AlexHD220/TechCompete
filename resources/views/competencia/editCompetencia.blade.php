@@ -84,21 +84,43 @@
 
 <x-plantilla-body>
 
-    @php
+    <!--@php
         $previousUrl = session('_custom_previous.url');
-    @endphp
+    @endphp-->
+
+    <?php
+        // Obtener la fecha actual
+        $hoy = date('Y-m-d'); 
+
+        // Determinar el valor mínimo
+        $fechaRegistroMinima = ($competencia->inicio_registros < $hoy) ? $competencia->inicio_registros : $hoy;
+    ?>
+
     
     <h1 style="margin-bottom: 15px;">Editar Competencia</h1>
 
     <!--editar formulario por medio de la direccion de route:list, esto porque como no tengo un archivo, necesito mandar llamar a la ruta de la lista asesor.update-->
     <form id="formulario" action="{{ route('competencia.update', $competencia)}}" method="post"  enctype="multipart/form-data"> <!--la diagonal me envia al principio de la url "solacyt.test/"-->
         <!--Mostrar errores-->
-        @if ($errors->any() || session('missing_fecha'))
+        @if ($errors->any() || session('missing_fecha') || session('missing_tipo') || session('missing_fecha_inicio') || session('missing_fecha_fin'))
             <div class="msgAlerta">                
                 <ul>
                     @if(session('missing_fecha'))
-                        <li>El campo "Fecha" es obligatorio.</li>
+                        <li>El campo Fecha es obligatorio.</li>
                     @endif
+
+                    @if(session('missing_tipo'))
+                        <li>El campo Tipo es obligatorio.</li>
+                    @endif
+
+                    @if(session('missing_fecha_inicio'))
+                        <li>El campo Fecha de registros (Inicio) es obligatorio.</li>
+                    @endif
+
+                    @if(session('missing_fecha_fin'))
+                        <li>El campo Fecha de registros (Cierre) es obligatorio.</li>
+                    @endif
+
 
                     @if ($errors->any())
                         @foreach ($errors->all() as $error)
@@ -144,21 +166,32 @@
         <input type="number" name="duracion" id="duracion" required value = "{{old('duracion') ?? $competencia -> duracion}}" min="1" step="1" style="width: 50px;"> días <br><br>        
 
         <label for="tipo" style="margin-bottom: 5px;"><b>Tipo de inscripciones: </b></label><br>
-        <select name="tipo" required style="width: 110px; height: 30px;">
-            <option selected disabled value=""> - </option>
-            <option value="Cualquiera" @selected((old('tipo') ?? $competencia->tipo) == 'Cualquiera')>Cualquiera</option>
-            <option value="Equipos" @selected((old('tipo') ?? $competencia->tipo)== 'Equipos')>Equipos</option>
-            <option value="Proyectos" @selected((old('tipo') ?? $competencia->tipo)== 'Proyectos')>Proyectos</option>            
-        </select><br><br>
+        @if($competencia->enProgreso)
+            {{ $competencia->tipo }}<br><br>   
+        @else
+            <select name="tipo" required style="width: 110px; height: 30px;">
+                <option selected disabled value=""> - </option>
+                <option value="Cualquiera" @selected((old('tipo') ?? $competencia->tipo) == 'Cualquiera')>Cualquiera</option>
+                <option value="Equipos" @selected((old('tipo') ?? $competencia->tipo)== 'Equipos')>Equipos</option>
+                <option value="Proyectos" @selected((old('tipo') ?? $competencia->tipo)== 'Proyectos')>Proyectos</option>            
+            </select><br><br>
+        @endif
 
+        
+        <label for = "inicio_registros" style="margin-bottom: 10px;"><b>Fecha de registros: </b></label><br>    
 
-        @if(!$competencia->enProgreso)
-            <label for = "inicio_registros" style="margin-bottom: 10px;"><b>Fecha de registros: </b></label><br>    
+        <label for = "inicio_registros" style="margin-bottom: 15px;"><b> - Inicio: </b></label>       
+            
+        @if($competencia->enProgreso)
+            {{ date('d/m/Y', strtotime($competencia->inicio_registros)) }}<br>              
+        @else
+            <input type="date" id="inicio_registros" name="inicio_registros" required value = "{{old('inicio_registros') ?? $competencia -> inicio_registros}}" min="{{ $fechaRegistroMinima }}" max="{{ \Carbon\Carbon::parse($competencia->fecha)->subDay(1)->format('Y-m-d') }}"><br>
+        @endif
 
-            <label for = "inicio_registros" style="margin-bottom: 15px;"><b> - Inicio: </b></label>       
-            <input type="date" id="inicio_registros" name="inicio_registros" required value = "{{old('inicio_registros') ?? $competencia -> inicio_registros}}" min="{{ now()->toDateString() }}" max="{{ \Carbon\Carbon::parse($competencia->fecha)->subDay(1)->format('Y-m-d') }}"><br>
-
-            <label for = "fin_registros"><b> - Cierre: </b></label>
+        <label for = "fin_registros"><b> - Cierre: </b></label>
+        @if($competencia->enProgreso)
+            {{ date('d/m/Y', strtotime($competencia->fin_registros)) }}<br><br>     
+        @else
             <input type="date" id="fin_registros" name="fin_registros" required value = "{{ old('fin_registros') ?? $competencia -> fin_registros }}" min="{{ \Carbon\Carbon::parse($competencia->inicio_registros)->addDay(1)->format('Y-m-d') }}" max="{{ $competencia->fecha }}"><br><br>
         @endif
 

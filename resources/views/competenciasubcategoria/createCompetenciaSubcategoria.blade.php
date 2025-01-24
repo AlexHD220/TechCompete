@@ -29,7 +29,8 @@
         </script>
     @endif
 
-    <h1 style="margin-bottom: 15px;">Nueva Subcategoría ({{ $competencia->publicada ? '' : 'Borrador ' }}{{$competencia->name}})</h1>
+    <h1 style="margin-bottom: 10px;">{{ $competencia->publicada ? '' : 'Borrador ' }}{{$competencia->name}}</h1>
+    <h2 style="margin-bottom: 15px;">Nueva Subcategoría ({{$categoria->name}})</h2>
 
     <form action="{{ route('competenciasubcategoria.store', [$competencia, $competenciaCategoria]) }}" method="post">
 
@@ -151,6 +152,7 @@
         // Referencias al checkbox y al input de fecha        
         const personalizarCostoCheckbox = document.getElementById('personalizar_costo');
 
+        // Pagina recargada
         if(checkbox.checked){
             costoCheckbox.removeAttribute('disabled'); // Habilitar el input                
 

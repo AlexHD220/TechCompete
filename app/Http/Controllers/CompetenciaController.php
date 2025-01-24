@@ -39,7 +39,7 @@ class CompetenciaController extends Controller
         
         // Competencias en progreso
         $actuales = Competencia::where('publicada',1)->where('fecha', '<=', Carbon::now()->startOfDay())
-        ->where('fecha_fin', '>=', Carbon::now()->startOfDay())->orderBy('fecha', 'asc')->get(); // Mas proxima a mas lejana | // Si quiero ordenarlos de mayor a menos usar desc   
+        ->where('fecha_fin', '>=', Carbon::now()->endOfDay())->orderBy('fecha', 'asc')->get(); // Mas proxima a mas lejana | // Si quiero ordenarlos de mayor a menos usar desc   
         
         // Cuenta de competencias pasadas
         $pasadas = Competencia::where('publicada',1)->where('fecha_fin', '<', Carbon::now()->startOfDay())->get();
@@ -120,6 +120,17 @@ class CompetenciaController extends Controller
         
         //dd($registrojuez);
 
+        // Nombre de competencia unico (VALIDATE UNIQUE)
+        $competenciaDraftRegistrada = Competencia::where('name', $request->name)->where('publicada', 0)
+        ->where('fecha', '>', Carbon::now()->startOfDay())->first();
+
+        $competenciaRegistrada = Competencia::where('name', $request->name)->where('publicada', 1)->first();        
+        
+        if ($competenciaDraftRegistrada || $competenciaRegistrada) {
+            return redirect()->back()->withErrors(['name' => 'Este nombre ya ha sido registrado para otra competencia.'])->withInput();
+        }
+        
+
         // Generar el enlace de Google Maps
         $googleMapsLink = "https://www.google.com/maps?q={$request->latitud},{$request->longitud}";
         
@@ -130,7 +141,7 @@ class CompetenciaController extends Controller
         $competencia->name = $request->name;
         $competencia->descripcion = $request->descripcion;
         $competencia->fecha = $request->fecha;
-        $competencia->fecha_fin = Carbon::parse($request->fecha)->addDays(($request->duracion)-1);       
+        $competencia->fecha_fin = Carbon::parse($request->fecha)->addDays(($request->duracion)-1); // ($request->duracion)-1
         $competencia->duracion = $request->duracion;
         $competencia->tipo = $request->tipo;
         $competencia->inicio_registros = $request->inicio_registros;
@@ -209,6 +220,12 @@ class CompetenciaController extends Controller
 
             $competenciaCategorias = CompetenciaCategoria::where('competencia_id',$competencia->id)
             ->orderBy('inicio_registros', 'asc')->orderBy('fin_registros', 'asc')->get();
+
+            // lte(): Menor o igual a.
+            $competencia->enProgreso = Carbon::parse($competencia->fecha)->lte(Carbon::now()->startOfDay());
+            
+            // lt(): Menor que.
+            $competencia->pasada = Carbon::parse($competencia->fecha_fin)->lt(Carbon::now()->endOfDay());
     
             return view('competencia/showCompetencia',compact('competencia', 'categoriascount', 'todasregistradas', 'competenciaCategorias'));
         }
@@ -251,22 +268,59 @@ class CompetenciaController extends Controller
             ]);*/
         }
 
+        $edit_errors = false;
+
         // Agregar la validación condicional
         if (!$competencia->enProgreso) {
             if(!$request->fecha){
                 session()->flash('missing_fecha', true);
+                $edit_errors = true;
+            }
+
+            if(!$request->tipo){
+                session()->flash('missing_tipo', true);
+                $edit_errors = true;
+            }
+
+            if(!$request->inicio_registros){
+                session()->flash('missing_fecha_inicio', true);
+                $edit_errors = true;
+            }
+
+            if(!$request->fin_registros){
+                session()->flash('missing_fecha_fin', true);
+                $edit_errors = true;
             }
         }
 
         $request->validate([ ///Validar datos, si los datos recibidos no cumplen estas regresas no les permite la entrada a la base de datos y regresa a la pagina original
-            'name' => ['required', 'string', 'min:5', 'max:50', Rule::unique('competencias')->ignore($competencia)],
+            //'name' => ['required', 'string', 'min:5', 'max:50', Rule::unique('competencias')->ignore($competencia)],
+            'name' => ['required', 'string', 'min:5', 'max:50'],
             'fecha' => ['date', 'before_or_equal:' . now()->addYears(2)->format('Y-m-d')],
             'duracion' => ['required','integer','min:1','max:100'],
             //'asesor_id' => ['required', 'not_in:Selecciona una opción'],
-            'tipo' => ['required'],
+            //'tipo' => ['required'],
             //'categoria_id' => ['required'],
             'imagen' => ['image', 'mimes:png,jpg,jpeg', 'max:5120'], // Máximo 5 Mb
         ]);
+
+        if ($edit_errors) {
+            //dd($request->all());                  
+            return redirect()->back()->withInput();
+        }
+
+
+        // Nombre de competencia unico (VALIDATE UNIQUE)
+        $competenciaDraftRegistrada = Competencia::where('id', '!=', $competencia->id)->where('name', $request->name)
+        ->where('publicada', 0)->where('fecha', '>', Carbon::now()->startOfDay())->first();
+
+        $competenciaRegistrada = Competencia::where('id', '!=', $competencia->id)->where('name', $request->name)
+        ->where('publicada', 1)->first();                
+        
+        if ($competenciaDraftRegistrada || $competenciaRegistrada) {
+            return redirect()->back()->withErrors(['name' => 'Este nombre ya ha sido registrado para otra competencia.'])->withInput();
+        }
+
 
         // Generar el enlace de Google Maps
         $googleMapsLink = "https://www.google.com/maps?q={$request->latitud},{$request->longitud}";
@@ -308,9 +362,9 @@ class CompetenciaController extends Controller
         
         // Configura los datos para la notificación
         session()->flash('alerta', [                
-            'texto' => '¡Categoría Actualizada Exitosamente!',
+            'texto' => '¡Competencia Actualizada Exitosamente!',
             'icono' => 'success',
-            'tiempo' => 2500,
+            'tiempo' => 2000,
             'botonConfirmacion' => false,
         ]);
         
@@ -361,7 +415,7 @@ class CompetenciaController extends Controller
         }
         else{
             return redirect('/competencia');
-        }
+        }        
     }
 
     public function showdraft(Competencia $competencia)
@@ -399,16 +453,23 @@ class CompetenciaController extends Controller
     
             $categoriascount = $categorias->count();            
 
-            $competenciaCategorias = CompetenciaCategoria::where('categoria_id',$competencia->id)
+            $competenciaCategorias = CompetenciaCategoria::where('competencia_id',$competencia->id)
             ->orderBy('inicio_registros', 'asc')->orderBy('fin_registros', 'asc')->get();
+           
+            // lte(): Menor o igual a.
+            $competencia->enProgreso = Carbon::parse($competencia->fecha)->lte(Carbon::now()->startOfDay());
+            
+            // lt(): Menor que.
+            $competencia->pasada = Carbon::parse($competencia->fecha_fin)->lt(Carbon::now()->endOfDay());
     
-            return view('competencia/showdraftcompetencia',compact('competencia', 'categoriascount', 'todasregistradas', 'competenciaCategorias'));
+            return view('competencia/showCompetencia',compact('competencia', 'categoriascount', 'todasregistradas', 'competenciaCategorias'));
         }        
         elseif(!$competencia->publicada && $competencia->fecha <= Carbon::now()->startOfDay()){
-            return view('competencia/showexpiredcompetencia',compact('competencia'));
+            // Mostrar detalles de competencias expiradas
+            //return view('competencia/showexpiredcompetencia',compact('competencia'));
         }
         else{
-            return redirect('/competencia/draft');
+            return redirect('/competencia');
         }
     }
 
@@ -421,10 +482,10 @@ class CompetenciaController extends Controller
 
             // Configura los datos para la notificación
             session()->flash('alerta', [
-                'titulo' => '"' . $competencia->name . '"',
-                'texto' => '¡Competencia Publicada Exitosamente!',
+                'titulo' => '"' . $competencia->name . '"',                
+                'texto' => '¡Competencia Desactivada Exitosamente!',
                 'icono' => 'success',
-                'tiempo' => 2500,
+                'tiempo' => 2000,
                 'botonConfirmacion' => false,
             ]);
 
@@ -437,9 +498,9 @@ class CompetenciaController extends Controller
             // Configura los datos para la notificación
             session()->flash('alerta', [
                 'titulo' => '"' . $competencia->name . '"',
-                'texto' => '¡Competencia Desactivada Exitosamente!',
+                'texto' => '¡Competencia Publicada Exitosamente!',
                 'icono' => 'success',
-                'tiempo' => 2500,
+                'tiempo' => 2000,
                 'botonConfirmacion' => false,
             ]);
 
@@ -505,18 +566,82 @@ class CompetenciaController extends Controller
         if($competencia->oculta == true){
             $competencia->oculta = false; // Cambia el rol a 1
             $competencia->save();
+
+            // Configura los datos para la notificación
+            session()->flash('alerta', [
+                'titulo' => '"' . $competencia->name . '"',                
+                'texto' => '¡Competencia Mostrada Exitosamente!',
+                'icono' => 'success',
+                'tiempo' => 2000,
+                'botonConfirmacion' => false,
+            ]);
         }
         else{
             $competencia->oculta = true; // Cambia el rol a 1
             $competencia->save();
-        }
+
+            // Configura los datos para la notificación
+            session()->flash('alerta', [
+                'titulo' => '"' . $competencia->name . '"',
+                'texto' => '¡Competencia Ocultada Exitosamente!',
+                'icono' => 'success',
+                'tiempo' => 2000,
+                'botonConfirmacion' => false,
+            ]);
+        }        
 
         return redirect('/competencia/previous'); // Pendiente enviar a show
     }
 
-    public function showprevious($id)
+    public function showprevious(Competencia $competencia)
     {
-        //
+        if($competencia->publicada){
+            if($competencia->tipo == 'Cualquiera'){
+                $categorias = Categoria::all();
+            }
+            elseif($competencia->tipo == 'Equipos'){
+                $categorias = Categoria::where('tipo','Equipos')->get();
+            }
+            elseif($competencia->tipo == 'Proyectos'){
+                $categorias = Categoria::where('tipo','Proyectos')->get();
+            }
+
+            if($categorias->count() > 0){
+                // Recuperar los IDs de categorías ya registradas en competenciacategorias                
+                $competenciacategorias = CompetenciaCategoria::where('competencia_id',$competencia->id)->pluck('categoria_id')->toArray();
+        
+                // Filtrar las categorías para excluir las que ya están registradas
+                $categorias = $categorias->filter(function ($categoria) use ($competenciacategorias) {
+                    return !in_array($categoria->id, $competenciacategorias);
+                });  
+
+                if($categorias->count() == 0){
+                    $todasregistradas = true;
+                }
+                else{
+                    $todasregistradas = false;
+                }
+            }   
+            else{
+                $todasregistradas = false;
+            }   
+    
+            $categoriascount = $categorias->count();
+
+            $competenciaCategorias = CompetenciaCategoria::where('competencia_id',$competencia->id)
+            ->orderBy('inicio_registros', 'asc')->orderBy('fin_registros', 'asc')->get();
+
+            // lte(): Menor o igual a.
+            $competencia->enProgreso = Carbon::parse($competencia->fecha)->lte(Carbon::now()->startOfDay());
+            
+            // lt(): Menor que.
+            $competencia->pasada = Carbon::parse($competencia->fecha_fin)->lt(Carbon::now()->endOfDay());
+    
+            return view('competencia/showCompetencia',compact('competencia', 'categoriascount', 'todasregistradas', 'competenciaCategorias'));
+        }
+        else{
+            return redirect('/competencia/draft');
+        }
     }
 
     /**
@@ -524,6 +649,7 @@ class CompetenciaController extends Controller
      */
     public function destroy(Request $request, Competencia $competencia)
     {
+
         //dd($competencia);
 
         //dd($request->ruta);
@@ -539,24 +665,31 @@ class CompetenciaController extends Controller
 
         
         //$juez->user->delete();  //Relacion 1:1
-        
-        $nombreCompetencia = $competencia->name;
+
+        // lte(): Menor o igual a.
+        // lt(): Menor que.
+        if(!Carbon::parse($competencia->fecha)->lte(Carbon::now()->startOfDay()) 
+        && !Carbon::parse($competencia->fecha_fin)->lt(Carbon::now()->endOfDay())){
+
+            $nombreCompetencia = $competencia->name;
 
 
-        $competencia->publicada = false; // Cambia publicada de true a false
-        
-        $competencia->save();
+            $competencia->publicada = false; // Cambia publicada de true a false
+            
+            $competencia->save();
 
-        $competencia -> delete();        
+            $competencia -> delete();        
 
-        // Configura los datos para la notificación
-        session()->flash('alerta', [
-            'titulo' => '"' . $nombreCompetencia . '"',
-            'texto' => '¡Competencia Eliminada Exitosamente!',
-            'icono' => 'success',
-            'tiempo' => 2500,
-            'botonConfirmacion' => false,
-        ]);
+            // Configura los datos para la notificación
+            session()->flash('alerta', [
+                'titulo' => '"' . $nombreCompetencia . '"',
+                'texto' => '¡Competencia Eliminada Exitosamente!',
+                'icono' => 'success',
+                'tiempo' => 2000,
+                'botonConfirmacion' => false,
+            ]);
+        }
+
 
         return redirect($request->ruta);
     } 
@@ -569,6 +702,13 @@ class CompetenciaController extends Controller
         Competencia::where(function ($query){
             $query->where('publicada',0)->where('fecha', '<=', Carbon::now()->startOfDay());            
         })->delete();
+
+        session()->flash('alerta', [                
+            'texto' => '¡Borradores Expirados Eliminados Exitosamente!',
+            'icono' => 'success',
+            'tiempo' => 2000,
+            'botonConfirmacion' => false,
+        ]);
 
         // Redirige con un mensaje de éxito
         return redirect('/competencia/draft');
@@ -595,9 +735,36 @@ class CompetenciaController extends Controller
     /**
      * Display the specified delete resource.
      */
-    public function showtrashed($id)
-    {
-        //
+    public function showtrashed($competenciaid)
+    {        
+        $competencia = Competencia::onlyTrashed()->findOrFail($competenciaid);
+
+        if($competencia->tipo == 'Cualquiera'){
+            $categorias = Categoria::all();
+        }
+        elseif($competencia->tipo == 'Equipos'){
+            $categorias = Categoria::where('tipo','Equipos')->get();
+        }
+        elseif($competencia->tipo == 'Proyectos'){
+            $categorias = Categoria::where('tipo','Proyectos')->get();
+        }
+
+        if($categorias->count() > 0){
+            // Recuperar los IDs de categorías ya registradas en competenciacategorias                
+            $competenciacategorias = CompetenciaCategoria::where('competencia_id',$competencia->id)->pluck('categoria_id')->toArray();
+    
+            // Filtrar las categorías para excluir las que ya están registradas
+            $categorias = $categorias->filter(function ($categoria) use ($competenciacategorias) {
+                return !in_array($categoria->id, $competenciacategorias);
+            });              
+        }   
+
+        $categoriascount = $categorias->count();
+
+        $competenciaCategorias = CompetenciaCategoria::where('competencia_id',$competencia->id)
+        ->orderBy('inicio_registros', 'asc')->orderBy('fin_registros', 'asc')->get();
+
+        return view('competencia/showtrashedCompetencia',compact('competencia', 'categoriascount', 'competenciaCategorias'));
     }
 
     public function restore($id)
@@ -607,25 +774,93 @@ class CompetenciaController extends Controller
 
         // Busca el registro eliminado por ID
         $competencia = Competencia::onlyTrashed()->findOrFail($id); // Busca solo registros eliminados
-    
 
-        //dd($juez->user()->withTrashed()->first());
+        // Nombre de competencia unico (VALIDATE UNIQUE)
+        $competenciaDraftRegistrada = Competencia::where('name', $competencia->name)->where('publicada', 0)
+        ->where('fecha', '>', Carbon::now()->startOfDay())->first();
 
-        // Restaura el registro
-        $competencia->restore();      
+        $competenciaRegistrada = Competencia::where('name', $competencia->name)->where('publicada', 1)->first();        
         
-        
-        // Configura los datos para la notificación
-        session()->flash('alerta', [
-            'titulo' => '"' . $competencia->name . '"',
-            'texto' => '¡Competencia Restaurada Exitosamente!',
-            'icono' => 'success',
-            'tiempo' => 2500,
-            'botonConfirmacion' => false,
-        ]);
+        if ($competenciaDraftRegistrada || $competenciaRegistrada) {
+            // Configura los datos para la notificación
+            session()->flash('cambiarNombre', [
+                'titulo' => '"' . $competencia->name . '"',
+                'texto' => '¡Ya existe otra competencia con el mismo nombre! No es posible restaurarla.',
+                'icono' => 'warning',                
+                'confirmButtonText' => 'Cambiar nombre',
+                'inputValue' => $competencia->name
+            ]);
+        }
+        else{
+            //dd($juez->user()->withTrashed()->first());
+
+            // Restaura el registro
+            $competencia->restore();
+
+
+            // Configura los datos para la notificación
+            session()->flash('alerta', [
+                'titulo' => '"' . $competencia->name . '"',
+                'texto' => '¡Competencia Restaurada Exitosamente!',
+                'icono' => 'success',
+                'tiempo' => 2000,
+                'botonConfirmacion' => false,
+            ]);
+        }                          
 
         return redirect('/competencia/trashed');
     }
+
+
+    public function updateName(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255'
+        ]);
+
+        // Busca el registro eliminado por ID
+        $competencia = Competencia::onlyTrashed()->findOrFail($id); // Busca solo registros eliminados
+
+        // Nombre de competencia unico (VALIDATE UNIQUE)
+        $competenciaDraftRegistrada = Competencia::where('name',  $request->name)->where('publicada', 0)
+        ->where('fecha', '>', Carbon::now()->startOfDay())->first();
+
+        $competenciaRegistrada = Competencia::where('name', $request->name)->where('publicada', 1)->first();        
+        
+
+        if ($competenciaDraftRegistrada || $competenciaRegistrada) {
+            // Configura los datos para la notificación
+            session()->flash('cambiarNombre', [
+                'titulo' => '"' . $request->name . '"',
+                'texto' => '¡Este nombre ya ha sido registrado para otra competencia!',
+                'icono' => 'error',                
+                'confirmButtonText' => 'Elegir otro nombre',
+                'inputValue' => $request->name
+            ]);
+        }
+        else{
+            //$competencia->name = $request->input('name');
+            $competencia->name = $request->name;
+            $competencia->save();
+
+            $competencia->restore();
+
+
+            // Configura los datos para la notificación
+            session()->flash('alerta', [
+                'titulo' => '"' . $competencia->name . '"',
+                'texto' => '¡Competencia Restaurada Exitosamente!',
+                'icono' => 'success',
+                'tiempo' => 2000,
+                'botonConfirmacion' => false,
+            ]);
+        }
+
+        //return response()->json(['nombre' => $competencia->nombre], 200);
+        //return redirect()->back()->with('success', 'El nombre de la competencia se actualizó correctamente.');
+        return redirect('/competencia/trashed');
+    }
+
 
 
 

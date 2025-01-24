@@ -171,7 +171,8 @@ $timestampNow = now()->toDateString();
 
     @if ($expiradas->count() > 0)
         <div class="d-flex justify-content-between align-items-center" style="margin-top: 35px; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; justify-items: center;">
-            <h3 style="margin-bottom: 0px;">Competencias expiradas.</h3>
+            <!--<h3 style="margin-bottom: 0px;">Competencias expiradas.</h3>-->
+            <h3 style="margin-bottom: 0px;">Borradores expirados.</h3>
                         
             <form action="{{ route('competencia.destroyexpiradas') }}" method="POST"  onsubmit="return confirm('¿Está seguro que desea eliminar todos los borradores expirados?')">
                 @csrf
@@ -193,9 +194,10 @@ $timestampNow = now()->toDateString();
                 
                 <li>                  
                     
-                    <a href="{{ route('competencia.showdraft', $expirada) }}" style="text-decoration: none; color: inherit;">                        
+                    <!--<a href="{{ route('competencia.showdraft', $expirada) }}" style="text-decoration: none; color: inherit;">                        
                         <b style="font-size: 20px;">{{ $expirada -> name }}</b>
-                    </a>
+                    </a>-->
+                    <b style="font-size: 20px;">{{ $expirada -> name }}</b>
 
                     (<a href="{{ $expirada->mapa_link }}" style="text-decoration: none;" target="_blank" rel="noopener noreferrer" title="Ubicación">
                         <h style="font-size: 15px;">{{ $expirada->ubicacion }}</h>
@@ -238,16 +240,14 @@ $timestampNow = now()->toDateString();
                         </button>
                     </form>                                                
 
-                </li><br>
+                </li><br><br>
                 
             @endforeach
         </div>
 
-    @endif    
-
-
-
+    @endif
 </div>
+
 </x-plantilla-body>
 
 </html>

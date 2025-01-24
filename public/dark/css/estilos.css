@@ -156,3 +156,17 @@
   input:not(:focus) + .slider {
     box-shadow: none;
   }
+
+
+
+  /*=====================================================================*/
+  
+  .swal2-validation-message {
+    background: none !important; /* Sin fondo */
+    /*color: red;*/ /* Texto rojo (puedes cambiarlo a cualquier color) */
+    font-size: 16px; /* Tamaño de texto más pequeño */
+    font-weight: bold; /* Resalta el mensaje */
+    margin-top: 10px; /* Espacio superior */
+  }
+  /*=====================================================================*/
+  

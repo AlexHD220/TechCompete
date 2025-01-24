@@ -1,6 +1,6 @@
 //======================================================================================>
 
-
+// Pagina recargada
 if(document.getElementById('fecha_competencia').value){
     document.getElementById('inicio_registros').removeAttribute('disabled');  
 }
@@ -29,6 +29,15 @@ const fechaCompetenciaInput = document.getElementById('fecha_competencia');
 const inicioRegistrosInput = document.getElementById('inicio_registros');
 const finRegistrosInput = document.getElementById('fin_registros');
 
+// Pagina recargada
+if (fechaCompetenciaInput.value) {
+    const fechaSeleccionada = new Date(fechaCompetenciaInput.value);
+    fechaSeleccionada.setDate(fechaSeleccionada.getDate() - 1); // Sumar 1 día
+    const maximoinicioRegistros = fechaSeleccionada.toISOString().split('T')[0]; // Formatear a YYYY-MM-DD
+
+    inicioRegistrosInput.max = maximoinicioRegistros;
+}
+
 // Actualizar el mínimo de fecha_fin al cambiar fecha
 fechaCompetenciaInput.addEventListener('change', function () {
   if (fechaCompetenciaInput.value) {
@@ -45,6 +54,15 @@ fechaCompetenciaInput.addEventListener('change', function () {
       inicioRegistrosInput.max = yesterdayFormatted;          
   }
 });
+
+
+// Pagina recargada
+if (fechaCompetenciaInput.value) {
+    const fechaSeleccionada = new Date(fechaCompetenciaInput.value);      
+    const maximofinregistros = fechaSeleccionada.toISOString().split('T')[0]; // Formatear a YYYY-MM-DD
+
+    finRegistrosInput.max = maximofinregistros;
+}
 
 // Actualizar el mínimo de fecha_fin al cambiar fecha
 fechaCompetenciaInput.addEventListener('change', function () {
@@ -80,6 +98,16 @@ document.getElementById('inicio_registros').addEventListener('input', function()
         finRegistros.value = ""; // Limpia el valor de fecha_fin 
     }
 });
+
+
+// Pagina recargada
+if (inicioRegistrosInput.value) {
+    const fechaSeleccionada = new Date(inicioRegistrosInput.value);
+    fechaSeleccionada.setDate(fechaSeleccionada.getDate() + 1); // Sumar 1 día
+    const minimoFechaFin = fechaSeleccionada.toISOString().split('T')[0]; // Formatear a YYYY-MM-DD
+
+    finRegistrosInput.min = minimoFechaFin;
+}
 
 
 // Actualizar el mínimo de fecha_fin al cambiar fecha

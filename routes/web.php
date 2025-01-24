@@ -250,7 +250,7 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
     ->name('competencia.showdraft');
 
     // Ruta para mostrar los detalles de registros eliminados
-    Route::get('competencia/trashed/{competencia}', [CompetenciaController::class, 'showtrashed'])
+    Route::get('competencia/trashed/{competenciaid}', [CompetenciaController::class, 'showtrashed'])
     ->name('competencia.showtrashed');   
     
     // Ruta para mostrar los detalles de registros no publicados
@@ -275,6 +275,10 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
     // Ruta para mostrar los registros pendientes de publicar
     Route::get('competencia/draft/{competencia}/edit', [CompetenciaController::class, 'editdraft'])
     ->name('competencia.editdraft');
+
+    Route::patch('competencia/trashed{id}/updateName', [CompetenciaController::class, 'updateName'])
+    ->name('competencia.updateName');
+
 
 //------------------------------------------------------------------------------------|
 
@@ -324,10 +328,7 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
 //------------------------------------------------------------------------------------> Competencia_Categoria
 
     Route::get('competencia/{competencia}/categoria/attach', [CompetenciaCategoriaController::class, 'create'])
-    ->name('competenciacategoria.create');
-
-    Route::get('competencia/draft/{competencia}/categoria/attach', [CompetenciaCategoriaController::class, 'createdraft'])
-    ->name('competenciacategoria.createdraft');
+    ->name('competenciacategoria.create');    
 
     Route::post('competencia/{competencia}/categoria', [CompetenciaCategoriaController::class, 'store'])
     ->name('competenciacategoria.store');
@@ -345,9 +346,10 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
 
     // Ruta Destroy 
     Route::delete('competencia/{competencia}/categoria/{competenciaCategoria}', [CompetenciaCategoriaController::class, 'destroy'])
-    ->name('competenciacategoria.destroy');
+    ->name('competenciacategoria.destroy');    
 
-    //---------------------------------------> Pendientes de inplementar [!]
+    Route::get('competencia/draft/{competencia}/categoria/attach', [CompetenciaCategoriaController::class, 'createdraft'])
+    ->name('competenciacategoria.createdraft');
 
     // Ruta para mostrar los detalles de registros no publicados
     Route::get('competencia/draft/{competencia}/categoria/{competenciaCategoria}', [CompetenciaCategoriaController::class, 'showdraft'])
@@ -356,6 +358,10 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
     // Ruta para mostrar los registros pendientes de publicar
     Route::get('competencia/draft/{competencia}/categoria/{competenciaCategoria}/edit', [CompetenciaCategoriaController::class, 'editdraft'])
     ->name('competenciacategoria.editdraft');
+
+    // Ruta para mostrar los detalles de registros eliminados
+    Route::get('competencia/trashed/{competenciaid}/categoria/{categoriaid}', [CompetenciaCategoriaController::class, 'showtrashed'])
+    ->name('competenciacategoria.showtrashed'); 
 
 //------------------------------------------------------------------------------------|
 
@@ -376,12 +382,20 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
 
     // Ruta Destroy 
     Route::delete('competencia/{competencia}/categoria/{competenciaCategoria}/subcategoria/{competenciaSubcategoria}', [CompetenciaSubcategoriaController::class, 'destroy'])
-    ->name('competenciasubcategoria.destroy');
-
-    //---------------------------------------> Pendientes de inplementar [!]
+    ->name('competenciasubcategoria.destroy');    
 
     Route::get('competencia/draft/{competencia}/categoria/{competenciaCategoria}/subcategoria/attach', [CompetenciaSubcategoriaController::class, 'createdraft'])
     ->name('competenciasubcategoria.createdraft');    
+
+    // Ruta para mostrar los detalles de registros no publicados [PEDNIENTE DE IMPLEMENTAR]
+    /*Route::get('competencia/draft/{competencia}/categoria/{competenciaCategoria}/subcategoria/{competenciaSubcategoria}', [CompetenciaSubcategoriaController::class, 'showdraft'])
+    ->name('competenciasubcategoria.showdraft');*/
+
+    // Ruta para mostrar los registros pendientes de publicar
+    Route::get('competencia/draft/{competencia}/categoria/{competenciaCategoria}/subcategoria/{competenciaSubcategoria}/edit', [CompetenciaSubcategoriaController::class, 'editdraft'])
+    ->name('competenciasubcategoria.editdraft');
+    
+    //---------------------------------------> Pendientes de inplementar [!]
 
 //------------------------------------------------------------------------------------|
 

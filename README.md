@@ -52,6 +52,7 @@ composer install
 # Crea la base de datos MySQL
 mysql -u root -p
 CREATE DATABASE techcompete;
+[Presiona Enter]
 exit 
 
 # Configura el archivo .env
@@ -67,7 +68,7 @@ DB_USERNAME=root
 DB_PASSWORD=
 
 # Ejecuta las migraciones y semillas
-php artisan migrate:fresh
+php artisan migrate
 php artisan db:seed
 
 # Instala las dependencias de Node.js y compila los assets
@@ -77,6 +78,9 @@ npm run build
 # Crea el enlace simbólico para el almacenamiento de archivos
 php artisan storage:link
 
+#Reiniciar el servidor
+Deten servidor y vuelve a ejecutarlo desde Laragon para crear el dominio.
+
 # Accede al proyecto desde tu navegador
-Laragon generará automáticamente un dominio local con la ruta:
+Laragon generará automáticamente un dominio "local" con la ruta:
 http://techcompete.test
