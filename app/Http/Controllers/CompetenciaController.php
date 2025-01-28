@@ -483,7 +483,7 @@ class CompetenciaController extends Controller
             // Configura los datos para la notificación
             session()->flash('alerta', [
                 'titulo' => '"' . $competencia->name . '"',                
-                'texto' => '¡Competencia Desactivada Exitosamente!',
+                'texto' => '¡Competencia Deshabilitada Exitosamente!',
                 'icono' => 'success',
                 'tiempo' => 2000,
                 'botonConfirmacion' => false,

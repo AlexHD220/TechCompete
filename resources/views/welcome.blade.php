@@ -75,14 +75,44 @@
             }
         </style>
 
+        <style>
+            .padding-bienvenida{
+                /*padding-top: 35px;*/
+                padding-top: 70px;
+            }
+
+            .padding-encabezado {
+                padding-bottom: 0px;                    
+            }
+
+            .padding-footer0 {
+                padding-bottom: 0px;                    
+            }
+
+            @media (max-width: 639px) {                
+
+                .padding-bienvenida {                    
+                    margin-top: 0px;
+                }
+
+                .size-bienvenida{
+                    font-size: 30px;
+                }
+
+                .size-rol{
+                    font-size: 20px;
+                }
+            }
+        </style>
+
     </head>
-    <body class="antialiased">
+    <body class="antialiased">    
         
-        <div class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-blue-500 selection:text-white">
+        <div class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-blue-500 selection:text-white" style="background-color: #191c24;">
             @if (Route::has('login'))
 
                 @if(0)
-                    <div class="sm:fixed sm:top-0 sm:left-0 p-6 text_left z-10">
+                    <div class="sm:fixed sm:top-0 sm:left-0 p-6 text_left z-10"> <!--z-10">-->
                         @auth
                             @can('only-superadmin')
                                 <a href="{{ url('/administrador/create') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"> <!--class="focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"-->
@@ -93,7 +123,7 @@
                     </div>
                 @endif
 
-                <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10">
+                <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10 padding-encabezado" style="width: 100%; background-color: #191c24;"> <!--z-10">-->
                     @auth
 
                         <a href="{{ url('/dashboard') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" style="font-size: 18px;"> <!--class="focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"-->
@@ -125,29 +155,43 @@
                 </div>
             @endif
             
-            <div class="max-w-7xl mx-auto p-6 lg:p-8">
+            <div id="body_pagina" class="max-w-7xl mx-auto p-6 lg:p-8 padding-footer padding-bienvenida"  style="background-color: #191c24;">
 
                 @auth
-                    <div class="flex justify-center" style="margin-top: 10px;">
-                        <h1 style="color: #ed5048; font-size: 35px; font-weight: bold; margin-bottom: 10px; margin-top: 0px; font-family: 'Montserrat'; letter-spacing: 5px;">
-                            <b style="font-size: 45px; font-weight: bolder;" class="flex justify-center">Bienvenido</b>
-                            <a onmouseover="this.style.color='#eb1616'" onmouseout="this.style.color='#ed5048'" href="{{ url('/dashboard') }}">
-                            @can('only-user')
-                                <b>{{ auth()->user()->name }}</b>
-                            @else
-                                @if(Auth::id() == 1)              
-                                    <b><i>SuperAdministrador</i></b>
-                                @else
-                                    <b><i>Administrador</i></b>
-                                @endif
-                            @endcan
-                            </a>
+                    <div class="flex justify-center">
+                        <h1 style="color: #ed5048; font-size: 35px; font-weight: bold; margin-top: 0px; font-family: 'Montserrat'; letter-spacing: 5px;">
+                            <b style="font-size: 45px; font-weight: bolder;" class="flex justify-center size-bienvenida">Bienvenido</b>
+                            
+                            <div style="margin-bottom: 20px; display: flex; flex-wrap: wrap; text-align: center;">
+                                <a class="size-rol" onmouseover="this.style.color='#eb1616'" onmouseout="this.style.color='#ed5048'" href="{{ url('/dashboard') }}">
+                                    @can('only-user')
+                                        <b>{{ auth()->user()->name }}</b>
+                                    @endcan
+
+                                    @if(Auth::user()->rol == 1)              
+                                        <b><i>SuperAdministrador</i></b>
+                                    @elseif(Auth::user()->rol == 2)  
+                                        <b><i>Administrador</i></b>
+                                    @elseif(Auth::user()->rol == 3)  
+                                        <b><i>Staff</i></b>
+                                    @elseif(Auth::user()->rol == 4)  
+                                        <b><i>Staff Jr</i></b>
+                                    @elseif(Auth::user()->rol == 5)
+                                        <b><i>{{ Auth::user()->name }}</i></b>
+                                        <!--<b><i>{{ auth()->user()->name }}</i></b>-->
+                                    @elseif(Auth::user()->rol == 6)  
+                                        <b><i>Asesor</i></b>
+                                    @elseif(Auth::user()->rol == 7)  
+                                        <b><i>Juez</i></b>
+                                    @endif                            
+                                </a>
+                            </div>
                         </h1>
                     </div>
                 @else
-                    <div class="flex justify-center" style="margin-top: 10px;">
-                        <h1 style="color: #ed5048; font-size: 35px; font-weight: bold; margin-bottom: 10px; margin-top: 20px; font-family: 'Montserrat'; letter-spacing: 5px;">
-                            <b>Bienvenido</b>
+                    <div class="flex justify-center">
+                        <h1 style="color: #ed5048; font-size: 35px; font-weight: bold; margin-bottom: 10px; margin-top: 0px; font-family: 'Montserrat'; letter-spacing: 5px;">
+                            <b class="size-rol">Bienvenido</b>
                         </h1>
                     </div>
                 @endauth
@@ -175,7 +219,7 @@
                 </div>-->
 
                 <!--Botones-->
-                <div class="flex justify-center" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                <div class="flex justify-center" style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
                     @auth <!--Cuando el usuario este logueado muestrame lo sigiente-->
 
                         @can('only-superadmin')                            
@@ -192,26 +236,26 @@
                             </button>
                         @endcan
 
-                        @can('only-user')
-                            <button onclick="window.location.href = '/asesor';" class="boton" style="margin-right: 25px;">
+                        <button onclick="window.location.href = '/competencia';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->
+                            Competencias
+                        </button>
+
+                        @can('only-institucion')                            
+                            <button onclick="window.location.href = '/asesor';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->                                
                                 Asesores
                             </button>
                         
 
-                            <button onclick="window.location.href = '/equipo';" class="boton" style="margin-right: 25px;">
+                            <button onclick="window.location.href = '/equipo';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->                                
                                 Equipos
                             </button>
 
-                            <button onclick="window.location.href = '/proyecto';" class="boton" style="margin-right: 25px;">
+                            <button onclick="window.location.href = '/proyecto';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->                                
                                 Proyectos
                             </button>
                         @endcan
 
-                    @endauth
-
-                    <button onclick="window.location.href = '/competencia';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->
-                        Competencias
-                    </button>
+                    @endauth                    
 
                     @auth <!--Cuando el usuario este logueado muestrame lo sigiente-->
                         
@@ -332,4 +376,26 @@
             </div>
         </div>
     </body>
+
+    <script>
+        const bodyPagina = document.getElementById('body_pagina0');
+
+        function ScrollbarVisible() {
+            bodyPagina.classList.add('padding-footer');
+            return document.documentElement.scrollHeight > document.documentElement.clientHeight;
+        }        
+
+        function updateBodyClass() {
+            if (ScrollbarVisible()) {            
+                bodyPagina.classList.remove('padding-footer'); 
+            } else {                
+                bodyPagina.classList.add('padding-footer');
+            }
+        }
+
+        
+        updateBodyClass();
+        
+        window.addEventListener('resize', updateBodyClass);
+    </script>
 </html>

@@ -30,7 +30,7 @@
 
         <label for="rol"><b>Tipo de cuenta: </b></label>
         <select name="rol" style="width: 200px; margin: 5px;" autofocus required>
-            <option selected disabled> - </option>
+            <option selected disabled value=""> - </option>
             <option value=1 @selected(old('rol') == 1)>SuperAdministrador</option>
             <option value=2 @selected(old('rol') == 2)>Administrador</option>
         </select><br><br>

@@ -68,10 +68,12 @@
 
         </form>
 
-        <div style="margin-top: 30px; text-align: right;">
-            <p class="text-gray-400" style="display: inline;">¿No tienes una cuenta?</p>
-            <a onmouseover="this.style.color='gray'" onmouseout="this.style.color='white'" href="{{ route('type-register') }}" style="margin-left: 5px; display: inline-block;">Regístrate</a>
-        </div>
+        @if (!session('success'))
+            <div style="margin-top: 30px; text-align: right;">
+                <p class="text-gray-400" style="display: inline;">¿No tienes una cuenta?</p>
+                <a onmouseover="this.style.color='gray'" onmouseout="this.style.color='white'" href="{{ route('type-register') }}" style="margin-left: 5px; display: inline-block;">Regístrate</a>
+            </div>
+        @endif
 
     </x-authentication-card>
     

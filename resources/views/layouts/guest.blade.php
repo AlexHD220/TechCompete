@@ -19,6 +19,16 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
         <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">-->
 
+        <!-- New Icon Font Stylesheet -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">    
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet"> 
+
+
+        <!-- Leaflet CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <!-- Leaflet Control Geocoder CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -43,6 +53,47 @@
 
         </style>
 
+        <style>
+            #map {
+                height: 300px; /* Ajusta el tamaño del mapa */
+                width: 100%;
+            }
+
+            /* Pantallas pequeñas: celulares en orientación vertical */
+            /*@media (max-width: 768px) {*/
+            /*@media (max-width: 500px) {
+                #map {
+                    width: 100%;
+                }
+            }*/
+
+            .leaflet-container {
+                position: relative; /* Cambiar a relativa si la barra lateral está encima */
+                z-index: 900; /* Mantener por detrás de la barra */
+            }
+
+            .leaflet-control-geocoder-form{
+                color: black;                
+            }
+
+            .leaflet-control-geocoder-icon::before {
+                content: "\f002"; /* Código Unicode del icono de búsqueda en Font Awesome */
+                font-family: "Font Awesome 5 Free"; /* Especifica la fuente */
+                font-weight: 900; /* Asegura que se use la versión sólida del icono */
+                font-size: 16px; /* Ajusta el tamaño del icono */
+                color: #333; /* Cambia el color del icono */
+                display: inline-block; /* Asegura que se muestre correctamente */
+                vertical-align: middle; /* Centra el icono verticalmente */
+                padding-left: 4px /*10px;*/
+
+                /*margin-left: auto; /* Empuja el ícono hacia la derecha */
+                /*display: block;*/
+                /*text-align: right;*/
+                /*float: right;*/
+            }
+
+        </style>
+
     </head>
     <body>
         
@@ -62,5 +113,8 @@
 
         @livewireScripts
         <script src="/dark/js/codigo.js" defer></script>
+        
+        <script src="/dark/js/confirmacionPassword.js" defer></script>
+        <script src="/dark/js/confirmacionCorreo.js" defer></script>
     </body>
 </html>

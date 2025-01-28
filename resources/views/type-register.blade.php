@@ -38,7 +38,7 @@
         </div>
 
         <div class="flex items-center justify-center">
-            <button onclick="window.location.href = '/institucion/create';" class="boton" style="margin-top: 20px; margin-bottom: 30px; font-size: 20px; width: 200px;">
+            <button onclick="window.location.href = '/institucion/signup';" class="boton" style="margin-top: 20px; margin-bottom: 30px; font-size: 20px; width: 200px;">
                 <b>Institución</b>
             </button>
         </div>

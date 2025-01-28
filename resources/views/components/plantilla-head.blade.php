@@ -37,6 +37,12 @@
     <!-- Template Stylesheet -->
     <link href="/dark/css/style.css" rel="stylesheet">
     <link href="/dark/css/estilos.css" rel="stylesheet">
+
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Leaflet Control Geocoder CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     
 
     <style>

@@ -39,8 +39,10 @@ Asegúrate de tener instalados los siguientes programas:
 ## Implementación del proyecto
 
 ```bash
-# Clona el repositorio en la carpeta raíz de Laragon (C:\laragon\www).
+# Desde la Terminal de Laragon clona el repositorio en la carpeta raíz (C:\laragon\www)
 git clone https://github.com/AlexHD220/TechCompete.git
+
+# Accede a la carpeta del proyecto dentro de la Terminal (C:\laragon\www\TechCompete)
 cd TechCompete
 
 # Verifica que estas en la rama "main"
@@ -49,17 +51,17 @@ git branch
 # Instala las dependencias de Composer
 composer install
 
+# Configura el archivo .env
+cp .env.example .env
+php artisan key:generate
+
 # Crea la base de datos MySQL
 mysql -u root -p
 CREATE DATABASE techcompete;
 [Presiona Enter]
 exit 
 
-# Configura el archivo .env
-cp .env.example .env
-php artisan key:generate
-
-# Edita el archivo .env para configurar las credenciales de la base de datos de Laragon:
+# Edita el archivo .env para configurar las credenciales de la base de datos de Laragon (MySQL)
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -78,9 +80,15 @@ npm run build
 # Crea el enlace simbólico para el almacenamiento de archivos
 php artisan storage:link
 
-#Reiniciar el servidor
-Deten servidor y vuelve a ejecutarlo desde Laragon para crear el dominio.
+# Reinicia el servidor
+Deten el servicio de Laragon y vuelve a ejecutarlo desde la aplicacion para generar el dominio.
 
 # Accede al proyecto desde tu navegador
-Laragon generará automáticamente un dominio "local" con la ruta:
+Laragon creará automáticamente un dominio local con la siguiente ruta.
 http://techcompete.test
+
+# Inicia sesión como Superusuarios dentro de la palataforma
+El proyecto generará automaticamente en la base de datos el primer usuario con permisos de Superadministrador.
+Para iniciar sesión utiliza las siguientes credenciales.
+- Correo electrónico: superadmin@techcompete.com
+- Contraseña: Pruebas.tc23

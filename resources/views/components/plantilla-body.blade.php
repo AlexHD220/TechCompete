@@ -221,6 +221,9 @@
     <script src="/dark/js/notificacion.js"></script>
     <script src="/dark/js/fechas.js" defer></script>
     <script src="/dark/js/scripts.js" defer></script>
+    
+    <script src="/dark/js/confirmacionPassword.js" defer></script>
+    <script src="/dark/js/confirmacionCorreo.js" defer></script>
 
     <!-- SweetAlert CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

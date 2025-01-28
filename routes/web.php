@@ -39,6 +39,8 @@ use Illuminate\Support\Facades\Route;
 });*/
 
 Route::get('/', function () {
+    session()->forget('form');
+
     if (Gate::allows('autenticado')) {
         // Usuario autenticado
         if (Gate::allows('mail-verificado', auth()->user())) {
@@ -399,6 +401,49 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
 
 //------------------------------------------------------------------------------------|
 
+Route::get('perfil/configuracion', function () {
+    session()->forget('form');
+
+    if (Gate::allows('autenticado')) {
+        // Usuario autenticado
+        if (Gate::allows('mail-verificado', auth()->user())) {
+            return view('profile.show'); // Usuario con correo verificado
+        } else {
+            return redirect()->route('verification.notice'); // Usuario sin correo verificado
+        }
+    } else {
+        // Usuario no autenticado
+        return view('welcome'); // Usuario con correo verificado        
+    }
+})->name('configuracionPerfil');
+
+//------------------------------------------------------------------------------------> Perfil institucion
+
+    Route::get('institucion/perfil', [InstitucionController::class, 'perfilshow'])
+    ->name('institucion.perfilshow');
+
+    // Ruta para mostrar los registros pendientes de publicar
+    Route::get('institucion/perfil/edit', [InstitucionController::class, 'perfiledit'])
+    ->name('institucion.edit');
+
+    Route::patch('institucion/perfil', [InstitucionController::class, 'perfilupdate'])
+    ->name('institucion.update');
+    
+    
+//------------------------------------------------------------------------------------|
+
+//------------------------------------------------------------------------------------> Perfil asesor
+
+
+
+//------------------------------------------------------------------------------------|
+
+//------------------------------------------------------------------------------------> Perfil juez
+
+
+
+//------------------------------------------------------------------------------------|
+
 }); //--------------------------------------------------------------------------------------------> Fin Middleware
 
 
@@ -424,7 +469,48 @@ Route::resource('competencia', CompetenciaController::class)->parameters([
 ]);*/
 
 
-Route::resource('institucion', InstitucionController::class);
+//------------------------------------------------------------------------------------> Competencias
+
+Route::get('institucion', [InstitucionController::class, 'index'])
+->name('institucion.index');
+
+Route::get('institucion/signup', [InstitucionController::class, 'create'])
+->name('institucion.create');
+
+/*Route::post('institucion/store/{valores}', [InstitucionController::class, 'store'])
+->name('institucion.store');*/
+
+Route::get('institucion/reset', [InstitucionController::class, 'reset'])
+->name('institucion.reset');
+
+Route::get('institucion/anterior/{valores}', [InstitucionController::class, 'anterior'])
+->name('institucion.anterior');
+
+Route::post('institucion', [InstitucionController::class, 'store'])
+->name('institucion.store');
+
+Route::get('institucion/{institucion}', [InstitucionController::class, 'show'])
+->name('institucion.show');
+
+
+
+/*Route::get('institucion/originalcreate', [InstitucionController::class, 'originalCreate'])
+->name('institucion.originalCreate');*7
+
+
+/*Route::get('/formulario-multistep', [InstitucionController::class, 'index'])
+->name('form.multistep');
+
+Route::post('/formulario-multistep', [InstitucionController::class, 'process'])
+->name('form.process');*/
+
+/*Route::resource('institucion', InstitucionController::class)
+->except(['create']);*/
+//->except(['create', 'store']);
+
+
+//------------------------------------------------------------------------------------|
+
 
 Route::resource('asesor', AsesorController::class);
 
@@ -461,5 +547,7 @@ Route::middleware([
 //Route::post('/logout', 'Auth\LoginController@logout')->name('logout'); // <-- ERROR ESTO NO FUNCIONO
 
 Route::get('/type-register', function () {
+    session()->forget('form');
+    
     return view('type-register');
 })->name('type-register');

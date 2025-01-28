@@ -228,7 +228,7 @@ $timestampNow = now()->toDateString();
                                         
                                         <button type="submit" onclick="return confirm('¿Está seguro que desea desactivar esta publicación?')" onmouseover="this.style.backgroundColor='#f97c3e';" onmouseout="this.style.backgroundColor='#ff5500';"  
                                         style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: #ff5500; color: white; border: none; padding: 5px; border-radius: 10%; display: inline-flex; justify-content: center; align-items: center;"
-                                        title="Desctivar Publicación">
+                                        title="Desactivar Publicación">
                                             <!--<i class="fas fa-ban" style="font-size: 20px;"></i>--> <!-- Ícono de FontAwesome -->
                                             <i class="fa-solid fa-right-to-bracket" style="font-size: 20px;"></i> <!-- Ícono de FontAwesome -->                                            
                                         </button>

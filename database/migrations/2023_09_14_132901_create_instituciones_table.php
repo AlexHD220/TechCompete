@@ -17,12 +17,24 @@ return new class extends Migration
             $table->string('name');
             $table->string('email');
             $table->string('tipo');
+
             $table->string('pais');
-            $table->string('region');
+            $table->string('estado');
+            $table->string('ciudad');
+            
+            $table->string('domicilio');
+            $table->string('latitud');
+            $table->string('longitud');
+            $table->string('mapa_link');
+
             
             $table->string('pagina_web')->nullable();            
             $table->string('telefono')->nullable();
             $table->string('whatsapp')->nullable();
+
+            $table->boolean('nombre_escuela_credencial'); 
+            $table->boolean('nombre_escuela_personalizado')->default(false); 
+            $table->string('nombre_credencial_escrito')->nullable();
 
             $table->softDeletes(); // Agrega la columna deleted_at
             //$table->timestamps();

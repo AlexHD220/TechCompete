@@ -194,8 +194,10 @@ function toggleCambiarFechaExpirada(element) {
 }
 
 
+//======================================================================================>
 
-const password = document.getElementById('password');
+
+/*const password = document.getElementById('password');
 const confirmPassword = document.getElementById('password_confirmation');
 const passwordError = document.getElementById('passwordError');
 
@@ -217,10 +219,11 @@ document.getElementById('registroForm').addEventListener('submit', function (eve
         passwordError.style.display = 'none'; // Oculta el mensaje de error
         confirmPassword.setCustomValidity(''); // Limpia el mensaje de validación
     }
-});
+});*/
 
 
 //======================================================================================>
+
 
 function sweetAlertPersistent(titulo, texto, icono) {  
     
@@ -243,4 +246,8 @@ function sweetAlertNotification(titulo, texto, icono, tiempo, botonConfirmacion)
       showConfirmButton: botonConfirmacion
   });
 }
+
+
+//======================================================================================>
+
 
