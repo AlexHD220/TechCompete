@@ -25,7 +25,13 @@
                         
                         <li>
                             <b style="font-size: 20px;">{{ $superstaff -> name }}</b>
-                            (<i>{{ $superstaff -> email }}</i>)
+                            
+                            @if($superstaff -> telefono)
+                                (<i>{{ $superstaff -> email }}</i> | {{ $superstaff -> telefono }})
+                            @else
+                                (<i>{{ $superstaff -> email }}</i>)
+                            @endif
+                            <h style="margin-right: 5px;"></h>   
                             
                             <form action="{{route('staff.restore', $superstaff->id)}}" method = "POST" style="display: inline-block;">
                                 @csrf
@@ -62,7 +68,13 @@
                         
                         <li>
                             <b style="font-size: 20px;">{{ $staff -> name }}</b>                                
-                            (<i>{{ $staff -> email }}</i>)
+                            
+                            @if($staff -> telefono)
+                                (<i>{{ $staff -> email }}</i> | {{ $staff -> telefono }})
+                            @else
+                                (<i>{{ $staff -> email }}</i>)
+                            @endif
+                            <h style="margin-right: 5px;"></h>  
                             
                             <form action="{{route('staff.restore', $staff->id)}}" method = "POST" style="display: inline-block;">
                                 @csrf

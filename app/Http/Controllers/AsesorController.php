@@ -25,6 +25,7 @@ use Illuminate\Validation\Rule;
 
 use App\Models\Administrador;
 use App\Models\Team;
+use App\Rules\ValidateUniqueInTables;
 use Illuminate\Auth\Events\Registered;
 use Laravel\Fortify\Rules\Password;
 
@@ -83,8 +84,8 @@ class AsesorController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|unique:registro_jueces,email',
-            'email' => ['unique:users'],
+            'email' => ['required', 'email', new ValidateUniqueInTables(['users', 'registro_jueces'])], //| unique:registro_jueces,email",            
+            'telefono' => ['nullable','numeric','unique:users,telefono',],
             // Otras reglas de validación para otros campos
         ]);
 
@@ -163,7 +164,8 @@ class AsesorController extends Controller
             'rol' => 6,
             'name' => $request->name,
             'lastname' => $request->lastname,
-            'email' => $request->email,                
+            'email' => $request->email,
+            'telefono' => $request->telefono,
             'password' => Hash::make($request->password),                
         ]);
         

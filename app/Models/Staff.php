@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Staff extends Model
 {
     use HasFactory;
+
+    public function user()
+    {
+        //return $this->belongsTo(Usuario::class);
+        return $this->belongsTo(User::class);
+    }
 }

@@ -200,15 +200,15 @@
     <p style="margin-bottom: 20px; font-size: 20px;">{{ $competencia->sede }}</p>   
     
     @auth <!--Cuando el usuario este logueado muestrame lo sigiente-->            
-        @can('only-superadmin')   
-            <!--@if($competencia->tipo != 'Cualquiera')-->
-            <div style="display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 20px;">
+        @can('only-superadmin') 
+
+            <div style="display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 20px; margin-left: 10px;">
                 <h5 style="margin-bottom: 0px; font-size: 18px;"><i>*<u>Tipo de competencia</u>:</i></h5> 
                 <p style="margin-left: 5px; margin-bottom: 0px; font-size: 18px;"> 
-                    {{$competencia->tipo}}
+                    {{ strtolower($competencia->tipo) }}
                 </p>
-            </div>
-            <!--@endif-->
+            </div>   
+
         @endcan
     @endauth
 
@@ -245,31 +245,38 @@
                         </div>
 
                         <div class="text-center" style="margin-top: 5px; font-size: 16px;">                            
-
-                            @if($competenciaCategoria->registro_personalizado)
-                                @if(\Carbon\Carbon::parse($competenciaCategoria->fin_registros)->isBefore(\Carbon\Carbon::now()->startOfDay()))                                  
-                                    <i>Inscripciones Cerradas</i>
-                                @else
-                                    @if(\Carbon\Carbon::parse($competenciaCategoria->inicio_registros)->isBefore(\Carbon\Carbon::now()->startOfDay()))  
-                                        <b>Cierre de inscripciones:</b><br>
-                                        {{ \Carbon\Carbon::parse($competenciaCategoria->fin_registros)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
+                            @if(\Carbon\Carbon::parse($competencia->fecha)->isAfter(\Carbon\Carbon::now()->startOfDay()))
+                                @if($competenciaCategoria->registro_personalizado)
+                                    @if(\Carbon\Carbon::parse($competenciaCategoria->fin_registros)->isBefore(\Carbon\Carbon::now()->startOfDay()))                                  
+                                        <i>Inscripciones Cerradas</i>
                                     @else
-                                        <b>Inicio de inscripciones:</b><br>
-                                        {{ \Carbon\Carbon::parse($competenciaCategoria->inicio_registros)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
+                                        @if(\Carbon\Carbon::parse($competenciaCategoria->inicio_registros)->isBefore(\Carbon\Carbon::now()->startOfDay()))  
+                                            <b>Cierre de inscripciones:</b><br>
+                                            {{ \Carbon\Carbon::parse($competenciaCategoria->fin_registros)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
+                                        @else
+                                            <b>Inicio de inscripciones:</b><br>
+                                            {{ \Carbon\Carbon::parse($competenciaCategoria->inicio_registros)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
+                                        @endif
+                                    @endif
+                                @else
+                                    @if(\Carbon\Carbon::parse($competencia->fin_registros)->isBefore(\Carbon\Carbon::now()->startOfDay()))                                  
+                                        <i>Inscripciones Cerradas</i>
+                                    @else
+                                        @if(\Carbon\Carbon::parse($competencia->inicio_registros)->isBefore(\Carbon\Carbon::now()->startOfDay()))  
+                                            <b>Cierre de inscripciones:</b><br>
+                                            {{ \Carbon\Carbon::parse($competencia->fin_registros)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
+                                        @else
+                                            <b>Inicio de inscripciones:</b><br>
+                                            {{ \Carbon\Carbon::parse($competencia->inicio_registros)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
+                                        @endif
                                     @endif
                                 @endif
                             @else
-                                @if(\Carbon\Carbon::parse($competencia->fin_registros)->isBefore(\Carbon\Carbon::now()->startOfDay()))                                  
-                                    <i>Inscripciones Cerradas</i>
-                                @else
-                                    @if(\Carbon\Carbon::parse($competencia->inicio_registros)->isBefore(\Carbon\Carbon::now()->startOfDay()))  
-                                        <b>Cierre de inscripciones:</b><br>
-                                        {{ \Carbon\Carbon::parse($competencia->fin_registros)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
-                                    @else
-                                        <b>Inicio de inscripciones:</b><br>
-                                        {{ \Carbon\Carbon::parse($competencia->inicio_registros)->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}
-                                    @endif
-                                @endif
+                                <a onmouseover="this.style.color='white'" onmouseout="this.style.color='#6c7293'" 
+                                href="{{ $competencia->publicada ? route('competenciacategoria.show', [$competencia, $competenciaCategoria]) : route('competenciacategoria.showdraft', [$competencia, $competenciaCategoria]) }}" 
+                                style="text-decoration: none; color: inherit;">
+                                    <i>Ver detalles</i>
+                                </a>
                             @endif
                         </div>
 

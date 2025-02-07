@@ -37,7 +37,7 @@
 
             <div class="mt-4">
                 <x-label for="telefono" value="{{ __('Número de telefono') }}" />
-                <x-input id="telefono" class="block mt-1 w-full" type="tel" placeholder="Opcional" name="telefono" :value="old('telefono')" maxlength="10"/> <!-- autocomplete="name" --->
+                <x-input id="telefono" class="block mt-1 w-full" type="tel" placeholder="Opcional" name="telefono" :value="old('telefono')" maxlength="15"/> <!-- autocomplete="name" --->
             </div>
 
             <div class="mt-4">

@@ -29,8 +29,8 @@
         <input type="text" id="usuario" name="usuario" placeholder="Usuario" required value = "{{ old('usuario') }}"><br><br>--> <!--value = "{{old('name')}}"-->
 
         <label for="rol"><b>Tipo de cuenta: </b></label>
-        <select name="rol" style="width: 200px; margin: 5px;" autofocus required>
-            <option selected disabled value=""> - </option>
+        <select name="rol" style="width: 200px; margin: 5px;" autofocus required>            
+            <option selected disabled value="" hidden> - </option>
             <option value=3 @selected(old('rol') == 3)>SuperStaff</option>
             <option value=4 @selected(old('rol') == 4)>Staff</option>
         </select><br><br>
@@ -43,6 +43,9 @@
 
         <label for = "email"><b>Correo Electrónico: </b></label>
         <input type="email" name="email" minlength="5" maxlength="50" required value = "{{ old('email') }}" style="width: 337px; margin: 5px"><br><br>
+
+        <label for="telefono"><b>Número de telefono: </b></label>
+        <input id="telefono" class="block mt-1 w-full" type="tel" placeholder="Opcional" name="telefono" value = "{{ old('telefono')  }}" style="width: 323px; margin: 5px" maxlength="15"><br><br> <!-- autocomplete="name" --->
 
         <input type="submit" value="Crear cuenta" style="margin-top: 10px;"> 
         <a href="{{ route('staff.index') }}" style="margin-left:20px;">Cancelar</a>

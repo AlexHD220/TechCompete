@@ -65,4 +65,17 @@
 
     </style>
 
+    <style>
+
+        @media (max-width: 991px) {
+            .ocultar-div-barra {
+                display: none;
+            }
+            .mostrar-div-barra {
+                margin: 30px;
+            }
+        }
+
+    </style>
+
 </head>

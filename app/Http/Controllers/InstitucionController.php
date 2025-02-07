@@ -19,6 +19,7 @@ use Illuminate\Validation\Rule;
 
 use App\Models\Administrador;
 use App\Models\Team;
+use App\Rules\ValidateUniqueInTables;
 use Illuminate\Auth\Events\Registered;
 use Laravel\Fortify\Rules\Password;
 
@@ -119,7 +120,8 @@ class InstitucionController extends Controller
         // Validaciones específicas para cada paso
         if ($currentStep == 1) {
             $request->validate([
-                'email' => 'required | email | new ValidateUniqueInTables(["users", "registro_jueces"]),',
+                'email' => ['required', 'email', new ValidateUniqueInTables(['users', 'registro_jueces'])], //| unique:registro_jueces,email",
+                'whatsapp' => ['nullable','numeric','unique:users,telefono',],
                 // Otras reglas de validación para otros campos
             ]);
         } 
@@ -207,7 +209,8 @@ class InstitucionController extends Controller
             $user = User::create([
                 'rol' => 5,
                 'name' => $finalData->name,
-                'email' => $finalData->email,                
+                'email' => $finalData->email,   
+                'telefono' => $finalData->whatsapp,             
                 'password' => Hash::make($finalData->password),                
             ]);
             

@@ -170,7 +170,7 @@
             {{ $competencia->tipo }}<br><br>   
         @else
             <select name="tipo" required style="width: 110px; height: 30px;">
-                <option selected disabled value=""> - </option>
+                <option selected disabled value="" hidden> - </option>
                 <option value="Cualquiera" @selected((old('tipo') ?? $competencia->tipo) == 'Cualquiera')>Cualquiera</option>
                 <option value="Equipos" @selected((old('tipo') ?? $competencia->tipo)== 'Equipos')>Equipos</option>
                 <option value="Proyectos" @selected((old('tipo') ?? $competencia->tipo)== 'Proyectos')>Proyectos</option>            

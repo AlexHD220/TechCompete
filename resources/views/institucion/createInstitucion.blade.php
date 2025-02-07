@@ -110,12 +110,12 @@
 
                 <div class="mt-4">
                     <x-label for="telefono" value="{{ __('Número de telefono') }}" />
-                    <x-input id="telefono" class="block mt-1 w-full" type="tel" placeholder="Opcional" name="telefono" :value="old('telefono') ?? $formPreviousData['step_'.$currentStep]['telefono'] ?? ''" maxlength="10"/> <!-- autocomplete="name" --->
+                    <x-input id="telefono" class="block mt-1 w-full" type="tel" placeholder="Opcional" name="telefono" :value="old('telefono') ?? $formPreviousData['step_'.$currentStep]['telefono'] ?? ''" maxlength="15"/> <!-- autocomplete="name" --->
                 </div>
 
                 <div class="mt-4">
                     <x-label for="whatsapp" value="{{ __('WhatsApp') }}" />
-                    <x-input id="whatsapp" class="block mt-1 w-full" type="tel"  placeholder="Opcional" name="whatsapp" :value="old('whatsapp') ?? $formPreviousData['step_'.$currentStep]['whatsapp'] ?? ''"/> <!-- autocomplete="name" --->
+                    <x-input id="whatsapp" class="block mt-1 w-full" type="tel"  placeholder="Opcional" name="whatsapp" :value="old('whatsapp') ?? $formPreviousData['step_'.$currentStep]['whatsapp'] ?? ''" maxlength="15"/> <!-- autocomplete="name" --->
                 </div> 
 
             @elseif ($currentStep == 4)

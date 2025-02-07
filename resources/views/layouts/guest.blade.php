@@ -94,9 +94,58 @@
 
         </style>
 
+        <style>
+            /* Ocultar el input de tipo file */
+            #imagen {
+                display: none;
+            }
+
+            /* Estilo personalizado para el botón */
+            .custom-file-label {
+                display: inline-block;
+                padding: 5px 10px;
+                background-color: #0e2c6c;
+                color: white;
+                border-radius: 5px;
+                cursor: pointer;
+                text-align: center;
+                transition: background-color 0.3s ease;
+            }
+
+            .custom-file-label:hover {
+                background-color: #061942;
+            }
+
+            /* Leyenda debajo del botón */
+            .file-name {
+                margin-top: 3px;
+                font-size: 14px;
+                color: #777;/*555*/
+            }
+        </style>
+
+        <style>
+            .error-message {
+                /*color: red;*/
+                color: #f87171;
+                font-size: 14px;
+                display: none; /* Oculto por defecto */
+                margin-top: 10px;            
+            }
+        </style>
+
     </head>
+
+
     <body>
         
+        @guest
+            <!--Equis-->
+            <a href="/" class="go-home-link">
+                <i class="fas fa-times"></i>
+            </a>
+        @endguest
+
         <!-- mail-verificado-->
         @can('mail-verificado')
             <!--Equis-->

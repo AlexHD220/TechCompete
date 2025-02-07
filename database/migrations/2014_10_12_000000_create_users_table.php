@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('lastname')->nullable();
             //$table->string('username')->unique();
             $table->string('email')->unique();
+            $table->string('telefono')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             //$table->boolean('change_password')->default(false);

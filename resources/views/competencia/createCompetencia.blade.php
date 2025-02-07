@@ -139,7 +139,7 @@
 
         <label for="tipo" style="margin-bottom: 5px;"><b>Tipo de inscripciones: </b></label><br>
         <select name="tipo" required style="width: 110px; height: 30px;">
-            <option selected disabled value=""> - </option>
+            <option selected disabled value="" hidden> - </option>
             <option value="Cualquiera" @selected(old('tipo') == 'Cualquiera')>Cualquiera</option>
             <option value="Equipos" @selected(old('tipo') == 'Equipos')>Equipos</option>
             <option value="Proyectos" @selected(old('tipo') == 'Proyectos')>Proyectos</option>            

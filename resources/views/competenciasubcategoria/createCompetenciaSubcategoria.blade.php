@@ -56,7 +56,7 @@
 
         <label for="nivel" style="margin-bottom: 5px;"><b> Subcategoría: </b></label><br>
         <select id="nivel" name="nivel" required style="min-width:100px; " autofocus>
-            <option selected disabled value="">Selecciona una opción</option>            
+            <option selected disabled value="" hidden>Selecciona una opción</option>            
             @foreach($subcategorias as $subcategoria)
                 <option value="{{ $subcategoria -> nivel }}" @if(old('nivel') == $subcategoria->nivel) selected @endif">
                     Nivel {{ $subcategoria->nivel }}
@@ -77,7 +77,6 @@
         </div><br>
 
         <div id="personalizar_costo" class="disabled-input">
-
             <label for = "costo"><b>Costo: $</b></label>
             <input type="number" name="costo" id="costo" required value = "{{ old('costo') }}" min="0" step="1" style="width: 75px;" disabled> pesos mexicanos <br><br>
         </div>   

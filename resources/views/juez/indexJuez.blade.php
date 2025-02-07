@@ -37,8 +37,12 @@
                         <a onmouseover="this.style.color='white'" onmouseout="this.style.color='#6c7293'" href="{{route('juez.show', $juez)}}" style="text-decoration: none; color: inherit; display: inline-block;">
                             <b style="font-size: 20px;">{{ $juez -> name }}</b>
                         </a>
-
-                        (<i><a href="mailto:{{ $juez -> email }}">{{ $juez -> email }}</a></i>)
+                        
+                        @if($juez -> telefono)
+                            (<i><a href="mailto:{{ $juez -> email }}">{{ $juez -> email }}</a></i> | <a target="_blank" href="https://api.whatsapp.com/send?phone={{ $juez -> telefono }}">{{ $juez -> telefono }}</a>)
+                        @else
+                            (<i><a href="mailto:{{ $juez -> email }}">{{ $juez -> email }}</a></i>)
+                        @endif
                         <h style="margin-right: 5px;"></h>
 
                         <form action="{{route('juez.destroy', $juez)}}" method = "POST" style="display: inline-block;">

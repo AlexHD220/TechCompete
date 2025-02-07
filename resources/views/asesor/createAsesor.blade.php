@@ -25,7 +25,7 @@
 
             <div class="mt-4">
                 <x-label for="telefono" value="{{ __('Número de telefono') }}" />
-                <x-input id="telefono" class="block mt-1 w-full" type="tel" placeholder="Opcional" name="telefono" :value="old('telefono')" maxlength="10"/> <!-- autocomplete="name" --->
+                <x-input id="telefono" class="block mt-1 w-full" type="tel" placeholder="Opcional" name="telefono" :value="old('telefono')" maxlength="15"/> <!-- autocomplete="name" --->
             </div>
 
             <div class="mt-4">
@@ -33,16 +33,35 @@
                 <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" minlength="5" maxlength="50" required /> <!-- autocomplete="username" -->
             </div>
 
+            <div class="mt-4">                
+                <x-label for="imagen" value="{{ __('Subir credencial institucional o identificación oficial') }}" />
+                <div>
+                    <div style="display: flex; align-items: center; margin-top: 4px;">
+                        <label for="imagen" id="imagen-button" class="custom-file-label" style="font-size: 16px;">Seleccionar imagen</label>                    
+                        <i id="circle-check" class="fa-solid fa-file-circle-check" style="margin-left: 10px; font-size: 20px; color: #2bbf29;  opacity: 0; visibility: hidden; transition: opacity 0.5s ease;"></i> <!--display: none;-->
+                    </div>
+
+                    <input type="file" id="imagen" name="imagen" placeholder="imagen" accept=".png, .jpg, .jpeg" onchange="validarImagen(this); circleCheckIcon(this)">
+
+                    <b><div id="file-name" class="file-name" style="margin-left: 10px;">Ningún archivo seleccionado</div></b>
+                    <div id="error-imagen" class="error-message"><i class="fa fa-exclamation-triangle"></i> Campo obligatorio, por favor cargue una imagen.</div>
+                </div>  
+            </div>
+
             <div class="mt-4">
                 <x-label for="password" value="{{ __('Contraseña') }}" />
-                <x-input id="password" class="block mt-1 w-full" type="password" name="password" minlength="8" maxlength="50" required autocomplete="new-password" style="width: 365px; display: inline;"/>
-                <i onmouseover="this.style.color='gray'" onmouseout="this.style.color='white'" class="fas fa-eye" id="showPassword" onclick="cambiarIcono()" style="margin-left: 10px;"></i>
+                <div class="flex items-center w-[90%]">
+                    <x-input id="password" class="flex-grow block mt-1 w-full" type="password" name="password" minlength="8" maxlength="50" required autocomplete="new-password" style="display: inline;"/> <!-- width: 365px; -->
+                    <i onmouseover="this.style.color='gray'" onmouseout="this.style.color='white'" class="fas fa-eye" id="showPassword" onclick="cambiarIcono()" style="margin-left: 10px; margin-right: 2px"></i>
+                </div>
             </div>
 
             <div class="mt-4">
                 <x-label for="password_confirmation" value="{{ __('Confirmar contraseña') }}" />
-                <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" minlength="8" maxlength="50" required autocomplete="new-password" style="width: 365px; display: inline;"/>
-                <i onmouseover="this.style.color='gray'" onmouseout="this.style.color='white'" class="fas fa-eye" id="showPassword_confirmation" onclick="cambiarIcono()" style="margin-left: 10px;"></i>
+                <div class="flex items-center w-[90%]">
+                    <x-input id="password_confirmation" class="flex-grow block mt-1 w-full" type="password" name="password_confirmation" minlength="8" maxlength="50" required autocomplete="new-password" style="display: inline;"/> <!-- width: 365px; -->
+                    <i onmouseover="this.style.color='gray'" onmouseout="this.style.color='white'" class="fas fa-eye" id="showPassword_confirmation" onclick="cambiarIcono()" style="margin-left: 10px; margin-right: 2px"></i>
+                </div>
                 <small id="passwordError" style="color: #f87171; display: none;"><div style="margin-top: 10px;"><b><i class="fa fa-exclamation-triangle"></i> Las contraseñas no coinciden.</b></div></small>
             </div>
 
@@ -75,4 +94,57 @@
     </x-authentication-card-register>
 
     <div style="margin-bottom: 60px;"></div>
+
+    <script>
+
+        // Validar imágen
+        document.getElementById('imagen').addEventListener('change', function () {
+            var fileName = this.files[0] ? this.files[0].name : "Ningún archivo seleccionado";
+            document.getElementById('file-name').textContent = fileName;
+
+            // Ocultar el mensaje de error si se seleccionó una imagen
+            if (this.files.length > 0) {
+                document.getElementById('error-imagen').style.display = 'none';
+            }
+        });
+
+        // Imagen required
+        document.getElementById('registroForm').addEventListener('submit', function (event) {
+            var inputImagen = document.getElementById('imagen');
+
+            // Verificar si no hay archivos seleccionados
+            if (inputImagen.files.length === 0) {                
+                event.preventDefault(); // Evita que el formulario se envíe
+                document.getElementById('error-imagen').style.display = 'block'; // Mostrar el mensaje de error
+            } else {
+                document.getElementById('error-imagen').style.display = 'none'; // Oculta el mensaje de error         
+            }
+            
+        });
+
+
+        //--------------------------------------> Agregar icono de imagen correcta
+
+        function circleCheckIcon() {
+            var input = document.getElementById('imagen');
+            var archivo = input.files[0];
+
+            if (archivo) {
+                //document.getElementById('circle-check').style.display = 'block';
+                const icono = document.getElementById("circle-check");
+                icono.style.visibility = "visible"; // Asegura que sea visible
+                icono.style.opacity = "1";         // Cambia la opacidad para que se muestre
+            }
+            else{
+                //document.getElementById('circle-check').style.display = 'none';
+                const icono = document.getElementById("circle-check");
+                icono.style.opacity = "0";         // Cambia la opacidad para ocultar
+                setTimeout(() => {
+                    icono.style.visibility = "hidden"; // Oculta completamente después de la transición
+                }, 100); // Ajusta este tiempo según el valor de `transition` (1 seg)
+            }
+        }
+        
+    </script>
+
 </x-guest-layout>

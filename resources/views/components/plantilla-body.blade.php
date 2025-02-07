@@ -14,11 +14,15 @@
             <nav class="navbar bg-secondary navbar-dark">
 
                 <!--Imagen esquina superior dereha-->
-                <a href="/" class="navbar-brand mx-4 mb-3">
-                    <!--<h3 class="text-primary"><i class="fa fa-user-edit me-2"></i>TechCompete</h3>--> 
-                    <!--filter: brightness(100); background-color: white;-->
-                    <img src="/dark/img/tsPortada.png" style="height: 60px; border-radius: 5px;">
-                </a>
+                <div class="ocultar-div-barra navbar-brand mx-4 mb-3">
+                    <a href="/">
+                        <!--<h3 class="text-primary"><i class="fa fa-user-edit me-2"></i>TechCompete</h3>--> 
+                        <!--filter: brightness(100); background-color: white;-->
+                        <img src="/dark/img/tsPortada.png" style="height: 60px; border-radius: 5px;">
+                    </a>
+                </div>
+
+                <div class="mostrar-div-barra"></div>
 
                 <!--etiqueta-->
 
@@ -73,14 +77,89 @@
                     @auth
                         @can('only-superadmin')
                             <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/administrador" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Administradores</a>
+                            <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/staff" class="nav-item nav-link"><i class="fa-solid fa-clipboard-user me-2"></i>Staff</a>
+                            <!-- <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/juez" class="nav-item nav-link"><i class="fa-solid fa-clipboard-check me-2"></i>Jueces</a> -->
+                            <div class="nav-item dropdown">
+                                <div style="display: flex; justify-content: flex-start; margin-left: 5px;" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-clipboard-check me-2"></i>
+                                    <a href="/juez" class="nav-link-dropdown" onmouseover="this.style.color='#eb1616'" onmouseout="this.style.color='#6c7293'" onclick="event.stopPropagation(); event.preventDefault(); window.location.href=this.href;">Jueces</a>                                    
+                                </div>
+                                
+                                <div class="dropdown-menu bg-transparent border-0" style="margin-bottom: 5px; padding: 0px;">                                
+                                    <a href="/registrojuez" style="margin-left: 5px; padding-left: 70px;" class="dropdown-item dropdown-border-item">
+                                        <div style="display: flex; flex-wrap: wrap; align-items: center;">
+                                            <i class="fa-solid fa-circle" style="font-size: 5px; margin-right: 10px;"></i>
+                                            Códigos registro
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="nav-item dropdown">
+                                <div style="display: flex; justify-content: flex-start; margin-left: 5px;" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-trophy me-2"></i>
+                                    <a href="/competencia" class="nav-link-dropdown" onmouseover="this.style.color='#eb1616'" onmouseout="this.style.color='#6c7293'" onclick="event.stopPropagation(); event.preventDefault(); window.location.href=this.href;">Competencias</a>                                    
+                                </div>                                
+                                
+                                <div class="dropdown-menu bg-transparent border-0" style="margin-bottom: 5px; padding: 0px;">                                
+                                    <a href="/competencia/draft" style="margin-left: 5px; padding-left: 70px;" class="dropdown-item dropdown-border-item">
+                                        <div style="display: flex; flex-wrap: wrap; align-items: center;">
+                                            <i class="fa-solid fa-circle" style="font-size: 5px; margin-right: 10px;"></i>
+                                            Borradores
+                                        </div>
+                                    </a>
+
+                                    <a href="/competencia/historial" style="margin-left: 5px; padding-left: 70px;" class="dropdown-item dropdown-border-item">
+                                        <div style="display: flex; flex-wrap: wrap; align-items: center;">
+                                            <i class="fa-solid fa-circle" style="font-size: 5px; margin-right: 10px;"></i>
+                                            Historial
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
                         @endcan
                     @endauth
 
-                    <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/competencia" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Competencias</a>
+                    @cannot('only-superadmin')
+                        <!-- <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/competencia" class="nav-item nav-link"><i class="fa-solid fa-trophy me-2"></i>Competencias</a> -->
+
+                        <div class="nav-item dropdown">
+                            <div style="display: flex; justify-content: flex-start; margin-left: 5px;" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                <i class="fa-solid fa-trophy me-2"></i>
+                                <a href="/competencia" class="nav-link-dropdown" onmouseover="this.style.color='#eb1616'" onmouseout="this.style.color='#6c7293'" onclick="event.stopPropagation(); event.preventDefault(); window.location.href=this.href;">Competencias</a>                                    
+                            </div>                                
+                            
+                            <div class="dropdown-menu bg-transparent border-0" style="margin-bottom: 5px; padding: 0px;">
+                                <a href="/competencia/historial" style="margin-left: 5px; padding-left: 70px;" class="dropdown-item dropdown-border-item">
+                                    <div style="display: flex; flex-wrap: wrap; align-items: center;">
+                                        <i class="fa-solid fa-circle" style="font-size: 5px; margin-right: 10px;"></i>
+                                        Historial
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    @endcan
 
                     @auth
                         @can('only-superadmin')
-                            <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/categoria" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Categorías</a>
+                            <!-- <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/categoria" class="nav-item nav-link"><i class="fa-solid fa-list me-2"></i>Categorías</a> -->
+
+                            <div class="nav-item dropdown">
+                                <div style="display: flex; justify-content: flex-start; margin-left: 5px;" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-list me-2"></i>
+                                    <a href="/categoria" class="nav-link-dropdown" onmouseover="this.style.color='#eb1616'" onmouseout="this.style.color='#6c7293'" onclick="event.stopPropagation(); event.preventDefault(); window.location.href=this.href;">Categorías</a>                                    
+                                </div>
+                                
+                                <div class="dropdown-menu bg-transparent border-0" style="margin-bottom: 5px; padding: 0px;">                                
+                                    <a href="/subcategoria" style="margin-left: 5px; padding-left: 70px;" class="dropdown-item dropdown-border-item">
+                                        <div style="display: flex; flex-wrap: wrap; align-items: center;">
+                                            <i class="fa-solid fa-circle" style="font-size: 5px; margin-right: 10px;"></i>
+                                            Subcategorías
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
                         @endcan
                     @endauth
                     <!--<a href="form.html" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Forms</a>-->

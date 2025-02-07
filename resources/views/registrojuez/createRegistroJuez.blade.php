@@ -38,7 +38,7 @@
         <!-- Selector de tipo de expiración -->
         <label for="expiration_type"><b>Tipo de Fecha Límite: </b></label>
         <select id="expiration_type" name="expiration_type" onchange="toggleExpirationInputs()" style="width: 200px; margin: 5px;" required>        
-            <option selected disabled value=""> - </option>
+            <option selected disabled value="" hidden> - </option>
             <option value="days" @selected(old('expiration_type') == 'days')>Por número de días</option>
             <option value="specific_date" @selected(old('expiration_type') == 'specific_date')>Por fecha específica</option>                         
         </select><br><br>

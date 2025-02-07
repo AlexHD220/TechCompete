@@ -161,7 +161,7 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
     
 //------------------------------------------------------------------------------------> Juez middleware
 
-    Route::get('juez/create/{codigo}', [JuezController::class, 'create'])
+    Route::get('juez/signup/{codigo}', [JuezController::class, 'create'])
     ->name('juez.create');
     //->name('juez.createjuez');
 
@@ -253,11 +253,7 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
 
     // Ruta para mostrar los detalles de registros eliminados
     Route::get('competencia/trashed/{competenciaid}', [CompetenciaController::class, 'showtrashed'])
-    ->name('competencia.showtrashed');   
-    
-    // Ruta para mostrar los detalles de registros no publicados
-    Route::get('competencia/previous/{competencia}', [CompetenciaController::class, 'showprevious'])
-    ->name('competencia.showprevious');    
+    ->name('competencia.showtrashed');         
 
     // Ruta para publicar un registro
     Route::patch('competencia/{competencia}/publicar', [CompetenciaController::class, 'publicar'])
@@ -334,11 +330,7 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
 
     Route::post('competencia/{competencia}/categoria', [CompetenciaCategoriaController::class, 'store'])
     ->name('competenciacategoria.store');
-    
-    // Ruta para mostrar los detalles de registros no publicados
-    Route::get('competencia/{competencia}/categoria/{competenciaCategoria}', [CompetenciaCategoriaController::class, 'show'])
-    ->name('competenciacategoria.show');
-    
+        
     // Ruta para mostrar los registros pendientes de publicar
     Route::get('competencia/{competencia}/categoria/{competenciaCategoria}/edit', [CompetenciaCategoriaController::class, 'edit'])
     ->name('competenciacategoria.edit');
@@ -401,7 +393,7 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
 
 //------------------------------------------------------------------------------------|
 
-Route::get('perfil/configuracion', function () {
+Route::get('cuenta/configuracion', function () {
     session()->forget('form');
 
     if (Gate::allows('autenticado')) {
@@ -450,17 +442,24 @@ Route::get('perfil/configuracion', function () {
 //------------------------------------------------------------------------------------> Competencias
 
 // Ruta para mostrar los registros anteriores
-Route::get('competencia/previous', [CompetenciaController::class, 'previous'])
+Route::get('competencia/historial', [CompetenciaController::class, 'previous'])
 ->name('competencia.previous');
 
 // Ruta para mostrar los detalles de las competencias previas
-Route::get('competencia/previous/{competencia}', [CompetenciaController::class, 'showprevious'])
+Route::get('competencia/historial/{competencia}', [CompetenciaController::class, 'showprevious'])
 ->name('competencia.showprevious');
 
 Route::resource('competencia', CompetenciaController::class)->parameters([
     'competencia' => 'competencia', //Corregir error {competencium} en -> php artisan route:list
 ]);
 //->except(['destroy']); // Dejar fuera la ruta Destroy para agregarla manualmente 
+
+//------------------------------------------------------------------------------------> CompetenciaCategoria
+
+// Ruta para mostrar los detalles de registros no publicados
+Route::get('competencia/{competencia}/categoria/{competenciaCategoria}', [CompetenciaCategoriaController::class, 'show'])
+->name('competenciacategoria.show');
+
 
 //------------------------------------------------------------------------------------|
 

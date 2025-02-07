@@ -60,7 +60,7 @@
 
         <label for="categoria_id" style="margin-bottom: 5px;"><b> Categoría: </b></label><br>
         <select id="categoria_id" name="categoria_id" required style="min-width:100px; " autofocus>
-            <option selected disabled value="">Selecciona una opción</option>            
+            <option selected disabled value="" hidden>Selecciona una opción</option>            
             @foreach($categorias as $categoria)
                 <option value="{{ $categoria -> id }}" @if(old('categoria_id') == $categoria->id) selected @endif title="Tipo {{$categoria->tipo}}">
                     {{ $categoria->name }}
@@ -68,9 +68,10 @@
             @endforeach
         </select><br><br>            
 
-        <label for = "costo"><b>Costo: $</b></label>
-        <input type="number" name="costo" id="costo" required value = "{{ old('costo') ? old('costo') : 0 }}" min="0" step="1" style="width: 75px;"> pesos mexicanos <br><br>
-
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+            <label for = "costo"><b>Costo de inscripción: </b></label>
+            <div><b>$ </b><input type="number" name="costo" id="costo" required value = "{{ old('costo') ? old('costo') : 0 }}" min="0" step="1" style="width: 75px;"> pesos mexicanos</div>
+        </div><br>
 
         <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 10px;">
             <div>

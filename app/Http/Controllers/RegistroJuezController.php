@@ -34,7 +34,7 @@ class registrojuezController extends Controller
     public function index()
     {
         $registrojueces = registrojuez::whereNotNull('expiracion_date')->where('validado',0)->where('expiracion_date', '>', Carbon::now())
-        ->orderBy('expiracion_date', 'asc')->get(); // Si quiero ordenarlos de mayor a menos usar desc
+        ->orderBy('expiracion_date', 'asc')->orderBy('email', 'asc')->get(); // Si quiero ordenarlos de mayor a menos usar desc
 
         foreach ($registrojueces as $registro) {
             //$registro->diasrestantes = Carbon::now()->startOfDay()->diffInDays(Carbon::parse($registro->expiracion_date), false);
@@ -81,7 +81,7 @@ class registrojuezController extends Controller
 
         // Verificar que el correo ingresado no este registrado dentro de la base de datos vigente
         //if ($correoRegistrado && $correoRegistrado->expiracion_date > Carbon::now()) {
-            if ($correoRegistrado){
+        if ($correoRegistrado){
             return redirect()->back()->withErrors(['email' => 'Este correo electrónico ya está vinculado a un código de registro vigente.'])->withInput();
         }
 

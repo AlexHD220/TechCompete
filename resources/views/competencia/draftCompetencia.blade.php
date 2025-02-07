@@ -240,7 +240,7 @@ $timestampNow = now()->toDateString();
                         </button>
                     </form>                                                
 
-                </li><br><br>
+                </li><br> <!-- <br> -->
                 
             @endforeach
         </div>

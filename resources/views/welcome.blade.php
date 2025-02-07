@@ -190,8 +190,8 @@
                     </div>
                 @else
                     <div class="flex justify-center">
-                        <h1 style="color: #ed5048; font-size: 35px; font-weight: bold; margin-bottom: 10px; margin-top: 0px; font-family: 'Montserrat'; letter-spacing: 5px;">
-                            <b class="size-rol">Bienvenido</b>
+                        <h1 style="color: #ed5048; font-size: 45px; font-weight: bold; margin-bottom: 20px; margin-top: 0px; font-family: 'Montserrat'; letter-spacing: 5px;">
+                            <b class="size-bienvenida">Bienvenido</b>
                         </h1>
                     </div>
                 @endauth
@@ -235,10 +235,14 @@
                                 Jueces
                             </button>
                         @endcan
+                        
+                    @endauth   
 
                         <button onclick="window.location.href = '/competencia';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->
                             Competencias
                         </button>
+                    
+                    @auth <!--Cuando el usuario este logueado muestrame lo sigiente-->
 
                         @can('only-institucion')                            
                             <button onclick="window.location.href = '/asesor';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->                                

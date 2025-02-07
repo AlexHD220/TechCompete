@@ -25,7 +25,13 @@
                         @if($superadministrador->id != Auth::id() && $superadministrador->id != 1)
                             <li>
                                 <b style="font-size: 20px;">{{ $superadministrador -> name }}</b>
-                                (<i>{{ $superadministrador -> email }}</i>)
+                                
+                                @if($superadministrador -> telefono)
+                                    (<i>{{ $superadministrador -> email }}</i> | {{ $superadministrador -> telefono }})
+                                @else
+                                    (<i>{{ $superadministrador -> email }}</i>)
+                                @endif
+                                <h style="margin-right: 5px;"></h>    
                                 
                                 <form action="{{route('administrador.restore', $superadministrador->id)}}" method = "POST" style="display: inline-block;">
                                     @csrf
@@ -62,7 +68,13 @@
                         @if($administrador->id != Auth::id() && $administrador->id != 1)
                             <li>
                                 <b style="font-size: 20px;">{{ $administrador -> name }}</b>                                
-                                (<i>{{ $administrador -> email }}</i>)
+                                
+                                @if($administrador -> telefono)
+                                    (<i>{{ $administrador -> email }}</i> | {{ $administrador -> telefono }})
+                                @else
+                                    (<i>{{ $administrador -> email }}</i>)
+                                @endif
+                                <h style="margin-right: 5px;"></h>    
                                 
                                 <form action="{{route('administrador.restore', $administrador->id)}}" method = "POST" style="display: inline-block;">
                                     @csrf

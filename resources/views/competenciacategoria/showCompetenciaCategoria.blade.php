@@ -227,35 +227,36 @@
                         </div>
 
                         <div class="text-center" style="margin-top: 10px; font-size: 16px;">
-                            @if(!$competenciaSubcategoria->limite_inscripciones || $competenciaSubcategoria->cuposrestantes > 0)
-                                @if($competenciaSubcategoria->costo_personalizado)
-                                    @if($competenciaSubcategoria->costo == 0)
-                                        <b>Costo: </b>gratuito                                        
-                                    @else
-                                        <b>Costo: </b>${{ number_format($competenciaSubcategoria->costo, 0, '.', ',') }}
-                                        <div class="text-center" style="margin-top: 0px;">   
-                                            <h style="font-size: 15px;">pesos mexicanos</h>
-                                        </div>                              
-                                    @endif
-                                @else     
-                                    @if($competenciaCategoria->costo == 0)
-                                        <b>Costo: </b>gratuito                                          
-                                    @else                           
-                                        <b>Costo: </b>${{ number_format($competenciaCategoria->costo, 0, '.', ',') }}
-
-                                        <div class="text-center" style="margin-top: 0px;">   
-                                            <h style="font-size: 15px;">pesos mexicanos</h>
-                                        </div>
-                                    @endif                                
+                            
+                            @if($competenciaSubcategoria->costo_personalizado)
+                                @if($competenciaSubcategoria->costo == 0)
+                                    <b>Costo: </b>gratuito                                        
+                                @else
+                                    <b>Costo: </b>${{ number_format($competenciaSubcategoria->costo, 0, '.', ',') }}
+                                    <div class="text-center" style="margin-top: 0px;">   
+                                        <h style="font-size: 15px;">pesos mexicanos</h>
+                                    </div>                              
                                 @endif
+                            @else     
+                                @if($competenciaCategoria->costo == 0)
+                                    <b>Costo: </b>gratuito                                          
+                                @else                           
+                                    <b>Costo: </b>${{ number_format($competenciaCategoria->costo, 0, '.', ',') }}
 
-                                @if($competenciaSubcategoria->limite_inscripciones)
+                                    <div class="text-center" style="margin-top: 0px;">   
+                                        <h style="font-size: 15px;">pesos mexicanos</h>
+                                    </div>
+                                @endif                                
+                            @endif
+
+                            @if($competenciaSubcategoria->limite_inscripciones)
+                                @if($competenciaSubcategoria->cuposrestantes > 0)
                                     <div class="text-center" style="margin-top: 0px;">   
                                         <h style="font-size: 15px;">Cupo limitado</h>
-                                    </div> 
+                                    </div>                                 
+                                @else
+                                    <b>Cupo de participación<br> lleno</br>
                                 @endif
-                            @else
-                                <b>Cupo de participación<br> lleno</br>
                             @endif
                         </div>                        
 

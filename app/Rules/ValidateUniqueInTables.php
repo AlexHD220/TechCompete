@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Rules;
+use Illuminate\Contracts\Validation\Rule;
 
 use Illuminate\Support\Facades\DB;
 
@@ -8,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 //use Illuminate\Contracts\Validation\ValidationRule;
 
 //class ValidateUniqueInTables implements ValidationRule
-class ValidateUniqueInTables
+class ValidateUniqueInTables implements Rule
 {
     protected $tables;
 

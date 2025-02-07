@@ -23,9 +23,9 @@ class CompetenciaController extends Controller
 
     public function __construct() //proteger con inicio de sesion aquellas pestañas que yo quiera
     {        
-        $this->middleware('auth')->except(['index','show', 'previous']); //excepto estas necesitan iniciar sesion 
+        $this->middleware('auth')->except(['index','show', 'previous', 'showprevious']); //excepto estas necesitan iniciar sesion 
 
-        $this->middleware('can:only-superadmin')->except('index', 'show', 'previous');
+        $this->middleware('can:only-superadmin')->except('index', 'show', 'previous', 'showprevious');
     }
      
     //otra variante es "only" para autenticar solo aquellas que notros queramos 
@@ -590,7 +590,7 @@ class CompetenciaController extends Controller
             ]);
         }        
 
-        return redirect('/competencia/previous'); // Pendiente enviar a show
+        return redirect('/competencia/historial'); // Pendiente enviar a show
     }
 
     public function showprevious(Competencia $competencia)

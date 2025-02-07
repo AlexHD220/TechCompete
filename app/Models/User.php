@@ -31,7 +31,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'lastname', 'email', 'password', 'rol', // Solo estas columnas pueden ser agregadas por el usuario, el resto no se agrega y se ignora
+        'name', 'lastname', 'email', 'password', 'rol', 'telefono', // Solo estas columnas pueden ser agregadas por el usuario, el resto no se agrega y se ignora
         //'name', 'email', 'password', 'rol', 'roleable_id','roleable_type','email_verified_at',
     ];
 

@@ -35,8 +35,13 @@
                         @if($superadministrador->id != Auth::id() && $superadministrador->id != 1)
                             <li>
                                 <b style="font-size: 20px;">{{ $superadministrador -> name }}</b>
-                                (<i><a href="mailto:{{ $superadministrador -> email }}">{{ $superadministrador -> email }}</a></i>)
-                                <h style="margin-right: 5px;"></h>
+                                
+                                @if($superadministrador -> telefono)
+                                    (<i><a href="mailto:{{ $superadministrador -> email }}">{{ $superadministrador -> email }}</a></i> | <a target="_blank" href="https://api.whatsapp.com/send?phone={{ $superadministrador -> telefono }}">{{ $superadministrador -> telefono }}</a>)
+                                @else
+                                    (<i><a href="mailto:{{ $superadministrador -> email }}">{{ $superadministrador -> email }}</a></i>)
+                                @endif
+                                <h style="margin-right: 5px;"></h>                                
                                 
                                 <!-- Botón para cambiar a Lower -->
                                 <form action="{{ route('administrador.lower', $superadministrador) }}" method="POST" style="display: inline;">
@@ -85,7 +90,13 @@
                         @if($administrador->id != Auth::id() && $administrador->id != 1)
                             <li>
                                 <b style="font-size: 20px;">{{ $administrador -> name }}</b>                                
-                                (<i><a href="mailto:{{ $administrador -> email }}">{{ $administrador -> email }}</a></i>)
+                                
+                                @if($administrador -> telefono)
+                                    (<i><a href="mailto:{{ $administrador -> email }}">{{ $administrador -> email }}</a></i> | <a target="_blank" href="https://api.whatsapp.com/send?phone={{ $administrador -> telefono }}">{{ $administrador -> telefono }}</a>)
+                                @else
+                                    (<i><a href="mailto:{{ $administrador -> email }}">{{ $administrador -> email }}</a></i>)
+                                @endif
+                                <h style="margin-right: 5px;"></h>     
                                 
                                 <!-- Botón para cambiar a Upper -->
                                 <form action="{{ route('administrador.upper', $administrador) }}" method="POST" style="display: inline;">

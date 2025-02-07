@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Administrador;
 use App\Models\Team;
 use App\Models\User;
+use App\Rules\ValidateUniqueInTables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; //ID Usuario
 use Illuminate\Support\Facades\Hash;
@@ -27,8 +28,8 @@ class AdministradorController extends Controller
      */
     public function index()
     {
-        $superadministradores = User::where('rol',1)->get();
-        $administradores = User::where('rol',2)->get();
+        $superadministradores = User::where('rol',1)->orderBy('name', 'asc')->get();
+        $administradores = User::where('rol',2)->orderBy('name', 'asc')->get();
 
         $disabledsuperadministradores = User::onlyTrashed()->where('rol',1)->get();
         $disabledadministradores = User::onlyTrashed()->where('rol',2)->get();
@@ -50,8 +51,8 @@ class AdministradorController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|unique:registro_jueces,email',
-            'email' => ['unique:users'],
+            'email' => ['required', 'email', new ValidateUniqueInTables(['users', 'registro_jueces'])], //| unique:registro_jueces,email",
+            'telefono' => ['nullable','numeric','unique:users,telefono',],
             // Otras reglas de validación para otros campos
         ]);
 
@@ -76,6 +77,7 @@ class AdministradorController extends Controller
                 'name' => $request->name,
                 'lastname' => $request->lastname,
                 'email' => $request->email,
+                'telefono' => $request->telefono,
                 'password' => Hash::make(Str::random(10)),
         ]);
         
@@ -150,8 +152,8 @@ class AdministradorController extends Controller
     public function trashed()
     {
         // Obtiene todos los registros eliminados
-        $superadministradores = User::onlyTrashed()->where('rol',1)->get();
-        $administradores = User::onlyTrashed()->where('rol',2)->get();
+        $superadministradores = User::onlyTrashed()->where('rol',1)->orderBy('name', 'asc')->get();
+        $administradores = User::onlyTrashed()->where('rol',2)->orderBy('name', 'asc')->get();
 
         //dd($superadministradores);
 

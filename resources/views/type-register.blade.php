@@ -31,22 +31,24 @@
 
     <x-authentication-card-type>    
 
-        <div class="flex items-center justify-center">
-            <b><h1 style="margin-top: -20px; font-size: 40px;">
+        <div class="text-center flex items-center justify-center">
+            <b><h1 style="margin-top: -10px; font-size: 40px;">
                 ¿Qué tipo de cuenta quieres crear?
             </h1></b>
         </div>
 
-        <div class="flex items-center justify-center">
-            <button onclick="window.location.href = '/institucion/signup';" class="boton" style="margin-top: 20px; margin-bottom: 30px; font-size: 20px; width: 200px;">
-                <b>Institución</b>
-            </button>
-        </div>
+        <div class="text-center items-center justify-center" style="margin-top: 20px;">
+            <div class="flex items-center justify-center" style=" margin-bottom: 30px;">
+                <button onclick="window.location.href = '/institucion/signup';" class="boton" style="font-size: 20px; width: 200px;">
+                    <b>Institución</b>
+                </button>
+            </div>
 
-        <div class="flex items-center justify-center">
-            <button onclick="window.location.href = '/asesor/create';" class="boton" style="margin-bottom: 100px; font-size: 20px; width: 200px;">
-                <b>Asesor</b>
-            </button>
+            <div class="flex items-center justify-center">
+                <button onclick="window.location.href = '/asesor/create';" class="boton" style="font-size: 20px; width: 200px;">
+                    <b>Asesor</b>
+                </button>
+            </div>
         </div>
 
         <x-slot name="logo">

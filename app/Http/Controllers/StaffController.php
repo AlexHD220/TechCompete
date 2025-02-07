@@ -6,6 +6,7 @@ use App\Models\Staff;
 use App\Models\Administrador;
 use App\Models\Team;
 use App\Models\User;
+use App\Rules\ValidateUniqueInTables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; //ID Usuario
 use Illuminate\Support\Facades\Hash;
@@ -29,8 +30,8 @@ class StaffController extends Controller
      */
     public function index()
     {
-        $superstaffs = User::where('rol',3)->get();
-        $staffs = User::where('rol',4)->get();
+        $superstaffs = User::where('rol',3)->orderBy('name', 'asc')->get();
+        $staffs = User::where('rol',4)->orderBy('name', 'asc')->get();
 
         $disabledsuperstaffs = User::onlyTrashed()->where('rol',3)->get();
         $disabledstaffs = User::onlyTrashed()->where('rol',4)->get();
@@ -52,8 +53,8 @@ class StaffController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|unique:registro_jueces,email',
-            'email' => ['unique:users'],
+            'email' => ['required', 'email', new ValidateUniqueInTables(['users', 'registro_jueces'])], //| unique:registro_jueces,email",
+            'telefono' => ['nullable','numeric','unique:users,telefono',],
             // Otras reglas de validación para otros campos
         ]);
 
@@ -78,6 +79,7 @@ class StaffController extends Controller
             'name' => $request->name,
             'lastname' => $request->lastname,
             'email' => $request->email,
+            'telefono' => $request->telefono,
             'password' => Hash::make(Str::random(10)),
         ]);
         
@@ -140,8 +142,8 @@ class StaffController extends Controller
     public function trashed()
     {
         // Obtiene todos los registros eliminados
-        $superstaffs = User::onlyTrashed()->where('rol',3)->get();
-        $staffs = User::onlyTrashed()->where('rol',4)->get();
+        $superstaffs = User::onlyTrashed()->where('rol',3)->orderBy('name', 'asc')->get();
+        $staffs = User::onlyTrashed()->where('rol',4)->orderBy('name', 'asc')->get();
 
         //dd($superstaffs);
 

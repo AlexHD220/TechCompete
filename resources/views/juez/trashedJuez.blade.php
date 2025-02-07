@@ -24,7 +24,13 @@
                     
                     <li>
                         <b style="font-size: 20px;">{{ $juez -> name }}</b>
-                        (<i>{{ $juez -> email }}</i>)
+                        
+                        @if($juez -> telefono)
+                            (<i>{{ $juez -> email }}</i> | {{ $juez -> telefono }})
+                        @else
+                            (<i>{{ $juez -> email }}</i>)
+                        @endif
+                        <h style="margin-right: 5px;"></h>    
                         
                         <form action="{{route('juez.restore', $juez->id)}}" method = "POST" style="display: inline-block;">
                             @csrf

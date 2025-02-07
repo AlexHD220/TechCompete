@@ -27,7 +27,9 @@ class JuezController extends Controller
      */
     public function index()
     {
-        $jueces = Juez::all();
+        //$jueces = Juez::all();
+
+        $jueces = Juez::orderBy('name', 'asc')->get();
         
         $disabledjueces = Juez::onlyTrashed()->get();
 
@@ -66,6 +68,7 @@ class JuezController extends Controller
         $request->validate([            
             'codigo' => 'required|exists:registro_jueces,codigo',
             'email' => 'required|email|',
+            'telefono' => ['nullable','numeric','unique:users,telefono',],
             //'codigo_registro' => 'required|in:' . $request->codigo, // Verifica si el código ingresado es el mismo que el de la ruta
         ]);
 
@@ -96,7 +99,8 @@ class JuezController extends Controller
             'rol' => 7,
             'name' => $request->name,
             'lastname' => $request->lastname,
-            'email' => $request->email,                
+            'email' => $request->email,   
+            'telefono' => $request->telefono,             
             'password' => Hash::make($request->password),                
         ]);
 
@@ -185,7 +189,7 @@ class JuezController extends Controller
     {
         // Obtiene todos los registros eliminados
         
-        $jueces = Juez::onlyTrashed()->get();
+        $jueces = Juez::onlyTrashed()->orderBy('name', 'asc')->get();
 
         //dd($jueces);
 

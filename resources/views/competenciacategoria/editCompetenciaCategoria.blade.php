@@ -60,7 +60,7 @@
 
         <label for="categoria_id" style="margin-bottom: 5px;"><b> Categoría: </b></label><br>
         <select id="categoria_id" name="categoria_id" required style="min-width:100px; " autofocus>
-            <option selected disabled value="">Selecciona una opción</option>            
+            <option selected disabled value="" hidden>Selecciona una opción</option>            
             @foreach($categorias as $categoria)                
                 <option value="{{ $categoria -> id }}" @if(old('categoria_id') == $categoria->id || $competenciaCategoria->categoria_id == $categoria->id) selected @endif title="Tipo {{$categoria->tipo}}">
                     {{ $categoria->name }}

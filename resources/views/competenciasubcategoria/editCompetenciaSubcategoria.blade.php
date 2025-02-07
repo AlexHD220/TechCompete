@@ -57,7 +57,7 @@
 
         <label for="nivel" style="margin-bottom: 5px;"><b> Subcategoría: </b></label><br>
         <select id="nivel" name="nivel" required style="min-width:100px; " autofocus>
-            <option selected disabled value="">Selecciona una opción</option>            
+            <option selected disabled value="" hidden>Selecciona una opción</option>            
             @foreach($subcategorias as $subcategoria)                
                 <option value="{{ $subcategoria -> nivel }}" @if(old('nivel') == $subcategoria->nivel || $competenciaSubcategoria->nivel == $subcategoria->nivel) selected @endif>
                     Nivel {{ $subcategoria->nivel }}

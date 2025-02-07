@@ -71,7 +71,7 @@ $timestampNow = now()->toDateString();
     @if($pasadascount > 0)            
         <div class="d-flex align-items-center" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 20px;">
             <button class="btn btn-primary" onMouseOver="this.style.backgroundColor='#053482'" onmouseout="this.style.backgroundColor='#004ecf'" style="font-size: 14px; background-color: #004ecf; border:0px; box-shadow: none; padding-top: 8px; padding-bottom: 8px;" 
-            onclick="window.location.href = '/competencia/previous';"><b>Competencias Pasadas</b></button>                    
+            onclick="window.location.href = '/competencia/historial';"><b>Competencias Pasadas</b></button>                    
 
             <!--@auth 
                 @can('only-superadmin')   
