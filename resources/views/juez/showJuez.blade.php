@@ -63,12 +63,14 @@
 
     <!--<h2> {{ $juez -> usuario }}</h2>--> <!--Mostrar detalles-->
 
-    <!-- Modal -->
-    <div id="imageModal" class="modal" style="display: none;">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <div class="modal-overlay" onclick="closeModal()"></div>
-        <img src="{{ $juez->user->profile_photo_url }}" alt="{{ $juez->user->name }}" class="modal-image">
-    </div>
+    @if (!is_null($juez->user->profile_photo_path))
+        <!-- Modal -->
+        <div id="imageModal" class="modal" style="display: none;">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-overlay" onclick="closeModal()"></div>
+            <img src="{{ $juez->user->profile_photo_url }}" alt="{{ $juez->user->name }}" class="modal-image">
+        </div>
+    @endif
 
     <div style="display: flex; align-items: center; margin-bottom: 20px;">
         
@@ -78,7 +80,7 @@
 
         <!-- Imagen de perfil -->
         @if (!is_null($juez->user->profile_photo_path))
-            <img src="{{ $juez->user->profile_photo_url }}" alt="{{ $juez->user->name }}"style="height: 100px; margin-right: 15px; border-radius: 10px; object-fit: cover; cursor: pointer;" onclick="showModal()">
+            <img src="{{ $juez->user->profile_photo_url }}" alt="{{ $juez->user->name }}"style="height: 100px; width: 100px; margin-right: 15px; border-radius: 10px; object-fit: cover; cursor: pointer;" onclick="showModal()">
         @endif
         
         
@@ -90,7 +92,7 @@
     </div>
 
     <h4> Correo electronico: </h4>
-    <p style="margin-left: 15px; margin-bottom: 20px; font-size: 18px;"> <a href="mailto:{{ $juez -> email }}">{{ $juez -> email }}</a> </p>
+    <p style="margin-left: 15px; margin-bottom: 20px; font-size: 18px;"> <a target="_blank" href="mailto:{{ $juez -> email }}">{{ $juez -> email }}</a> </p>
 
     @if (!empty($juez->telefono))
         <h4> Teléfono: </h4>

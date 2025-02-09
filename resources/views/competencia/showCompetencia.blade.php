@@ -183,14 +183,10 @@
                 </p>
             </div>
         </div>           
-
-        @if($competencia->publicada)
-            <button class="btn btn-primary" onMouseOver="this.style.backgroundColor='#053482'" onmouseout="this.style.backgroundColor='#004ecf'" style="font-size: 14px; background-color: #004ecf; border:0px; box-shadow: none; padding-top: 8px; padding-bottom: 8px;" 
-            onclick="window.location.href = '';"><b>Agenda del evento</b></button> <!-- Ruta pendiente -->
-        @else
-            <button class="btn btn-primary" onMouseOver="this.style.backgroundColor='#053482'" onmouseout="this.style.backgroundColor='#004ecf'" style="font-size: 14px; background-color: #004ecf; border:0px; box-shadow: none; padding-top: 8px; padding-bottom: 8px;" 
-            onclick="window.location.href = '';"><b>Agenda del evento</b></button> <!-- Ruta pendiente -->
-        @endif
+        
+        <button class="btn btn-primary" onMouseOver="this.style.backgroundColor='#053482'" onmouseout="this.style.backgroundColor='#004ecf'" style="font-size: 14px; background-color: #004ecf; border:0px; box-shadow: none; padding-top: 8px; padding-bottom: 8px;" 
+        link="{{ $competencia->publicada ? route('') : route('') }}" 
+        onclick="window.location.href = this.getAttribute('link');"><b>Agenda del evento</b></button> <!-- Ruta pendiente -->
 
     </div>
     

@@ -39,9 +39,9 @@
                         </a>
                         
                         @if($juez -> telefono)
-                            (<i><a href="mailto:{{ $juez -> email }}">{{ $juez -> email }}</a></i> | <a target="_blank" href="https://api.whatsapp.com/send?phone={{ $juez -> telefono }}">{{ $juez -> telefono }}</a>)
+                            (<i><a target="_blank" href="mailto:{{ $juez -> email }}">{{ $juez -> email }}</a></i> | <a target="_blank" href="https://api.whatsapp.com/send?phone={{ $juez -> telefono }}">{{ $juez -> telefono }}</a>)
                         @else
-                            (<i><a href="mailto:{{ $juez -> email }}">{{ $juez -> email }}</a></i>)
+                            (<i><a target="_blank" href="mailto:{{ $juez -> email }}">{{ $juez -> email }}</a></i>)
                         @endif
                         <h style="margin-right: 5px;"></h>
 

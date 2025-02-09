@@ -76,7 +76,7 @@
                         <button class="btn btn-primary" link="{{ route('competenciasubcategoria.createdraft', [$competencia, $competenciaCategoria]) }}" 
                         onclick="window.location.href = this.getAttribute('link');">
                             Agregar nivel de participación
-                        </button> <!-- Link pendiente -->             
+                        </button>            
                     @else
                         <div style="text-align: center;">
                             <a href="/subcategoria" style="font-size: 14px;">

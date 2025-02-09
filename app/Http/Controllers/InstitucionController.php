@@ -21,6 +21,7 @@ use App\Models\Administrador;
 use App\Models\Team;
 use App\Rules\ValidateUniqueInTables;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Fortify\Rules\Password;
 
 class InstitucionController extends Controller
@@ -83,7 +84,7 @@ class InstitucionController extends Controller
         $formData = $request->all(); 
 
         // Guardar los datos en la sesión
-        session()->put('form', $formData); */        
+        session()->put('form', $formData); */
 
         // Paso actual
         $currentStep = session('form.step', 1);
@@ -239,9 +240,10 @@ class InstitucionController extends Controller
             $institucion->mapa_link = $googleMapsLink;
 
 
-            $institucion->pagina_web = $finalData->pagina;
+            $institucion->pagina_web = $finalData->pagina_web;
             $institucion->telefono = $finalData->telefono;
             $institucion->whatsapp = $finalData->whatsapp;
+            $institucion->email_contacto = $finalData->email_contacto;
 
             if($finalData->nombre_escuela_credencial == 1){
                 $institucion->nombre_escuela_credencial = true;
@@ -275,15 +277,15 @@ class InstitucionController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function originalCreate()
+    /*public function originalCreate()
     {
         return view('institucion/respaldoCreateInstitucion');
-    }
+    }*/
 
     /**
      * Store a newly created resource in storage.
      */
-    public function originalStore(Request $request)
+    /*public function originalStore(Request $request)
     {
         $request->validate([
             'email' => 'required|email|unique:registro_jueces,email',
@@ -312,7 +314,7 @@ class InstitucionController extends Controller
         $institucion->tipo = $request->tipo;
         $institucion->pais = $request->pais;
         $institucion->region = $request->region;
-        $institucion->pagina_web = $request->pagina;
+        $institucion->pagina_web = $request->pagina_web;
         $institucion->telefono = $request->telefono;
         $institucion->whatsapp = $request->whatsapp;
         $institucion->save();
@@ -326,7 +328,261 @@ class InstitucionController extends Controller
         return redirect()->route('login')->with('success', '<b style="color: #41ef1f;">Su cuenta fue creada correctamente.</b> <br> <i>Antes de continuar, por favor verifique su dirección de correo electrónico.</i>');
         
         //return redirect('/institucion'); 
+    }*/
+
+
+    public function perfil()
+    {        
+        $institucion = auth()->user()->institucion;
+
+        //dd($institucion->user);
+
+        return view('institucion/perfilInstitucion',compact('institucion')); 
     }
+
+    public function ocultarPortada()
+    {
+        //$user = auth()->user(); // Obtiene el usuario autenticado
+        $institucion = auth()->user()->institucion; // Relación User -> Institucion
+
+        if ($institucion->portada_oculta == true) {
+            $institucion->portada_oculta = false;
+            $institucion->save();
+
+            return;
+        }
+        else{
+            $institucion->portada_oculta = true;
+            $institucion->save();
+
+            return;
+        }
+
+        //return response()->json(['message' => 'Error al actualizar'], 400);
+    }
+
+    public function actualizarPortada(Request $request)
+    {
+        //$user = auth()->user(); // Obtiene el usuario autenticado
+        $institucion = auth()->user()->institucion; // Relación User -> Institucion
+
+        $institucion->ubicacion_imagen = $request->file('imagenPortada')->storeAs('public/imagenes_instituciones', 'Portada_'.$institucion->name.'.'. $request->file('imagenPortada')->extension());
+        $institucion->portada_oculta = false;
+        $institucion->save();
+        
+        //return redirect()->route('institucion.perfil');
+        return redirect($request->ruta);
+
+        //return response()->json(['message' => 'Error al actualizar'], 400);
+    }
+    
+    public function actualizarImagenPerfil(Request $request)
+    {
+        $user = User::find(Auth::user()->id); // Obtiene el usuario autenticado        
+        $request->file('imagenPerfil')->storeAs('public/profile-photos', 'imagenPerfil_'.$user->name.'.'. $request->file('imagenPerfil')->extension());
+        $user->profile_photo_path = 'profile-photos/imagenPerfil_'.$user->name.'.'. $request->file('imagenPerfil')->extension();        
+        $user->save();
+        
+        //return redirect()->route('institucion.perfil');
+        return redirect($request->ruta);
+
+        //return response()->json(['message' => 'Error al actualizar'], 400);
+    }    
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function perfiledit()
+    {
+        $institucion = auth()->user()->institucion;
+
+        //dd($institucion->user);
+
+        return view('institucion/editPerfilInstitucion',compact('institucion')); 
+    }
+
+    public function eliminarPortada(Request $request)
+    {
+        //$user = auth()->user(); // Obtiene el usuario autenticado
+        $institucion = auth()->user()->institucion; // Relación User -> Institucion
+
+        Storage::delete($institucion->ubicacion_imagen); // Eliminar imagen almacenada
+
+        $institucion->ubicacion_imagen = null;
+        $institucion->portada_oculta = false;
+        $institucion->save();
+        
+        //return redirect()->route('institucion.perfil');
+        return redirect($request->ruta);
+
+        //return response()->json(['message' => 'Error al actualizar'], 400);
+    }
+    
+    public function eliminarImagenPerfil(Request $request)
+    {
+        $user = User::find(Auth::user()->id); // Obtiene el usuario autenticado        
+
+        Storage::delete('public/'.$user->profile_photo_path); // Eliminar imagen almacenada
+
+        $user->profile_photo_path = null;        
+        $user->save();
+        
+        //return redirect()->route('institucion.perfil');
+        return redirect($request->ruta);
+
+        //return response()->json(['message' => 'Error al actualizar'], 400);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function perfilupdate(Request $request)
+    {
+        //dd($request->all());
+
+        $user = User::find(Auth::user()->id); // Obtiene el usuario autenticado  
+        $institucion = $user->institucion;
+
+        //dd($request->all());        
+
+        $request->validate([ ///Validar datos, si los datos recibidos no cumplen estas regresas no les permite la entrada a la base de datos y regresa a la pagina original
+            //'name' => ['required', 'string', 'min:5', 'max:50', Rule::unique('competencias')->ignore($competencia)],
+            //'name' => ['required', 'string', 'min:5', 'max:50'],
+            'email' => ['required', 'email', new ValidateUniqueInTables(['users', 'registro_jueces'], $institucion->email)], //| unique:registro_jueces,email",
+            'whatsapp' => ['nullable','numeric', Rule::unique('users', 'telefono')->ignore($user)],
+            //'fecha' => ['date', 'before_or_equal:' . now()->addYears(2)->format('Y-m-d')],
+            //'duracion' => ['required','integer','min:1','max:100'],
+            //'asesor_id' => ['required', 'not_in:Selecciona una opción'],
+            //'tipo' => ['required'],
+            //'categoria_id' => ['required'],
+            //'imagen' => ['image', 'mimes:png,jpg,jpeg', 'max:5120'], // Máximo 5 Mb
+        ]);
+        
+
+        if($request->email_confirmation){
+            // Elimina 'email_confirmation' del request
+            $request->request->remove('email_confirmation');
+        }
+
+        //dd($request->all());
+
+        // Generar el enlace de Google Maps
+        $googleMapsLink = "https://www.google.com/maps?q={$request->latitud},{$request->longitud}";
+            
+        $request -> merge([            
+            'mapa_link' => $googleMapsLink,
+        ]);
+                    
+        $request->merge(['pais' => ucwords(strtolower($request->pais))]); // ucwords() convierte la primera letra de cada palabra en mayúscula (strtoupper() para todo en mayúsculas / strtolower() para todo en minúsculas.)        
+        $request->merge(['estado' => ucwords(strtolower($request->estado))]);         
+        $request->merge(['ciudad' => ucwords(strtolower($request->ciudad))]);     
+
+        //$request->merge(['' => $]);
+
+        if($request->nombre_escuela_credencial == 1){
+            $nombre_escuela_credencial = true;
+            $request->merge(['nombre_escuela_credencial' => $nombre_escuela_credencial]);
+
+            $request->merge(['ciudad' => ucwords(strtolower($request->ciudad))]);  
+            if($request->nombre_escuela_personalizado == 2){
+                $nombre_escuela_personalizado = true;     
+                $request->merge(['nombre_escuela_personalizado' => $nombre_escuela_personalizado]);           
+            }
+            elseif($request->nombre_escuela_personalizado == 1){
+                $nombre_escuela_personalizado = false;
+                $request->merge(['nombre_escuela_personalizado' => $nombre_escuela_personalizado]);
+
+                $nombre_credencial_escrito = null;
+
+                $request -> merge([
+                    'nombre_credencial_escrito' => $nombre_credencial_escrito,
+                ]);
+            }
+        }elseif($request->nombre_escuela_credencial == 2){
+            $nombre_escuela_credencial = false;
+            $request->merge(['nombre_escuela_credencial' => $nombre_escuela_credencial]);
+
+            $nombre_escuela_personalizado = false;
+            $nombre_credencial_escrito = null;
+
+            $request -> merge([            
+                'nombre_escuela_personalizado' => $nombre_escuela_personalizado,
+                'nombre_credencial_escrito' => $nombre_credencial_escrito,
+            ]);
+        }             
+        
+        // Enviar automáticamente el correo de verificación
+        //event(new Registered($user));
+
+        $confirmarCorreo = false;
+
+        if($institucion->email != $request->email){
+            $confirmarCorreo = true;
+        }                    
+
+
+        /*if ($request->hasFile('imagen')) {
+            //dd($request);
+            $request -> merge([
+                'ubicacion_imagen' => $request->file('imagen')->storeAs('public/imagenes_competencias', 'Portada_'.$request->name.'.'. $request->file('imagen')->extension()),                
+            ]);
+        }*/     
+        
+        //dd($request->all());
+
+        Institucion::where('id', $institucion->id)->update($request->except('_token','_method','ruta'));
+        
+        
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->telefono = $request->whatsapp;
+
+        if($confirmarCorreo == true){
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+
+
+        if($confirmarCorreo == true){
+            $user->sendEmailVerificationNotification();
+        }
+
+        // Actualizar tabla pivote con los nuevos registros  
+        //$competencia->categorias()->sync($request->input('categoria_id'));
+
+        // Insertar en la tabla pivote relacion m:n --> PENDIENTE FINAL
+        //$competencia->categorias()->attach($request->categoria_id); //detach() elimina de la lista el usuario que le pasemos
+
+
+        //Competencia::where('id', $competencia->id)->update($request->except('_token','_method')); //opuesto de except (only)
+
+        //return redirect() -> route('categoria.show', $categoria); //esto corresponde a el listado de route:list 
+        
+        //return redirect() -> route('competencia.index'); //esto corresponde a el listado de route:list         
+
+        //return redirect($request->ruta); 
+        
+        // Configura los datos para la notificación
+        //session()->flash('alerta', [   
+        
+        session()->put('alerta', [                
+            'texto' => 'Perfil Actualizado Exitosamente!',
+            'icono' => 'success',
+            'tiempo' => 2000,
+            'botonConfirmacion' => false,
+        ]);
+        
+        /*$previousUrl = session('_custom_previous.url');
+
+        //return redirect() -> route('competencia.show', $competencia);
+        return redirect($previousUrl);*/
+
+        //return redirect($request->ruta);
+
+        return redirect()->route('institucion.perfil');
+    }
+
 
     /**
      * Display the specified resource.

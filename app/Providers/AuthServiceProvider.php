@@ -83,7 +83,15 @@ class AuthServiceProvider extends ServiceProvider
         });
 
 
-        /// Limitar permisos de usuario
+        /// Limitar permisos de usuario        
+
+        Gate::define('have-perfil', function (User $user) { // Gate para limitar el acceso de un usuario a ciertos metodos o peticiones
+            if($user->rol == 5 || $user->rol == 6 || $user->rol == 7){
+                return true;
+            }else{
+                return false;
+            }
+        });
 
         Gate::define('only-institucion', function (User $user) { // Gate para limitar el acceso de un usuario a ciertos metodos o peticiones
             return $user->rol == 5;

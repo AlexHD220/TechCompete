@@ -66,16 +66,22 @@
                     <!--User Menu-->
                     <div class="nav-item dropdown">
                         <a href="" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
-                            <div class="info-container text-end">
-                                <span class="name d-block"><b>{{ auth()->user()->name }}</b></span>
-                                @can('only-superadmin')
-                                    <span class="role d-block" style="font-size: 12px;"><b>(Super Admin)</b></span>
-                                @endcan
-                                @can('only-admin')
-                                    <span class="role d-block" style="font-size: 12px;"><b>(Admin)</b></span>
-                                @endcan
-                            </div>
-                            <img class="profile-pic rounded-circle ms-2" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" style="width: 40px; height: 40px;">
+                            @can(!'only-institucion')
+                                <div class="info-container text-end">
+                                    <span class="name d-block"><b>{{ auth()->user()->name }}</b></span>
+                                    @can('only-superadmin')
+                                        <span class="role d-block" style="font-size: 12px;"><b>(Super Admin)</b></span>
+                                    @endcan
+                                    @can('only-admin')
+                                        <span class="role d-block" style="font-size: 12px;"><b>(Admin)</b></span>
+                                    @endcan
+                                </div>
+                            @else
+                                <div class="info-container text-end">
+                                    <span class="name d-block"><b>Institución</b></span>
+                                </div>
+                            @endcan
+                            <img class="profile-pic rounded-circle ms-2" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" style="width: 40px; height: 40px;  object-fit: cover;">
                         </a>
 
 
@@ -86,8 +92,11 @@
                             </div>
 
                             <div style="text-align: center; font-size: 15px;">
-                                <a href="/dashboard" class="dropdown-item">Mi Perfil</a>
-                                <a href="/user/profile" class="dropdown-item" style="padding-bottom: 6px;">Configuración del Perfil</a>
+                                @can('have-perfil')
+                                    <a href="{{ Auth::user()->rol == 5 ? route('institucion.perfil') : (Auth::user()->rol == 6 ? route('asesor.perfil') : route('juez.perfil')) }}" 
+                                    class="dropdown-item">Mi Perfil</a>
+                                @endcan
+                                <a href="/cuenta/configuracion" class="dropdown-item" style="padding-bottom: 6px;">Configuración del Perfil</a>
                                 <!--<a href="#" class="dropdown-item">Settings</a>-->
                                 <!--<a href="#" class="dropdown-item">Log Out</a> -->
                                 

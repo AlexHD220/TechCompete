@@ -31,10 +31,14 @@ return new class extends Migration
             $table->string('pagina_web')->nullable();            
             $table->string('telefono')->nullable();
             $table->string('whatsapp')->nullable();
+            $table->string('email_contacto')->nullable();
 
             $table->boolean('nombre_escuela_credencial'); 
             $table->boolean('nombre_escuela_personalizado')->default(false); 
             $table->string('nombre_credencial_escrito')->nullable();
+            $table->boolean('oculta')->default(false);
+
+            $table->string('ubicacion_imagen', 2048)->nullable();
 
             $table->softDeletes(); // Agrega la columna deleted_at
             //$table->timestamps();

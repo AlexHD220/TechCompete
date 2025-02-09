@@ -23,7 +23,7 @@
                 </div>                                
 
                 <div class="mt-4">
-                    <x-label for="tipo" value="{{ __('Tipo de institución') }}" />
+                    <x-label for="tipo" value="{{ __('Tipo de institución educativa') }}" />
                     <x-input id="tipo" class="block mt-1 w-full" type="text" name="tipo" :value="old('tipo') ?? $formPreviousData['step_'.$currentStep]['tipo'] ?? ''" required/> <!-- autocomplete="name" --->
                 </div>            
                 
@@ -104,8 +104,8 @@
                 <h1><b>Información de contacto</b></h1>
 
                 <div class="mt-4">
-                    <x-label for="pagina" value="{{ __('Página Web') }}" />
-                    <x-input id="pagina" class="block mt-1 w-full" type="url" placeholder="Opcional" name="pagina" :value="old('pagina') ?? $formPreviousData['step_'.$currentStep]['pagina'] ?? ''" autofocus/> <!-- autocomplete="name" --->
+                    <x-label for="pagina_web" value="{{ __('Página Web') }}" />
+                    <x-input id="pagina_web" class="block mt-1 w-full" type="url" placeholder="Opcional" name="pagina_web" :value="old('pagina_web') ?? $formPreviousData['step_'.$currentStep]['pagina_web'] ?? ''" autofocus/> <!-- autocomplete="name" --->
                 </div>
 
                 <div class="mt-4">
@@ -118,11 +118,17 @@
                     <x-input id="whatsapp" class="block mt-1 w-full" type="tel"  placeholder="Opcional" name="whatsapp" :value="old('whatsapp') ?? $formPreviousData['step_'.$currentStep]['whatsapp'] ?? ''" maxlength="15"/> <!-- autocomplete="name" --->
                 </div> 
 
+                <div class="mt-4">
+                    <x-label for="email_contacto" value="{{ __('Correo elecrónico de contacto') }}" />                    
+                    <x-input id="email_contacto" class="block mt-1 w-full" type="email" placeholder="Opcional" name="email_contacto" :value="old('email_contacto') ?? $formPreviousData['step_'.$currentStep]['email_contacto'] ?? ''" minlength="5" maxlength="50"/> <!-- autocomplete="username" -->
+                </div> 
+
             @elseif ($currentStep == 4)
 
-                <!--<h1><b>Registro e inscripción de estudiantes</b></h1>-->
+                <!--<h1><b>Registro e inscripción de estudiantes</b></h1>
+                <h1 style="margin-top: 15px;">Credencial del estudiante</h1>-->
 
-                <h1 style="margin-top: 15px;">Credencial del estudiante</h1>
+                <h1>Credencial del estudiante</h1>
 
                 <div class="mt-4">
                     <x-label for="siNombreButton" value="{{ __('¿La credencial del estudiante cuenta con el nombre de la institucion?') }}" />                    
@@ -223,6 +229,7 @@
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
     <!-- Leaflet Control Geocoder JS -->
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
@@ -371,6 +378,7 @@
             
             if (!city) {
                 return; // No hacer nada si el valor está vacío  
+                errorCiudad.style.display = 'none'; // oculta el mensaje de error
             }
 
             var errorCiudad = document.getElementById('error-ciudad');
@@ -505,6 +513,7 @@
             const nombrePersonalizado = document.getElementById('nombre_personalizado');
 
             const escribirNombre = document.getElementById('escribir_nombre');    
+                        
 
             // Pagina recargada
             if(NombreButtonSi.checked){
@@ -519,7 +528,28 @@
                     
                     escribirNombre.style.display = 'block'; // Muestra el input
                 }
+                else if(EscritoButtonSi.checked){
+                    escribirNombre.style.display = 'none'; // Oculta el input
+
+                    nombreCredencialEscrito.setAttribute('disabled', 'true'); // Deshabilitar el input                
+                    nombreCredencialEscrito.value = ""; // Limpia el valor de fecha_inicio  
+                }
             }
+            else if(NombreButtonNo.checked){
+                nombrePersonalizado.style.display = 'none'; // Oculta el input
+                escribirNombre.style.display = 'none'; // Oculta el input
+
+                EscritoButtonSi.setAttribute('disabled', 'true'); // Deshabilitar el input                
+                EscritoButtonSi.checked = ""; // Limpia el valor de fecha_inicio     
+                
+                EscritoButtonNo.setAttribute('disabled', 'true'); // Deshabilitar el input                
+                EscritoButtonNo.checked = ""; // Limpia el valor de fecha_inicio                     
+
+                nombreCredencialEscrito.setAttribute('disabled', 'true'); // Deshabilitar el input                
+                nombreCredencialEscrito.value = ""; // Limpia el valor de fecha_inicio  
+            }
+
+            // ------------------------------------------------------------------------------>
 
             // Escuchar cambios en el radio button Si
             NombreButtonSi.addEventListener('change', function () {

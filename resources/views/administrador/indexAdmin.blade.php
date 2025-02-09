@@ -37,9 +37,9 @@
                                 <b style="font-size: 20px;">{{ $superadministrador -> name }}</b>
                                 
                                 @if($superadministrador -> telefono)
-                                    (<i><a href="mailto:{{ $superadministrador -> email }}">{{ $superadministrador -> email }}</a></i> | <a target="_blank" href="https://api.whatsapp.com/send?phone={{ $superadministrador -> telefono }}">{{ $superadministrador -> telefono }}</a>)
+                                    (<i><a target="_blank" href="mailto:{{ $superadministrador -> email }}">{{ $superadministrador -> email }}</a></i> | <a target="_blank" href="https://api.whatsapp.com/send?phone={{ $superadministrador -> telefono }}">{{ $superadministrador -> telefono }}</a>)
                                 @else
-                                    (<i><a href="mailto:{{ $superadministrador -> email }}">{{ $superadministrador -> email }}</a></i>)
+                                    (<i><a target="_blank" href="mailto:{{ $superadministrador -> email }}">{{ $superadministrador -> email }}</a></i>)
                                 @endif
                                 <h style="margin-right: 5px;"></h>                                
                                 
@@ -92,9 +92,9 @@
                                 <b style="font-size: 20px;">{{ $administrador -> name }}</b>                                
                                 
                                 @if($administrador -> telefono)
-                                    (<i><a href="mailto:{{ $administrador -> email }}">{{ $administrador -> email }}</a></i> | <a target="_blank" href="https://api.whatsapp.com/send?phone={{ $administrador -> telefono }}">{{ $administrador -> telefono }}</a>)
+                                    (<i><a target="_blank" href="mailto:{{ $administrador -> email }}">{{ $administrador -> email }}</a></i> | <a target="_blank" href="https://api.whatsapp.com/send?phone={{ $administrador -> telefono }}">{{ $administrador -> telefono }}</a>)
                                 @else
-                                    (<i><a href="mailto:{{ $administrador -> email }}">{{ $administrador -> email }}</a></i>)
+                                    (<i><a target="_blank" href="mailto:{{ $administrador -> email }}">{{ $administrador -> email }}</a></i>)
                                 @endif
                                 <h style="margin-right: 5px;"></h>     
                                 

@@ -42,6 +42,6 @@ Para crear tu cuenta deberas ingresar a la siguiente página y llenar el formula
 ¿Tienes algún Problema? <i>!Contáctanos¡</i>
 - <a href="tel:+523323385972" target="_blank" > Teléfono: 3323385972 </a>
 - <a href="https://api.whatsapp.com/send?phone=523323385972" target="_blank" > WhatsApp: 3323385972</a>
-- <a href="mailto:dg967172@techcompete.com" target="_blank" > Correo electrónico: dg967172@techcompete.com </a>
+- <a href="mailto:dg967172@techcompete.com" target="_blank" > Correo electrónico: dg967172@techcompete.com </a> <!-- Correo de ejemplo -->
 
 </x-mail::message>

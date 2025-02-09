@@ -81,6 +81,11 @@
                 padding-top: 70px;
             }
 
+            .padding-bienvenida-perfil{
+                /*padding-top: 35px;*/
+                padding-top: 102px;
+            }
+
             .padding-encabezado {
                 padding-bottom: 0px;                    
             }
@@ -92,7 +97,13 @@
             @media (max-width: 639px) {                
 
                 .padding-bienvenida {                    
-                    margin-top: 0px;
+                    /*margin-top: 0px;*/
+                    padding-top: 0px;
+                }
+
+                .padding-bienvenida-perfil{
+                    /*margin-top: 0px;*/
+                    padding-top: 0px;
                 }
 
                 .size-bienvenida{
@@ -125,9 +136,17 @@
 
                 <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10 padding-encabezado" style="width: 100%; background-color: #191c24;"> <!--z-10">-->
                     @auth
+                        @if(0)
+                            <div style="margin-bottom: 5px;">
+                                <a href="{{ Auth::user()->rol == 5 ? route('institucion.perfil') : (Auth::user()->rol == 6 ? route('asesor.perfil') : route('juez.perfil')) }}" 
+                                class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" style="font-size: 18px;"> <!--class="focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"-->
+                                    Perfil
+                                </a>
+                            </div>
+                        @endcan
 
-                        <a href="{{ url('/dashboard') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" style="font-size: 18px;"> <!--class="focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"-->
-                            Perfil (Dashboard)
+                        <a href="{{ url('/cuenta/configuracion') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" style="font-size: 18px;"> <!--class="focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"-->
+                            Cuenta (Configuración)
                         </a>
 
                         <!-- Authentication -->
@@ -155,6 +174,7 @@
                 </div>
             @endif
             
+            <!-- {{ Gate::allows('have-perfil') ? 'padding-bienvenida-perfil'  : 'padding-bienvenida' }} -->
             <div id="body_pagina" class="max-w-7xl mx-auto p-6 lg:p-8 padding-footer padding-bienvenida"  style="background-color: #191c24;">
 
                 @auth
@@ -234,6 +254,13 @@
                             <button onclick="window.location.href = '/juez';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->
                                 Jueces
                             </button>
+                        @endcan
+
+                        @can('have-perfil')                                                            
+                            <button link="{{ Auth::user()->rol == 5 ? route('institucion.perfil') : (Auth::user()->rol == 6 ? route('asesor.perfil') : route('juez.perfil')) }}" 
+                            onclick="window.location.href = this.getAttribute('link');" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->
+                                Perfil
+                            </button>                            
                         @endcan
                         
                     @endauth   

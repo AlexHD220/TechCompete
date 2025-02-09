@@ -12,17 +12,15 @@ use Illuminate\Support\Facades\DB;
 class ValidateUniqueInTables implements Rule
 {
     protected $tables;
-    protected $except;
 
     /**
      * Crear una nueva instancia de la regla.
      *
      * @param array $tables Nombres de las tablas en donde se validará.
      */
-    public function __construct(array $tables, $except = null)
+    public function __construct(array $tables)
     {
         $this->tables = $tables;
-        $this->except = $except;
     }
 
     /**
@@ -35,17 +33,11 @@ class ValidateUniqueInTables implements Rule
     public function passes($attribute, $value)
     {
         foreach ($this->tables as $table) {
-            $query = DB::table($table)->where($attribute, $value);
-
-            // Excluir el correo actual en la validación
-            if ($this->except) {
-                $query->where($attribute, '!=', $this->except);
-            }
-
-            if ($query->exists()) {
+            if (DB::table($table)->where($attribute, $value)->exists()) {
                 return false;
             }
         }
+
         return true;
     }
 

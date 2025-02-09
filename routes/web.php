@@ -393,33 +393,48 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
 
 //------------------------------------------------------------------------------------|
 
-Route::get('cuenta/configuracion', function () {
-    session()->forget('form');
+    Route::get('cuenta/configuracion', function () {
+        session()->forget('form');
 
-    if (Gate::allows('autenticado')) {
-        // Usuario autenticado
-        if (Gate::allows('mail-verificado', auth()->user())) {
-            return view('profile.show'); // Usuario con correo verificado
+        if (Gate::allows('autenticado')) {
+            // Usuario autenticado
+            if (Gate::allows('mail-verificado', auth()->user())) {
+                return view('profile.show'); // Usuario con correo verificado
+            } else {
+                return redirect()->route('verification.notice'); // Usuario sin correo verificado
+            }
         } else {
-            return redirect()->route('verification.notice'); // Usuario sin correo verificado
+            // Usuario no autenticado
+            return view('welcome'); // Usuario con correo verificado        
         }
-    } else {
-        // Usuario no autenticado
-        return view('welcome'); // Usuario con correo verificado        
-    }
-})->name('configuracionPerfil');
+    })->name('configuracionPerfil');
 
 //------------------------------------------------------------------------------------> Perfil institucion
 
-    Route::get('institucion/perfil', [InstitucionController::class, 'perfilshow'])
-    ->name('institucion.perfilshow');
+    Route::get('institucion/perfil', [InstitucionController::class, 'perfil'])
+    ->name('institucion.perfil');
+
+    Route::post('/institucion/perfil/ocultarPortada', [InstitucionController::class, 'ocultarPortada'])
+    ->name('institucion.ocultarPortada');
+
+    Route::post('/institucion/perfil/actualizarPortada', [InstitucionController::class, 'actualizarPortada'])
+    ->name('institucion.actualizarPortada');
+
+    Route::post('/institucion/perfil/actualizarImagenPerfil', [InstitucionController::class, 'actualizarImagenPerfil'])
+    ->name('institucion.actualizarImagenPerfil');
 
     // Ruta para mostrar los registros pendientes de publicar
     Route::get('institucion/perfil/edit', [InstitucionController::class, 'perfiledit'])
     ->name('institucion.edit');
 
+    Route::post('/institucion/perfil/eliminarPortada', [InstitucionController::class, 'eliminarPortada'])
+    ->name('institucion.eliminarPortada');
+
+    Route::post('/institucion/perfil/eliminarImagenPerfil', [InstitucionController::class, 'eliminarImagenPerfil'])
+    ->name('institucion.eliminarImagenPerfil');
+
     Route::patch('institucion/perfil', [InstitucionController::class, 'perfilupdate'])
-    ->name('institucion.update');
+    ->name('institucion.perfilupdate');
     
     
 //------------------------------------------------------------------------------------|

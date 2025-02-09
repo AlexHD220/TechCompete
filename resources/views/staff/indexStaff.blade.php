@@ -37,9 +37,9 @@
                             <b style="font-size: 20px;">{{ $superstaff -> name }}</b>
                             
                             @if($superstaff -> telefono)
-                                (<i><a href="mailto:{{ $superstaff -> email }}">{{ $superstaff -> email }}</a></i> | <a target="_blank" href="https://api.whatsapp.com/send?phone={{ $superstaff -> telefono }}">{{ $superstaff -> telefono }}</a>)
+                                (<i><a target="_blank" href="mailto:{{ $superstaff -> email }}">{{ $superstaff -> email }}</a></i> | <a target="_blank" href="https://api.whatsapp.com/send?phone={{ $superstaff -> telefono }}">{{ $superstaff -> telefono }}</a>)
                             @else
-                                (<i><a href="mailto:{{ $superstaff -> email }}">{{ $superstaff -> email }}</a></i>)
+                                (<i><a target="_blank" href="mailto:{{ $superstaff -> email }}">{{ $superstaff -> email }}</a></i>)
                             @endif
                             <h style="margin-right: 5px;"></h>
                             
@@ -92,9 +92,9 @@
                             <b style="font-size: 20px;">{{ $staff -> name }}</b>                                
                             
                             @if($staff -> telefono)
-                                (<i><a href="mailto:{{ $staff -> email }}">{{ $staff -> email }}</a></i> | <a target="_blank" href="https://api.whatsapp.com/send?phone={{ $staff -> telefono }}">{{ $staff -> telefono }}</a>)
+                                (<i><a target="_blank" href="mailto:{{ $staff -> email }}">{{ $staff -> email }}</a></i> | <a target="_blank" href="https://api.whatsapp.com/send?phone={{ $staff -> telefono }}">{{ $staff -> telefono }}</a>)
                             @else
-                                (<i><a href="mailto:{{ $staff -> email }}">{{ $staff -> email }}</a></i>)
+                                (<i><a target="_blank" href="mailto:{{ $staff -> email }}">{{ $staff -> email }}</a></i>)
                             @endif
                             <h style="margin-right: 5px;"></h>
                             

@@ -41,7 +41,7 @@
                     <li> <!--*afasfdfddsfsdf (alejandro@gmail.com) | 13/08/24 (Quedan 10 dias para registrarse)-->
                         <b style="font-size: 20px;">{{ $registrojuez -> codigo }}</b>
 
-                        (<i><a href="mailto:{{ $registrojuez -> email }}">{{ $registrojuez -> email }}</a></i>)
+                        (<i><a target="_blank" href="mailto:{{ $registrojuez -> email }}">{{ $registrojuez -> email }}</a></i>)
 
                         <b style="font-size: 20px;"> | </b>
 

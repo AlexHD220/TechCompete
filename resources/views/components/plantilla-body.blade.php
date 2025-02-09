@@ -280,7 +280,7 @@
 
 
         <!-- Back to Top -->
-        <a class="btn btn-lg btn-primary btn-lg-square back-to-top" id="backToTopButton" style="cursor: pointer; display: none;"><i class="bi bi-arrow-up"></i></a> <!--href="#"-->
+        <!--<a class="btn btn-lg btn-primary btn-lg-square back-to-top" id="backToTopButton" style="cursor: pointer; display: none;"><i class="bi bi-arrow-up"></i></a>--> <!--href="#"-->
     </div>
 
     <!-- JavaScript Libraries -->
@@ -301,8 +301,8 @@
     <script src="/dark/js/fechas.js" defer></script>
     <script src="/dark/js/scripts.js" defer></script>
     
-    <script src="/dark/js/confirmacionPassword.js" defer></script>
-    <script src="/dark/js/confirmacionCorreo.js" defer></script>
+    <!--<script src="/dark/js/confirmacionPassword.js" defer></script>-->
+    <!--<script src="/dark/js/confirmacionCorreo.js" defer></script>-->
 
     <!-- SweetAlert CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
