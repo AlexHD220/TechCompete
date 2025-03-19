@@ -29,6 +29,10 @@ use App\Rules\ValidateUniqueInTables;
 use Illuminate\Auth\Events\Registered;
 use Laravel\Fortify\Rules\Password;
 
+use GuzzleHttp\Client; // Asegúrate de tener instalado guzzlehttp/guzzle
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+
 class AsesorController extends Controller
 {
     /**
@@ -73,15 +77,414 @@ class AsesorController extends Controller
      */
     public function create()
     {
+        session()->forget('asesor');
         //$orgs = Organizacion::all();
         //return view('asesor/createAsesor', compact('orgs'));
         return view('asesor/createAsesor');
     }
 
+    public function store(Request $request)
+    {
+        // Validación de campos básicos
+        $request->validate([
+            //'name'           => 'required|string|max:255',
+            //'lastname'       => 'required|string|max:255',
+            'email'          => ['required', 'email', new \App\Rules\ValidateUniqueInTables(['users', 'registro_jueces'])],
+            'telefono'       => ['nullable', 'numeric', 'unique:users,telefono'],
+            //'escuela'        => 'required|string|max:255',
+            //'codigo_asesor'  => 'required|string|max:255',
+            //'imagen'         => 'required|image|max:2048',
+            //'password'       => 'required|string|min:8|confirmed',
+        ]);
+
+        // Preparar el cliente Guzzle para enviar la imagen y datos al servidor Flask de IA.
+        $client = new Client();
+        $imageFile = $request->file('imagen');
+        $filePath = $imageFile->getRealPath();
+
+        try {
+            // Enviar una solicitud multipart al servidor de IA (Flask)
+            $response = $client->request('POST', 'http://localhost:5000/procesar-imagen', [
+                'multipart' => [
+                    [
+                        'name'     => 'imagen',
+                        'contents' => fopen($filePath, 'r'),
+                        'filename' => $imageFile->getClientOriginalName()
+                    ],
+                    [
+                        'name'     => 'tipoCuenta',
+                        'contents' => 'asesor',
+                    ],
+                    [
+                        'name'     => 'name',
+                        'contents' => $request->name,
+                    ],
+                    [
+                        'name'     => 'lastname',
+                        'contents' => $request->lastname,
+                    ],
+                    /*[
+                        'name'     => 'escuela',
+                        'contents' => $request->escuela,
+                    ],
+                    [
+                        'name'     => 'codigo_asesor',
+                        'contents' => $request->codigo_asesor,
+                    ],*/
+                ]
+            ]);
+        } catch (\Exception $e) {
+            // Si ocurre un error al comunicarse con el servicio de IA, se redirige con un mensaje de error
+            return redirect()->back()->withErrors(['imagen' => 'Error al procesar la imagen. Inténtalo nuevamente.'])->withInput();
+        }
+
+        // Decodificar la respuesta JSON enviada por el servidor de IA.
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        /* Se espera que el servidor de IA devuelva un JSON con 4 campos booleanos:
+           - nombre_valido
+           - apellido_valido
+           - escuela_valida
+           - codigo_valido
+           Estos campos serán true si el texto extraído de la imagen coincide con los datos ingresados.
+        */
+
+        if (
+            isset($data['nombre_valido'], $data['apellido_valido']/*, $data['escuela_valida'], $data['codigo_valido']*/) &&
+            $data['nombre_valido'] === true &&
+            $data['apellido_valido'] === true /*&&
+            $data['escuela_valida'] === true &&
+            $data['codigo_valido'] === true*/
+        ) {
+            // Si la validación de IA es exitosa, se crea el usuario y se registra al asesor.
+            $user = User::create([
+                'rol'      => 6, // Rol para asesor
+                'name'     => $request->name,
+                'lastname' => $request->lastname,
+                'email'    => $request->email,
+                'telefono' => $request->telefono,
+                'password' => Hash::make($request->password),
+            ]);
+
+            $asesor = new Asesor();
+            $asesor->user_id = $user->id;
+            $asesor->name = $request->name;
+            $asesor->lastname = $request->lastname;
+            $asesor->email = $request->email;
+            $asesor->telefono = $request->telefono;
+            //$asesor->escuela       = $request->escuela;
+            //$asesor->codigo_asesor = $request->codigo_asesor;
+
+            // Almacenar la imagen en una carpeta definitiva (por ejemplo, public/imagenes)
+            /*$imagenPath = $imageFile->store('public/imagenes');
+            $asesor->identificacion_path = $imagenPath;*/
+
+            $fileName = Str::slug($request->name, '_');
+            $fileLastname = Str::slug($request->lastname, '_');
+
+            $asesor->identificacion_path = $request->file('imagen')->storeAs('public/imagenes_asesores', 'Identificacion_'.$fileName.'_'.$fileLastname.'.'. $request->file('imagen')->extension());
+            $asesor->save();
+
+            $user->sendEmailVerificationNotification();
+
+            return redirect()->route('login')->with('success', 'Asesor registrado correctamente.');
+            
+        } else {
+            // Si alguno de los campos no coincide, redirigir al asesor a una vista de revisión.
+            // Se guarda la imagen en una ubicación temporal para mostrarla en la vista.
+            $imagenTemporal = $imageFile->store('public/imagenes_temporales');    
+
+            //$fileName = Str::slug($request->name, '_');
+            //$fileLastname = Str::slug($request->lastname, '_');
+            //$imagenTemporal = $request->file('imagen')->storeAs('public/imagenes_asesores', 'Identificacion_'.$fileName.'_'.$fileLastname.'.'. $request->file('imagen')->extension());    
+
+            /*return view('asesor/validarCredencial', [
+                'dataIA' => $data,               // Resultados de la IA
+                'requestData' => $request->all(),     // Datos ingresados por el usuario
+                'imagenTemporal'=> $imagenTemporal,      // Ruta de la imagen temporal
+            ]);*/
+
+            $asesorRequest = $request->except(['_token', 'imagen']); // Obtiene todos los datos excepto el token CSRF
+
+            session(['asesor.request' => $asesorRequest]); // Guarda los datos en la sesión
+            session(['asesor.credencial' => $imagenTemporal]);
+            session(['asesor.data' => $data]);
+
+            //dd($data);
+
+            //session()->flash('request', $request);
+
+            //return redirect()->action([self::class, 'validarCredencial']);
+            return redirect()->route('asesor.validarcredencial');
+        }
+    }
+
+    public function validarcredencial(Request $request)
+    {
+        // Recuperamos los datos almacenados en la sesión 
+        //$requestData = session()->get('request');  
+
+        if (session()->has('asesor')){
+            $asesorRequest = session('asesor.request', []); // Recupera los datos, si no existen devuelve []
+            $imagenTemporal = session('asesor.credencial', []);
+            $data = session('asesor.data', []);
+
+            //dd($data);
+    
+            // Ahora puedes utilizar $datos según lo necesites en este método
+            return view('asesor.validarCredencial', compact('asesorRequest', 'imagenTemporal', 'data'));
+        }        
+        else{
+            return redirect()->route('asesor.create');
+        }
+    }
+
+    public function validarcredencialstore(Request $request)
+    {
+        // Validación de campos básicos
+        $request->validate([
+            //'name'           => 'required|string|max:255',
+            //'lastname'       => 'required|string|max:255',
+            //'email'          => ['required', 'email', new \App\Rules\ValidateUniqueInTables(['users', 'registro_jueces'])],
+            //'telefono'       => ['nullable', 'numeric', 'unique:users,telefono'],
+            //'escuela'        => 'required|string|max:255',
+            //'codigo_asesor'  => 'required|string|max:255',
+            //'imagen'         => 'required|image|max:2048',
+            //'password'       => 'required|string|min:8|confirmed',
+        ]);
+
+        $asesorRequest = session('asesor.request', []); // Recupera los datos, si no existen devuelve []          
+        $asesorRequest = (object) $asesorRequest;
+
+        //dd($asesorRequest['name']);
+        //dd($asesorRequest->name);
+        
+        // Preparar el cliente Guzzle para enviar la imagen y datos al servidor Flask de IA.
+        $client = new Client();
+
+        if($request->tipo == 'datos'){
+            $imagenTemporal = session('asesor.credencial', []);   
+            $absolutePath = storage_path('app/' . $imagenTemporal);               
+        }
+        elseif($request->tipo == 'imagen'){
+            $imageFile = $request->file('imagen');
+            $filePath = $imageFile->getRealPath();
+        }          
+        
+        //dd($absolutePath);
+
+        try {
+            // Enviar una solicitud multipart al servidor de IA (Flask)
+            if($request->tipo == 'datos'){
+                $response = $client->request('POST', 'http://localhost:5000/procesar-imagen', [
+                    'multipart' => [
+                        [
+                            'name'     => 'imagen',
+                            'contents' => fopen($absolutePath, 'r'),
+                            'filename' => basename($absolutePath)
+                        ],
+                        [
+                            'name'     => 'tipoCuenta',
+                            'contents' => 'asesor',
+                        ],
+                        [
+                            'name'     => 'name',
+                            'contents' => $request->name,
+                        ],
+                        [
+                            'name'     => 'lastname',
+                            'contents' => $request->lastname,
+                        ],
+                        /*[
+                            'name'     => 'escuela',
+                            'contents' => $request->escuela,
+                        ],
+                        [
+                            'name'     => 'codigo_asesor',
+                            'contents' => $request->codigo_asesor,
+                        ],*/
+                    ]
+                ]);              
+            }
+            elseif($request->tipo == 'imagen'){
+                $response = $client->request('POST', 'http://localhost:5000/procesar-imagen', [
+                    'multipart' => [
+                        [
+                            'name'     => 'imagen',
+                            'contents' => fopen($filePath, 'r'),
+                            'filename' => $imageFile->getClientOriginalName()
+                        ],
+                        [
+                            'name'     => 'tipoCuenta',
+                            'contents' => 'asesor',
+                        ],
+                        [
+                            'name'     => 'name',
+                            'contents' => $asesorRequest->name,
+                        ],
+                        [
+                            'name'     => 'lastname',
+                            'contents' => $asesorRequest->lastname,
+                        ],
+                        /*[
+                            'name'     => 'escuela',
+                            'contents' => $request->escuela,
+                        ],
+                        [
+                            'name'     => 'codigo_asesor',
+                            'contents' => $request->codigo_asesor,
+                        ],*/
+                    ]
+                ]);
+            } 
+            
+        } catch (\Exception $e) {
+            // Si ocurre un error al comunicarse con el servicio de IA, se redirige con un mensaje de error
+            return redirect()->back()->withErrors(['imagen' => 'Error al procesar la imagen. Inténtalo nuevamente.'])->withInput();
+        }
+
+        // Decodificar la respuesta JSON enviada por el servidor de IA.
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        /* Se espera que el servidor de IA devuelva un JSON con 4 campos booleanos:
+           - nombre_valido
+           - apellido_valido
+           - escuela_valida
+           - codigo_valido
+           Estos campos serán true si el texto extraído de la imagen coincide con los datos ingresados.
+        */
+
+        if (
+            isset($data['nombre_valido'], $data['apellido_valido']/*, $data['escuela_valida'], $data['codigo_valido']*/) &&
+            $data['nombre_valido'] === true &&
+            $data['apellido_valido'] === true /*&&
+            $data['escuela_valida'] === true &&
+            $data['codigo_valido'] === true*/
+        ) {
+            $asesor = new Asesor();
+
+            if($request->tipo == 'datos'){
+                // Si la validación de IA es exitosa, se crea el usuario y se registra al asesor.
+                $user = User::create([
+                    'rol'      => 6, // Rol para asesor
+                    'name'     => $request->name,
+                    'lastname' => $request->lastname,
+                    'email'    => $asesorRequest->email,
+                    'telefono' => $asesorRequest->telefono,
+                    'password' => Hash::make($asesorRequest->password),
+                ]);
+
+                $asesor->name = $request->name;
+                $asesor->lastname = $request->lastname;
+
+                $fileName = Str::slug($request->name, '_');
+                $fileLastname = Str::slug($request->lastname, '_');
+
+                // Obtener la extensión del archivo desde la ruta temporal
+                $extension = pathinfo($absolutePath, PATHINFO_EXTENSION);                
+
+                // Construir el nuevo nombre y la nueva ruta
+                $nuevoNombre = 'Identificacion_' . $fileName . '_' . $fileLastname . '.' . $extension;
+                $nuevaRuta = 'public/imagenes_asesores/' . $nuevoNombre;
+
+                // Asegurarse de que el directorio de destino exista; si no, crearlo.
+                if (!Storage::exists('public/imagenes_asesores')) {
+                    Storage::makeDirectory('public/imagenes_asesores');
+                }
+
+                // Mover el archivo desde la ruta temporal a la nueva ruta
+                // Storage::move() renombra el archivo, trasladándolo y eliminando la versión temporal.
+                Storage::move($imagenTemporal, $nuevaRuta);
+                //$absolutePath = storage_path('app/' . $imagenTemporal);  
+
+                //dd($nuevaRuta);
+
+                //dd($imagenTemporal);
+
+                // Asignar la nueva ruta al campo del modelo, por ejemplo:
+                $asesor->identificacion_path = $nuevaRuta;                
+            }
+            elseif($request->tipo == 'imagen'){
+                // Si la validación de IA es exitosa, se crea el usuario y se registra al asesor.
+                $user = User::create([
+                    'rol'      => 6, // Rol para asesor
+                    'name'     => $asesorRequest->name,
+                    'lastname' => $asesorRequest->lastname,
+                    'email'    => $asesorRequest->email,
+                    'telefono' => $asesorRequest->telefono,
+                    'password' => Hash::make($asesorRequest->password),
+                ]);
+
+                $asesor->name = $asesorRequest->name;
+                $asesor->lastname = $asesorRequest->lastname;
+
+                $fileName = Str::slug($asesorRequest->name, '_');
+                $fileLastname = Str::slug($asesorRequest->lastname, '_');
+
+                $asesor->identificacion_path = $request->file('imagen')->storeAs('public/imagenes_asesores', 'Identificacion_'.$fileName.'_'.$fileLastname.'.'. $request->file('imagen')->extension());
+            }
+            
+            $asesor->user_id = $user->id;            
+            $asesor->email = $asesorRequest->email;
+            $asesor->telefono = $asesorRequest->telefono;
+            //$asesor->escuela       = $request->escuela;
+            //$asesor->codigo_asesor = $request->codigo_asesor;
+
+            // Almacenar la imagen en una carpeta definitiva (por ejemplo, public/imagenes)
+            /*$imagenPath = $imageFile->store('public/imagenes');
+            $asesor->identificacion_path = $imagenPath;*/
+            
+            $asesor->save();
+
+            $user->sendEmailVerificationNotification();
+
+            session()->forget('asesor');
+
+            return redirect()->route('login')->with('success', 'Asesor registrado correctamente.');
+            
+        } else {
+            // Si alguno de los campos no coincide, redirigir al asesor a una vista de revisión.
+            // Se guarda la imagen en una ubicación temporal para mostrarla en la vista.             
+
+            if($request->tipo == 'datos'){                         
+                $asesorRequest->name = $request->name;
+                $asesorRequest->lastname = $request->lastname;
+            }
+            elseif($request->tipo == 'imagen'){
+                $imagenTemporal = $imageFile->store('public/imagenes_temporales');   
+            }  
+
+            //$fileName = Str::slug($request->name, '_');
+            //$fileLastname = Str::slug($request->lastname, '_');
+            //$imagenTemporal = $request->file('imagen')->storeAs('public/imagenes_asesores', 'Identificacion_'.$fileName.'_'.$fileLastname.'.'. $request->file('imagen')->extension());    
+
+            /*return view('asesor/validarCredencial', [
+                'dataIA' => $data,               // Resultados de la IA
+                'requestData' => $request->all(),     // Datos ingresados por el usuario
+                'imagenTemporal'=> $imagenTemporal,      // Ruta de la imagen temporal
+            ]);*/
+
+            //$asesorRequest = $request->except(['_token', 'imagen']); // Obtiene todos los datos excepto el token CSRF
+
+            $asesorRequest = (array) $asesorRequest;
+
+            session(['asesor.request' => $asesorRequest]); // Guarda los datos en la sesión
+            session(['asesor.credencial' => $imagenTemporal]);
+            session(['asesor.data' => $data]);
+
+            //dd($data);
+
+            //session()->flash('request', $request);
+
+            //return redirect()->action([self::class, 'validarCredencial']);
+            return redirect()->route('asesor.validarcredencial');
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function originalStore(Request $request)
     {
         $request->validate([
             'email' => ['required', 'email', new ValidateUniqueInTables(['users', 'registro_jueces'])], //| unique:registro_jueces,email",            

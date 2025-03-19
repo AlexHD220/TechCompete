@@ -24,6 +24,8 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Fortify\Rules\Password;
 
+use Illuminate\Support\Str;
+
 class InstitucionController extends Controller
 {
     /**
@@ -94,7 +96,7 @@ class InstitucionController extends Controller
         // Decodificamos los valores de la URL
         $valores = json_decode(urldecode($valores), true);
         
-        //$name = $valores['name']; // Alejandro
+        //$name = $valores['name'];
         
         //dd($valores);
 
@@ -366,7 +368,8 @@ class InstitucionController extends Controller
         //$user = auth()->user(); // Obtiene el usuario autenticado
         $institucion = auth()->user()->institucion; // Relación User -> Institucion
 
-        $institucion->ubicacion_imagen = $request->file('imagenPortada')->storeAs('public/imagenes_instituciones', 'Portada_'.$institucion->name.'.'. $request->file('imagenPortada')->extension());
+        $fileName = Str::slug($request->name, '_');
+        $institucion->ubicacion_imagen = $request->file('imagenPortada')->storeAs('public/imagenes_instituciones', 'Portada_'.$fileName.'.'. $request->file('imagenPortada')->extension());
         $institucion->portada_oculta = false;
         $institucion->save();
         

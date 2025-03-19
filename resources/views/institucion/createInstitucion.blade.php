@@ -198,7 +198,7 @@
             <div class="flex items-center justify-between mt-4" style="margin-top: 30px;">
                 <div class="text-center">                        
 
-                    @if ($previousData || $currentStep != 1 && $currentStep != 1)
+                    @if ($previousData || $currentStep != 1 && $currentStep != 0)
                         <button type="button" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" style="font-size: 14px;" 
                         link="{{ route('institucion.reset') }}" onclick="window.location.href = this.getAttribute('link');">
                             Reiniciar formulario

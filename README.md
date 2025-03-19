@@ -77,6 +77,9 @@ php artisan db:seed
 npm install
 npm run build
 
+# Instala Guzzle y actualiza las dependencias necesarias para enviar peticiones al servidor Flask
+composer require guzzlehttp/guzzle -W
+
 # Crea el enlace simbólico para el almacenamiento de archivos
 php artisan storage:link
 

@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
+use Illuminate\Support\Str;
+
 class CompetenciaController extends Controller
 {
     /**
@@ -152,7 +154,8 @@ class CompetenciaController extends Controller
         $competencia->latitud = $request->latitud;
         $competencia->longitud = $request->longitud;
         $competencia->mapa_link = $googleMapsLink;
-        $competencia->ubicacion_imagen = $request->file('imagen')->storeAs('public/imagenes_competencias', 'Portada_'.$request->name.'.'. $request->file('imagen')->extension());
+        $fileName = Str::slug($request->name, '_');
+        $competencia->ubicacion_imagen = $request->file('imagen')->storeAs('public/imagenes_competencias', 'Portada_'.$fileName.'.'. $request->file('imagen')->extension());
 
 
         //dd($registrojuez->id);
@@ -331,8 +334,9 @@ class CompetenciaController extends Controller
 
         if ($request->hasFile('imagen')) {
             //dd($request);
+            $fileName = Str::slug($request->name, '_');
             $request -> merge([
-                'ubicacion_imagen' => $request->file('imagen')->storeAs('public/imagenes_competencias', 'Portada_'.$request->name.'.'. $request->file('imagen')->extension()),                
+                'ubicacion_imagen' => $request->file('imagen')->storeAs('public/imagenes_competencias', 'Portada_'.$fileName.'.'. $request->file('imagen')->extension()),                
             ]);
         }         
         

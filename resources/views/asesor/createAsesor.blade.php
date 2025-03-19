@@ -10,7 +10,7 @@
          <b><h1 style="margin-bottom: 15px; font-size: 20px;">Crea una cuenta como Asesor</h1></b>
         </div>
 
-        <form id="registroForm" method="POST" action="{{ route('asesor.store') }}">
+        <form id="registroForm" method="POST" action="{{ route('asesor.store') }}" enctype="multipart/form-data">
             @csrf
 
             <div class="mt-4">
@@ -31,6 +31,12 @@
             <div class="mt-4">
                 <x-label for="email" value="{{ __('Correo electrónico') }}" />
                 <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" minlength="5" maxlength="50" required /> <!-- autocomplete="username" -->
+            </div>
+
+            <div class="mt-4">
+                <x-label for="email_confirmation" value="{{ __('Confirmar correo electrónico') }}" />
+                <x-input id="email_confirmation" class="block mt-1 w-full" type="email" name="email_confirmation" :value="old('email_confirmation')" minlength="5" maxlength="50" required /> <!-- autocomplete="username" -->
+                <small id="emailError" style="color: #f87171; display: none;"><div style="margin-top: 10px;"><b><i class="fa fa-exclamation-triangle"></i> Los correos electrónicos no coinciden.</b></div></small>
             </div>
 
             <div class="mt-4">                

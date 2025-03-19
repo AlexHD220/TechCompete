@@ -523,10 +523,20 @@ Route::post('/formulario-multistep', [InstitucionController::class, 'process'])
 //->except(['create', 'store']);
 
 
-//------------------------------------------------------------------------------------|
+//------------------------------------------------------------------------------------| validarCredencial
+
+Route::get('asesor/validarcredencial', [AsesorController::class, 'validarcredencial'])
+->name('asesor.validarcredencial');
+
+Route::post('asesor/validarcredencial', [AsesorController::class, 'validarcredencialstore'])
+->name('asesor.validarcredencialstore');
+
+Route::post('asesor/revisarcredencial', [AsesorController::class, 'revisarcredencialmanualmente'])
+->name('asesor.revisarcredencialmanualmente');
 
 
 Route::resource('asesor', AsesorController::class);
+
 
 
 Route::resource('horario', HorarioController::class);

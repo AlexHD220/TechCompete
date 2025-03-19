@@ -1150,7 +1150,7 @@
 
         const emailConfirmationDiv = document.getElementById('email_confirmation_div');
 
-        if ("{{$institucion->email }}" != email.value) {
+        if ("{{ $institucion->email }}" != email.value) {
             emailConfirmationDiv.style.display = 'block';
             confirmEmail.removeAttribute('disabled'); // Habilitar el input
             
