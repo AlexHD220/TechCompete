@@ -88,7 +88,6 @@ class AsesorController extends Controller
         return view('asesor/createAsesor');
     }
 
-    // Usuario
     public function store(Request $request)
     {
         // Validación de campos básicos
@@ -191,27 +190,10 @@ class AsesorController extends Controller
             $asesor->identificacion_path = $request->file('imagen')->storeAs('public/imagenes_asesores', 'Identificacion_'.$fileName.'_'.$fileLastname.'.'. $request->file('imagen')->extension());
             $asesor->save();
 
-
-            //============================================================================>
-
-            // Crear link para verificacion de correo
-            $verificationUrl = URL::temporarySignedRoute(
-                'verification.verify', // Nombre de la ruta de verificación
-                now()->addMinutes(60),  // Tiempo de expiración del enlace
-                ['id' => $user->id, 'hash' => sha1($user->email)] // Parámetros de la ruta
-            );
-
-            //dd($verificationUrl);
-
-            // Enviar correo de activacion de cuenta
-            Mail::to($asesor->email)->send(new NotificaCuentaAsesorAprobada($asesor, $verificationUrl));
-            
-            //============================================================================>
-
             $user->sendEmailVerificationNotification();
 
             //return redirect()->route('login')->with('success', 'Asesor registrado correctamente.');
-            return redirect()->route('login')->with('success', '<b style="color: #41ef1f;">Cuenta de Asesor registrada correctamente.</b> <br> <i>Antes de continuar, por favor verifique su dirección de correo electrónico.</i>');
+            return redirect()->route('login')->with('success', '<b style="color: #41ef1f;">Asesor registrado correctamente.</b> <br> <i>Antes de continuar, por favor verifique su dirección de correo electrónico.</i>');
             
         } else {
             // Si alguno de los campos no coincide, redirigir al asesor a una vista de revisión.
@@ -243,7 +225,6 @@ class AsesorController extends Controller
         }
     }
 
-    // Usuario
     public function validarcredencial(Request $request)
     {
         // Recuperamos los datos almacenados en la sesión 
@@ -264,7 +245,6 @@ class AsesorController extends Controller
         }
     }
 
-    // Usuario
     public function validarcredencialstore(Request $request)
     {
         // Validación de campos básicos
@@ -463,29 +443,12 @@ class AsesorController extends Controller
             
             $asesor->save();
 
-
-            //============================================================================>
-            
-            // Crear link para verificacion de correo
-            $verificationUrl = URL::temporarySignedRoute(
-                'verification.verify', // Nombre de la ruta de verificación
-                now()->addMinutes(60),  // Tiempo de expiración del enlace
-                ['id' => $user->id, 'hash' => sha1($user->email)] // Parámetros de la ruta
-            );
-
-            //dd($verificationUrl);
-
-            // Enviar correo de activacion de cuenta
-            Mail::to($asesor->email)->send(new NotificaCuentaAsesorAprobada($asesor, $verificationUrl));
-            
-            //============================================================================>
-
             $user->sendEmailVerificationNotification();
 
             session()->forget('asesor');
 
             //return redirect()->route('login')->with('success', 'Asesor registrado correctamente.');
-            return redirect()->route('login')->with('success', '<b style="color: #41ef1f;">Cuenta de Asesor registrada correctamente.</b> <br> <i>Antes de continuar, por favor verifique su dirección de correo electrónico.</i>');
+            return redirect()->route('login')->with('success', '<b style="color: #41ef1f;">Asesor registrado correctamente.</b> <br> <i>Antes de continuar, por favor verifique su dirección de correo electrónico.</i>');
             
         } else {
             // Si alguno de los campos no coincide, redirigir al asesor a una vista de revisión.
@@ -527,7 +490,6 @@ class AsesorController extends Controller
     }
 
 
-    // Usuario
     public function revisarcredencialmanualmente()
     {
         // Validación de campos básicos
@@ -673,7 +635,6 @@ class AsesorController extends Controller
         return redirect('/');
     }
 
-    // Administrador view
     public function validarcuenta()
     {
         if (auth()->check()) { // Verifica si el usuario está logueado
@@ -702,7 +663,6 @@ class AsesorController extends Controller
         }                      
     }
 
-    // Administrador view
     public function showvalidarcuenta(Asesor $asesor)
     {
         $cuentasAsesores = Asesor::where('verificada', 0)
@@ -727,7 +687,6 @@ class AsesorController extends Controller
         return view('asesor/showValidarCuentaAsesor',compact('asesor', 'asesorAnterior', 'asesorSiguiente')); //asesor es el usuario actual a mostrar
     }
 
-    // Administrador
     public function aprobarcuenta(Request $request, Asesor $asesor)
     {        
 
@@ -803,7 +762,6 @@ class AsesorController extends Controller
         //return redirect('/administrador/trashed');
     }
 
-    // Administrador
     public function rechazarcuenta(Request $request, Asesor $asesor)
     {
         // Validar la entrada
@@ -899,7 +857,6 @@ class AsesorController extends Controller
         return $codigo;
     }
 
-    // Usuario view
     public function buscarcuenta()
     {
         if (Auth::check()) {
@@ -911,7 +868,6 @@ class AsesorController extends Controller
         return view("asesor/buscarCuentaAsesor"); 
     }
 
-    // Usuario
     public function buscarcuentastore(Request $request)
     {
         // Validar los campos
@@ -948,7 +904,6 @@ class AsesorController extends Controller
         }
     }
 
-    // Usuario view (New)
     public function validarcredencialrechazada($codigo_rechazo)
     {
 
@@ -957,13 +912,11 @@ class AsesorController extends Controller
 
         //dd($asesor);
 
-        // Reemplaza 'public/' con 'storage/' para obtener la ruta completa del archivo
+        // Reemplaza 'public/' con 'storage/' para obtener la ruta completa
         $rutaArchivo = public_path('storage/' . str_replace('public/', '', $asesor->identificacion_path)); // Ruta completa del archivo almacenado
 
         //dd($rutaArchivo);
-                
 
-        // Convertir imagen como si fuera upload
         if (file_exists($rutaArchivo)) {
             // Simular que la imagen es un archivo subido
             $imageFile = new UploadedFile(
@@ -1033,7 +986,6 @@ class AsesorController extends Controller
 
         
         // Si alguno de los campos no coincide, redirigir al asesor a una vista de revisión.
-        
         // Se guarda la imagen en una ubicación temporal para mostrarla en la vista.
         $imagenTemporal = $imageFile->store('public/imagenes_temporales');    
 
@@ -1049,16 +1001,15 @@ class AsesorController extends Controller
 
         //$asesorRequest = $asesor->only(['name', 'lastname']);
 
-        /*$asesorRequest = array_merge(
+        $asesorRequest = array_merge(
             $asesor->only(['name', 'lastname']),            
-        );*/
+        );
 
-        //session(['asesor.request' => $asesorRequest]); // Guarda los datos en la sesión
+        session(['asesor.request' => $asesorRequest]); // Guarda los datos en la sesión
         session(['asesor.credencial' => $imagenTemporal]);
         session(['asesor.data' => $data]);
 
         session(['asesor.id' => $asesor->id]);
-        session(['asesor.rutaOriginalImagen' => $rutaArchivo]);
         session(['asesor.codigo_rechazo' => $asesor->codigo_rechazo]);
 
         //dd($data);
@@ -1075,11 +1026,7 @@ class AsesorController extends Controller
 
     
         if (session()->has('asesor')){
-            //$asesorRequest = session('asesor.request', []); // Recupera los datos, si no existen devuelve []
-
-            $asesor_id = session('asesor.id', []);
-            $asesor = Asesor::where('id', $asesor_id)->first();
-
+            $asesorRequest = session('asesor.request', []); // Recupera los datos, si no existen devuelve []
             $imagenTemporal = session('asesor.credencial', []);
             $data = session('asesor.data', []);
 
@@ -1090,7 +1037,7 @@ class AsesorController extends Controller
             $primeraRevision = true;
 
             // Ahora puedes utilizar $datos según lo necesites en este método
-            return view('asesor.validarCredencialRechazada', compact('asesor', 'imagenTemporal', 'data', 'primeraRevision', 'codigo_rechazo'));
+            return view('asesor.validarCredencialRechazada', compact('asesorRequest', 'imagenTemporal', 'data', 'primeraRevision', 'codigo_rechazo'));
         }        
         else{
             return redirect('/');
@@ -1101,7 +1048,6 @@ class AsesorController extends Controller
     }
 
 
-    // Usuario (New)
     public function validarcredencialrechazadastore(Request $request)
     {
         // Validación de campos básicos
@@ -1116,13 +1062,10 @@ class AsesorController extends Controller
             //'password'       => 'required|string|min:8|confirmed',
         ]);
 
-        /*$asesorRequest = session('asesor.request', []); // Recupera los datos, si no existen devuelve []          
-        $asesorRequest = (object) $asesorRequest;*/
+        $asesorRequest = session('asesor.request', []); // Recupera los datos, si no existen devuelve []          
+        $asesorRequest = (object) $asesorRequest;
 
         $asesor_id = session('asesor.id', []);
-        $asesor = Asesor::where('id', $asesor_id)->first();
-        
-        $rutaOriginalImagen = session('asesor.rutaOriginalImagen', []);        
         $codigo_rechazo = session('asesor.codigo_rechazo', []);
 
         //dd($asesorRequest);                 
@@ -1134,27 +1077,14 @@ class AsesorController extends Controller
         // Preparar el cliente Guzzle para enviar la imagen y datos al servidor Flask de IA.
         $client = new Client();
 
-        
-        $imagenTemporal = session('asesor.credencial', []);   
-        $absolutePath = storage_path('app/' . $imagenTemporal);
-
-        //dd($absolutePath);
-        
-        if($request->tipo == 'imagen'){
-            $imageFile = $request->file('imagen');
-            $filePath = $imageFile->getRealPath();
-        }
-
-        /*if($request->tipo == 'datos'){
+        if($request->tipo == 'datos'){
             $imagenTemporal = session('asesor.credencial', []);   
-            $absolutePath = storage_path('app/' . $imagenTemporal);
-
-            //dd($absolutePath);
+            $absolutePath = storage_path('app/' . $imagenTemporal);               
         }
         elseif($request->tipo == 'imagen'){
             $imageFile = $request->file('imagen');
             $filePath = $imageFile->getRealPath();
-        }*/          
+        }          
         
         //dd($absolutePath);
 
@@ -1205,11 +1135,11 @@ class AsesorController extends Controller
                         ],
                         [
                             'name'     => 'name',
-                            'contents' => $asesor->name,
+                            'contents' => $asesorRequest->name,
                         ],
                         [
                             'name'     => 'lastname',
-                            'contents' => $asesor->lastname,
+                            'contents' => $asesorRequest->lastname,
                         ],
                         /*[
                             'name'     => 'escuela',
@@ -1249,12 +1179,13 @@ class AsesorController extends Controller
 
             if($request->tipo == 'datos'){
 
-                //$asesor = Asesor::where('id', $asesor_id)->first();
+                $asesor = Asesor::where('id', $asesor_id)->first();
 
                 //dd($asesor);
 
                 // Recuperar cuenta de usuario (Busca el registro eliminado por ID)
                 $user = User::onlyTrashed()->findOrFail($asesor->user_id); // Busca solo registros eliminados                
+
             
                 // Restaura el registro
                 $user->restore();         
@@ -1289,9 +1220,6 @@ class AsesorController extends Controller
                 $nuevoNombre = 'Identificacion_' . $fileName . '_' . $fileLastname . '.' . $extension;
                 $nuevaRuta = 'public/imagenes_asesores/' . $nuevoNombre;
 
-                // Asignar la nueva ruta al campo del modelo, por ejemplo:
-                $asesor->identificacion_path = $nuevaRuta;   
-
                 // Asegurarse de que el directorio de destino exista; si no, crearlo.
                 if (!Storage::exists('public/imagenes_asesores')) {
                     Storage::makeDirectory('public/imagenes_asesores');
@@ -1300,33 +1228,27 @@ class AsesorController extends Controller
                 // Mover el archivo desde la ruta temporal a la nueva ruta
                 // Storage::move() renombra el archivo, trasladándolo y eliminando la versión temporal.
                 Storage::move($imagenTemporal, $nuevaRuta);
-
-                //Eliminar imagen original almacenada en "imagenes_asesores_pendientes"
-                if (file_exists($rutaOriginalImagen)) {
-                    unlink($rutaOriginalImagen); // Eliminar el archivo            
-                }  
-
-                //Eliminar imagen temporal upload almacenada en "imagenes_temporales"
-                if (file_exists($absolutePath)) {
-                    unlink($absolutePath); // Elimina el archivo
-                } 
-
                 //$absolutePath = storage_path('app/' . $imagenTemporal);  
 
                 //dd($nuevaRuta);
 
-                //dd($imagenTemporal);                              
+                //dd($imagenTemporal);
+
+                // Asignar la nueva ruta al campo del modelo, por ejemplo:
+                $asesor->identificacion_path = $nuevaRuta;                 
                                         
             }
             elseif($request->tipo == 'imagen'){
 
-                //$asesor = Asesor::where('id', $asesor_id)->first();
+                $asesor = Asesor::where('id', $asesor_id)->first();
 
                 // Recuperar cuenta de usuario (Busca el registro eliminado por ID)
                 $user = User::onlyTrashed()->findOrFail($asesor->user_id); // Busca solo registros eliminados                
             
                 // Restaura el registro
-                $user->restore();
+                $user->restore();         
+
+
 
                 // Activar cuenta de asesor
                 $asesor->verificada = true;        
@@ -1337,59 +1259,38 @@ class AsesorController extends Controller
                 $asesor->codigo_rechazo = null;                
 
 
+
                 $fileName = Str::slug($asesor->name, '_');
                 $fileLastname = Str::slug($asesor->lastname, '_');
 
                 $asesor->identificacion_path = $request->file('imagen')->storeAs('public/imagenes_asesores', 'Identificacion_'.$fileName.'_'.$fileLastname.'.'. $request->file('imagen')->extension());                
-                                
+                
 
-                //Eliminar imagen original almacenada en "imagenes_asesores_pendientes"
-                if (file_exists($rutaOriginalImagen)) {
-                    unlink($rutaOriginalImagen); // Eliminar el archivo            
-                }  
-
-                //Eliminar imagen temporal upload almacenada en "imagenes_temporales"
-                if (file_exists($absolutePath)) {
+                /*if (file_exists($absolutePath)) {
                     unlink($absolutePath); // Elimina el archivo
-                }
+                }*/
             }      
+
             
             $asesor->save();
-
-
-            //============================================================================>
-            
-            // Crear link para verificacion de correo
-            $verificationUrl = URL::temporarySignedRoute(
-                'verification.verify', // Nombre de la ruta de verificación
-                now()->addMinutes(60),  // Tiempo de expiración del enlace
-                ['id' => $user->id, 'hash' => sha1($user->email)] // Parámetros de la ruta
-            );
-
-            //dd($verificationUrl);
-
-            // Enviar correo de activacion de cuenta
-            Mail::to($asesor->email)->send(new NotificaCuentaAsesorAprobada($asesor, $verificationUrl));
-            
-            //============================================================================>
 
             $user->sendEmailVerificationNotification();
 
             session()->forget('asesor');
 
             //return redirect()->route('login')->with('success', 'Asesor registrado correctamente.');
-            return redirect()->route('login')->with('success', '<b style="color: #41ef1f;">Cuenta de Asesor registrada correctamente.</b> <br> <i>Antes de continuar, por favor verifique su dirección de correo electrónico.</i>');
+            return redirect()->route('login')->with('success', '<b style="color: #41ef1f;">Asesor registrado correctamente.</b> <br> <i>Antes de continuar, por favor verifique su dirección de correo electrónico.</i>');
             
         } else {
             // Si alguno de los campos no coincide, redirigir al asesor a una vista de revisión.
             // Se guarda la imagen en una ubicación temporal para mostrarla en la vista.             
 
             //dd($asesorRequest->id);
-            //$asesor = Asesor::where('id', $asesor_id)->first();
+            $asesor = Asesor::where('id', $asesor_id)->first();
             
             if($request->tipo == 'datos'){                         
-                //$asesorRequest->name = $request->name;
-                //$asesorRequest->lastname = $request->lastname;
+                $asesorRequest->name = $request->name;
+                $asesorRequest->lastname = $request->lastname;
                 
 
                 $user = User::onlyTrashed()->findOrFail($asesor->user_id); // Busca solo registros eliminados                
@@ -1404,28 +1305,11 @@ class AsesorController extends Controller
 
             }
             elseif($request->tipo == 'imagen'){
-                $imagenTemporal = $imageFile->store('public/imagenes_asesores_pendientes');                                 
+                $imagenTemporal = $imageFile->store('public/imagenes_temporales');                                 
                 $absolutePath = storage_path('app/' . $imagenTemporal); 
 
-
-                //==================================================================>
-
-                // Convierte la ruta absoluta en una ruta relativa
-                $relativePath = str_replace(storage_path('app/'), '', $absolutePath);
-
-                //dd($relativePath);
-
-                $asesor->identificacion_path = $relativePath;  
-                $asesor->save();
-                
-                //Eliminar imagen original almacenada en "imagenes_asesores_pendientes"
-                if (file_exists($rutaOriginalImagen)) {
-                    unlink($rutaOriginalImagen); // Eliminar el archivo            
-                }
-
-                session(['asesor.rutaOriginalImagen' => $relativePath]);
-
-                //==================================================================>
+                /*$asesor->identificacion_path = $absolutePath;  
+                $asesor->save();*/
             }  
 
             //dd($asesorRequest);
@@ -1442,14 +1326,14 @@ class AsesorController extends Controller
 
             //$asesorRequest = $request->except(['_token', 'imagen']); // Obtiene todos los datos excepto el token CSRF
 
-            //$asesorRequest = (array) $asesorRequest;
+            $asesorRequest = (array) $asesorRequest;
 
             //dd($asesorRequest);
 
             //dd($asesorRequest);
             //dd($asesorRequest['telefono']);
 
-            //session(['asesor.request' => $asesorRequest]); // Guarda los datos en la sesión
+            session(['asesor.request' => $asesorRequest]); // Guarda los datos en la sesión
             session(['asesor.credencial' => $imagenTemporal]);
             session(['asesor.data' => $data]);
 
@@ -1461,11 +1345,7 @@ class AsesorController extends Controller
             //return redirect()->route('asesor.validarcredencial');
 
             if (session()->has('asesor')){
-                //$asesorRequest = session('asesor.request', []); // Recupera los datos, si no existen devuelve []
-    
-                $asesor_id = session('asesor.id', []);
-                $asesor = Asesor::where('id', $asesor_id)->first();
-    
+                $asesorRequest = session('asesor.request', []); // Recupera los datos, si no existen devuelve []
                 $imagenTemporal = session('asesor.credencial', []);
                 $data = session('asesor.data', []);
     
@@ -1476,7 +1356,7 @@ class AsesorController extends Controller
                 $primeraRevision = false;
     
                 // Ahora puedes utilizar $datos según lo necesites en este método
-                return view('asesor.validarCredencialRechazada', compact('asesor', 'imagenTemporal', 'data', 'primeraRevision', 'codigo_rechazo'));
+                return view('asesor.validarCredencialRechazada', compact('asesorRequest', 'imagenTemporal', 'data', 'primeraRevision', 'codigo_rechazo'));
             }        
             else{
                 return redirect('/');
@@ -1485,7 +1365,6 @@ class AsesorController extends Controller
     }
 
 
-    // Usuario (New)
     public function revisarcredencialrechazadamanualmente()
     {
         // Validación de campos básicos
@@ -1500,18 +1379,19 @@ class AsesorController extends Controller
             //'password'       => 'required|string|min:8|confirmed',
         ]);*/
         
-        //$asesorRequest = session('asesor.request', []); // Recupera los datos, si no existen devuelve []          
-        //$asesorRequest = (object) $asesorRequest;        
-
-        $asesor_id = session('asesor.id', []);
-        $asesor = Asesor::where('id', $asesor_id)->first();
-        
-        $rutaOriginalImagen = session('asesor.rutaOriginalImagen', []);
+        $asesorRequest = session('asesor.request', []); // Recupera los datos, si no existen devuelve []          
+        $asesorRequest = (object) $asesorRequest;
 
         $imagenTemporal = session('asesor.credencial', []);   
         $absolutePath = storage_path('app/' . $imagenTemporal);   
 
-        //dd($absolutePath);           
+        //dd($absolutePath);
+
+        $asesor_id = session('asesor.id', []);
+
+
+        $asesor = Asesor::where('id', $asesor_id)->first();         
+    
 
         $fileName = Str::slug($asesor->name, '_');
         $fileLastname = Str::slug($asesor->lastname, '_');
@@ -1526,10 +1406,6 @@ class AsesorController extends Controller
         $nuevoNombre = 'Identificacion_' . $fileName . '_' . $fileLastname . '.' . $extension;
         $nuevaRuta = 'public/imagenes_asesores_pendientes/' . $nuevoNombre;
 
-        // Asignar la nueva ruta al campo del modelo, por ejemplo:
-        $asesor->identificacion_path = $nuevaRuta;    
-
-
         // Asegurarse de que el directorio de destino exista; si no, crearlo.
         if (!Storage::exists('public/imagenes_asesores_pendientes')) {
             Storage::makeDirectory('public/imagenes_asesores_pendientes');
@@ -1540,21 +1416,12 @@ class AsesorController extends Controller
         Storage::move($imagenTemporal, $nuevaRuta);
         //$absolutePath = storage_path('app/' . $imagenTemporal);  
 
-
-        //Eliminar imagen original almacenada en "imagenes_asesores_pendientes"
-        if (file_exists($rutaOriginalImagen)) {
-            unlink($rutaOriginalImagen); // Eliminar el archivo            
-        }  
-
-        //Eliminar imagen temporal upload almacenada en "imagenes_temporales"
-        if (file_exists($absolutePath)) {
-            unlink($absolutePath); // Elimina el archivo
-        }
-
         //dd($nuevaRuta);
 
         //dd($imagenTemporal);
 
+        // Asignar la nueva ruta al campo del modelo, por ejemplo:
+        $asesor->identificacion_path = $nuevaRuta;       
         
         // Eliminar dato de observaciones (NULL)
         $asesor->observaciones = false;

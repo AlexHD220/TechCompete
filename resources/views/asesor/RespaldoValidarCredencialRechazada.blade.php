@@ -36,7 +36,7 @@
 
                 <h2><b>Actualizar datos:</b></h2>
 
-                <form id="datosForm" method="POST" action="{{ route('asesor.validarcredencialstore') }}" enctype="multipart/form-data">
+                <form id="datosForm" method="POST" action="{{ route('asesor.validarcredencialrechazadastore', $codigo_rechazo) }}" enctype="multipart/form-data">
                     @csrf                    
 
                     <input id="tipo" type="hidden" name="tipo" value="datos">
@@ -105,7 +105,7 @@
 
                 <h2><b>Actualizar imagen:</b></h2>
 
-                <form id="datosForm" method="POST" action="{{ route('asesor.validarcredencialstore') }}" enctype="multipart/form-data">
+                <form id="datosForm" method="POST" action="{{ route('asesor.validarcredencialrechazadastore', $codigo_rechazo) }}" enctype="multipart/form-data">
                     @csrf                    
 
                     <input id="tipo" type="hidden" name="tipo" value="imagen">
@@ -141,24 +141,26 @@
                 <p>ⓘ <i><b>Nota:</b> Para poder crear una cuenta como asesor es <u>necesario comprobar su identidad</u> por medio de una credencial institucional o identificación oficial.</i></p>            
             </div>
                                     
-
+            
             <div class="flex items-center justify-end mt-4" style="margin-top: 30px;">
                 <!-- Botón para enviar la información para revisión manual -->
-                <form action="{{ route('asesor.revisarcredencialmanualmente') }}" method="POST" style="display:inline;">
-                    @csrf
-                    <!-- Se pueden enviar los datos actuales en campos ocultos para conservarlos -->
-                    @if(0)
-                        <input type="hidden" name="name" value="{{ $asesorRequest['name'] ?? '' }}">
-                        <input type="hidden" name="lastname" value="{{ $asesorRequest['lastname'] ?? '' }}">
-                        @if(0)<!--<input type="hidden" name="escuela" value="{{ $asesorRequest['escuela'] ?? '' }}">-->
-                        <!--<input type="hidden" name="codigo_asesor" value="{{ $asesorRequest['codigo_asesor'] ?? '' }}">-->@endif
-                        <input type="hidden" name="imagen_temporal" value="{{ $imagenTemporal }}">
-                    @endif
-                    
-                    <x-button id="boton_revision_manual" onclick="return confirm('¿Está seguro que desea enviar su solicitud a revisión manual?')" class="ml-4" style="margin-left: 0px;">
-                        {{ __('Enviar para Revisión Manual') }}
-                    </x-button>
-                </form>
+                @unless($primeraRevision)
+                    <form action="{{ route('asesor.revisarcredencialrechazadamanualmente', $codigo_rechazo) }}" method="POST" style="display:inline;">
+                        @csrf
+                        <!-- Se pueden enviar los datos actuales en campos ocultos para conservarlos -->
+                        @if(0)
+                            <input type="hidden" name="name" value="{{ $asesorRequest['name'] ?? '' }}">
+                            <input type="hidden" name="lastname" value="{{ $asesorRequest['lastname'] ?? '' }}">
+                            @if(0)<!--<input type="hidden" name="escuela" value="{{ $asesorRequest['escuela'] ?? '' }}">-->
+                            <!--<input type="hidden" name="codigo_asesor" value="{{ $asesorRequest['codigo_asesor'] ?? '' }}">-->@endif
+                            <input type="hidden" name="imagen_temporal" value="{{ $imagenTemporal }}">
+                        @endif
+                                                
+                        <x-button onclick="return confirm('¿Está seguro que desea enviar su solicitud a revisión manual?')"  class="ml-4" style="margin-left: 0px;">
+                            {{ __('Enviar para Revisión Manual') }}
+                        </x-button>
+                    </form>
+                @endif
 
     </x-authentication-card-register>
 
@@ -275,7 +277,6 @@
             actualizarDatos.style.display = 'block'; // Muestra el div
             datosIngresados.style.display = 'none'; // ocultar el div
             document.getElementById("boton_cambiar_credencial").disabled = true;
-            document.getElementById("boton_revision_manual").disabled = true; // New
         });
 
         document.getElementById("cancelar_datos").addEventListener("click", function(event) {
@@ -283,7 +284,6 @@
             datosIngresados.style.display = 'block'; // Muestra el div
             actualizarDatos.style.display = 'none'; // ocultar el div
             document.getElementById("boton_cambiar_credencial").disabled = false;
-            document.getElementById("boton_revision_manual").disabled = false; // New
         });
 
     </script>
@@ -299,7 +299,6 @@
             cambiarCredencial.style.display = 'block'; // Muestra el div
             credencialProporcionada.style.display = 'none'; // ocultar el div
             document.getElementById("boton_actualizar_datos").disabled = true;
-            document.getElementById("boton_revision_manual").disabled = true; // New
             
             //document.getElementById("boton_actualizar_imagen").disabled = true; // New
         });
@@ -309,7 +308,6 @@
             credencialProporcionada.style.display = 'block'; // Muestra el div
             cambiarCredencial.style.display = 'none'; // ocultar el div
             document.getElementById("boton_actualizar_datos").disabled = false;
-            document.getElementById("boton_revision_manual").disabled = false; // New
         });
 
     </script>

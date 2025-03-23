@@ -66,7 +66,7 @@
                     <!--User Menu-->
                     <div class="nav-item dropdown">
                         <a href="" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
-                            @can(!'only-institucion')
+                            @cannot('only-institucion')
                                 <div class="info-container text-end">
                                     <span class="name d-block"><b>{{ auth()->user()->name }}</b></span>
                                     @can('only-superadmin')

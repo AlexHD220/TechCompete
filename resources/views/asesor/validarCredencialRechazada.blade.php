@@ -17,8 +17,8 @@
             <div id="datos_ingresados" class="mt-4" style="margin-bottom: 30px;">
                 <h2><b>Datos ingresados:</b></h2>
                 <ul>
-                    <li style="margin-left: 5px;"><strong>- Nombre:</strong> {{ $asesorRequest['name'] ?? '' }}</li>
-                    <li style="margin-left: 5px;"><strong>- Apellido(s):</strong> {{ $asesorRequest['lastname'] ?? '' }}</li>
+                    <li style="margin-left: 5px;"><strong>- Nombre:</strong> {{ $asesor->name ?? '' }}</li>
+                    <li style="margin-left: 5px;"><strong>- Apellido(s):</strong> {{ $asesor->lastname ?? '' }}</li>
                     @if(0)<!--<li><strong>Escuela:</strong> {{ $asesorRequest['escuela'] ?? '' }}</li>-->
                     <!--<li><strong>Código de Asesor:</strong> {{ $asesorRequest['codigo_asesor'] ?? '' }}</li>-->@endif
                 </ul> 
@@ -36,19 +36,19 @@
 
                 <h2><b>Actualizar datos:</b></h2>
 
-                <form id="datosForm" method="POST" action="{{ route('asesor.validarcredencialstore') }}" enctype="multipart/form-data">
+                <form id="datosForm" method="POST" action="{{ route('asesor.validarcredencialrechazadastore', $codigo_rechazo) }}" enctype="multipart/form-data">
                     @csrf                    
 
                     <input id="tipo" type="hidden" name="tipo" value="datos">
 
                     <div class="mt-4">
                         <x-label for="name" value="{{ __('Nombre(s)') }}" />
-                        <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name') ?? $asesorRequest['name'] ?? ''" minlength="3" maxlength="20" required autofocus /> <!-- autocomplete="name" --->
+                        <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name') ?? $asesor->name ?? ''" minlength="3" maxlength="20" required autofocus /> <!-- autocomplete="name" --->
                     </div>
 
                     <div class="mt-4">
                         <x-label for="lastname" value="{{ __('Apellido(s)') }}" />
-                        <x-input id="lastname" class="block mt-1 w-full" type="text" name="lastname" :value="old('lastname') ?? $asesorRequest['lastname'] ?? ''" minlength="5" maxlength="30" required/> <!-- autocomplete="name" --->
+                        <x-input id="lastname" class="block mt-1 w-full" type="text" name="lastname" :value="old('lastname') ?? $asesor->lastname ?? ''" minlength="5" maxlength="30" required/> <!-- autocomplete="name" --->
                     </div>
 
                     <div class="flex items-center justify-end mt-4" style="margin-top: 30px;">
@@ -105,7 +105,7 @@
 
                 <h2><b>Actualizar imagen:</b></h2>
 
-                <form id="datosForm" method="POST" action="{{ route('asesor.validarcredencialstore') }}" enctype="multipart/form-data">
+                <form id="datosForm" method="POST" action="{{ route('asesor.validarcredencialrechazadastore', $codigo_rechazo) }}" enctype="multipart/form-data">
                     @csrf                    
 
                     <input id="tipo" type="hidden" name="tipo" value="imagen">
@@ -141,24 +141,26 @@
                 <p>ⓘ <i><b>Nota:</b> Para poder crear una cuenta como asesor es <u>necesario comprobar su identidad</u> por medio de una credencial institucional o identificación oficial.</i></p>            
             </div>
                                     
-
+            
             <div class="flex items-center justify-end mt-4" style="margin-top: 30px;">
                 <!-- Botón para enviar la información para revisión manual -->
-                <form action="{{ route('asesor.revisarcredencialmanualmente') }}" method="POST" style="display:inline;">
-                    @csrf
-                    <!-- Se pueden enviar los datos actuales en campos ocultos para conservarlos -->
-                    @if(0)
-                        <input type="hidden" name="name" value="{{ $asesorRequest['name'] ?? '' }}">
-                        <input type="hidden" name="lastname" value="{{ $asesorRequest['lastname'] ?? '' }}">
-                        @if(0)<!--<input type="hidden" name="escuela" value="{{ $asesorRequest['escuela'] ?? '' }}">-->
-                        <!--<input type="hidden" name="codigo_asesor" value="{{ $asesorRequest['codigo_asesor'] ?? '' }}">-->@endif
-                        <input type="hidden" name="imagen_temporal" value="{{ $imagenTemporal }}">
-                    @endif
-                    
-                    <x-button id="boton_revision_manual" onclick="return confirm('¿Está seguro que desea enviar su solicitud a revisión manual?')" class="ml-4" style="margin-left: 0px;">
-                        {{ __('Enviar para Revisión Manual') }}
-                    </x-button>
-                </form>
+                @unless($primeraRevision)
+                    <form action="{{ route('asesor.revisarcredencialrechazadamanualmente', $codigo_rechazo) }}" method="POST" style="display:inline;">
+                        @csrf
+                        <!-- Se pueden enviar los datos actuales en campos ocultos para conservarlos -->
+                        @if(0)
+                            <input type="hidden" name="name" value="{{ $asesor->name ?? '' }}">
+                            <input type="hidden" name="lastname" value="{{ $asesor->lastname ?? '' }}">
+                            @if(0)<!--<input type="hidden" name="escuela" value="{{ $asesorRequest['escuela'] ?? '' }}">-->
+                            <!--<input type="hidden" name="codigo_asesor" value="{{ $asesorRequest['codigo_asesor'] ?? '' }}">-->@endif
+                            <input type="hidden" name="imagen_temporal" value="{{ $imagenTemporal }}">
+                        @endif
+                                                
+                        <x-button id="boton_revision_manual" onclick="return confirm('¿Está seguro que desea enviar su solicitud a revisión manual?')"  class="ml-4" style="margin-left: 0px;">
+                            {{ __('Enviar para Revisión Manual') }}
+                        </x-button>
+                    </form>
+                @endif
 
     </x-authentication-card-register>
 
@@ -214,7 +216,7 @@
                     icono.style.visibility = "hidden"; // Oculta completamente después de la transición
                 }, 100); // Ajusta este tiempo según el valor de `transition` (1 seg)
 
-                document.getElementById("boton_actualizar_imagen").disabled = true; // New
+                document.getElementById("boton_actualizar_imagen").disabled = true; // New                
             }
         }
         
@@ -224,13 +226,13 @@
         // New
 
         // Pagina recargada
-        if(document.getElementById("name").value != "{{ $asesorRequest['name'] }}" || document.getElementById("lastname").value != "{{ $asesorRequest['lastname'] }}" ){
+        if(document.getElementById("name").value != "{{ $asesor->name }}" || document.getElementById("lastname").value != "{{ $asesor->lastname }}" ){
             document.getElementById("boton_actualizar_info").disabled = false; // New
         }        
 
         document.getElementById("name").addEventListener('input', function () {
             if(document.getElementById("name").value && document.getElementById("lastname").value){    
-                if (document.getElementById("name").value != "{{ $asesorRequest['name'] }}" || document.getElementById("lastname").value != "{{ $asesorRequest['lastname'] }}") {
+                if (document.getElementById("name").value != "{{ $asesor->name }}" || document.getElementById("lastname").value != "{{ $asesor->lastname }}") {
                     document.getElementById("boton_actualizar_info").disabled = false; // New
                 } else {
                     document.getElementById("boton_actualizar_info").disabled = true; // New                   
@@ -243,7 +245,7 @@
 
         document.getElementById("lastname").addEventListener('input', function () {
             if(document.getElementById("name").value && document.getElementById("lastname").value){    
-                if (document.getElementById("name").value != "{{ $asesorRequest['name'] }}" || document.getElementById("lastname").value != "{{ $asesorRequest['lastname'] }}") {
+                if (document.getElementById("name").value != "{{ $asesor->name }}" || document.getElementById("lastname").value != "{{ $asesor->lastname }}") {
                     document.getElementById("boton_actualizar_info").disabled = false; // New
                 } else {
                     document.getElementById("boton_actualizar_info").disabled = true; // New                   
@@ -264,7 +266,7 @@
 
 
         // Pagina recargada
-        if(document.getElementById("name").value != "{{ $asesorRequest['name'] }}" || document.getElementById("lastname").value != "{{ $asesorRequest['lastname'] }}" ){
+        if(document.getElementById("name").value != "{{ $asesor->name }}" || document.getElementById("lastname").value != "{{ $asesor->lastname }}" ){
             actualizarDatos.style.display = 'block'; // Muestra el div
             datosIngresados.style.display = 'none'; // ocultar el div
         }

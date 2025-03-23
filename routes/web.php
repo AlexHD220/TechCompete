@@ -18,6 +18,7 @@ use App\Http\Controllers\RegistroJuezController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SubcategoriaController;
 use App\Http\Controllers\UsuarioController;
+use App\Models\Asesor;
 use App\Models\CompetenciaSubcategoria;
 use App\Models\Staff;
 use Illuminate\Support\Facades\Gate;
@@ -43,8 +44,22 @@ Route::get('/', function () {
 
     if (Gate::allows('autenticado')) {
         // Usuario autenticado
-        if (Gate::allows('mail-verificado', auth()->user())) {
-            return view('welcome'); // Usuario con correo verificado
+        if (Gate::allows('mail-verificado', auth()->user())) {                                  
+            
+            $user = auth()->user();
+
+            if ($user->rol == 1 || $user->rol == 2) {
+
+                $cuentasAsesores = Asesor::where('verificada',0)->where('observaciones', 0)->get();                        
+
+                $cuentasAsesorescount = $cuentasAsesores->count();
+
+                return view('welcome',compact('cuentasAsesorescount')); 
+
+            } else{
+                return view('welcome'); // Usuario con correo verificado
+            }
+
         } else {
             return redirect()->route('verification.notice'); // Usuario sin correo verificado
         }
@@ -441,13 +456,28 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
 
 //------------------------------------------------------------------------------------> Perfil asesor
 
+Route::get('asesor/validarcuenta', [AsesorController::class, 'validarcuenta'])
+->name('asesor.validarcuenta');
 
+Route::get('asesor/validarcuenta/{asesor}', [AsesorController::class, 'showvalidarcuenta'])
+->name('asesor.showvalidarcuenta');
+
+
+Route::post('asesor/validarcuenta/{asesor}/aprobarcuenta', [AsesorController::class, 'aprobarcuenta'])
+->name('asesor.aprobarcuenta');
+
+Route::post('asesor/validarcuenta/{asesor}/rechazarcuenta', [AsesorController::class, 'rechazarcuenta'])
+->name('asesor.rechazarcuenta');
+
+Route::get('asesor/perfil', [AsesorController::class, 'perfil'])
+->name('asesor.perfil');
 
 //------------------------------------------------------------------------------------|
 
 //------------------------------------------------------------------------------------> Perfil juez
 
-
+Route::get('juez/perfil', [JuezController::class, 'perfil'])
+->name('juez.perfil');
 
 //------------------------------------------------------------------------------------|
 
@@ -531,8 +561,32 @@ Route::get('asesor/validarcredencial', [AsesorController::class, 'validarcredenc
 Route::post('asesor/validarcredencial', [AsesorController::class, 'validarcredencialstore'])
 ->name('asesor.validarcredencialstore');
 
+
 Route::post('asesor/revisarcredencial', [AsesorController::class, 'revisarcredencialmanualmente'])
 ->name('asesor.revisarcredencialmanualmente');
+
+Route::post('asesor/pruebaSweet', [AsesorController::class, 'pruebaSweet'])
+->name('asesor.pruebaSweet');
+
+
+
+Route::get('asesor/buscarcuenta', [AsesorController::class, 'buscarcuenta'])
+->name('asesor.buscarcuenta');
+
+Route::post('asesor/buscarcuenta', [AsesorController::class, 'buscarcuentastore'])
+->name('asesor.buscarcuentastore');
+
+
+Route::get('asesor/validarcredencial/{codigo_rechazo}', [AsesorController::class, 'validarcredencialrechazada'])
+->name('asesor.validarcredencialrechazada');
+
+Route::post('asesor/validarcredencial/{codigo_rechazo}', [AsesorController::class, 'validarcredencialrechazadastore'])
+->name('asesor.validarcredencialrechazadastore');
+
+
+Route::post('asesor/revisarcredencial/{codigo_rechazo}', [AsesorController::class, 'revisarcredencialrechazadamanualmente'])
+->name('asesor.revisarcredencialrechazadamanualmente'); // PENDIENTE
+
 
 
 Route::resource('asesor', AsesorController::class);
@@ -540,6 +594,10 @@ Route::resource('asesor', AsesorController::class);
 
 
 Route::resource('horario', HorarioController::class);
+
+// Ruta para mostrar los detalles de las competencias previas
+Route::get('competencia/{competencia}/agenda', [CompetenciaController::class, 'agenda'])
+->name('competencia.agenda');
 
 
 // Prueba gates

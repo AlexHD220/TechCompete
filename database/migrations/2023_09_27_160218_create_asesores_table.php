@@ -28,6 +28,12 @@ return new class extends Migration
             $table->string('identificacion_path', 2048)->nullable();
             $table->string('nombre_original_identificacion')->nullable();
 
+            $table->boolean('verificada')->default(true);
+
+            $table->boolean('observaciones')->nullable();
+
+            $table->string('codigo_rechazo')->unique()->nullable();
+
             $table->softDeletes(); // Agrega la columna deleted_at
             //$table->timestamps();
         });

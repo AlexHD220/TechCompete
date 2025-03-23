@@ -78,4 +78,26 @@
 
     </style>
 
+<style>
+
+        /* Badge de notificaciones */
+        .notification-bar-badge {
+            
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+
+            min-width: 20px; /* Tamaño mínimo del círculo */
+            height: 20px; /* Mantiene la altura constante */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 2px;
+            line-height: 1;
+            pointer-events: none;
+        }
+        </style>
+
 </head>

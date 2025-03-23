@@ -116,8 +116,52 @@
             }
         </style>
 
+
+        <style>
+        /* Contenedor que envuelve el botón */
+        .button-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Badge de notificaciones */
+        .notification-badge {
+            position: absolute;
+            top: -1px;       /* Ajusta la posición vertical (-5px) */
+            right: -1px;    /* Ajusta la posición horizontal (-5px) */
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+
+            /*padding: 2px 10px; /* Tamaño y forma circular */
+            /*font-size: 20px;
+            font-weight: bold;
+            /*pointer-events: none; /* Permite hacer clic en el botón sin interferencia */
+
+            min-width: 30px; /* Tamaño mínimo del círculo */
+            height: 30px; /* Mantiene la altura constante */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 3px;
+            line-height: 1;
+            pointer-events: none;
+        }
+        </style>
+
     </head>
-    <body class="antialiased">    
+    <body class="antialiased">   
+        
+    @if (session('alerta'))
+        <script>                
+            document.addEventListener('DOMContentLoaded', function () {            
+                    // Captura los datos de la sesión y llama a la función                        
+                    sweetAlertNotification("{{ session('alerta.titulo') }}", "{{ session('alerta.texto') }}", "{{ session('alerta.icono') }}", "{{ session('alerta.tiempo') }}", "{{ session('alerta.botonConfirmacion') }}", "{{ session('alerta.colorBoton') }}",);
+            });
+        </script>
+    @endif
         
         <div class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-blue-500 selection:text-white" style="background-color: #191c24;">
             @if (Route::has('login'))
@@ -182,8 +226,8 @@
                         <h1 style="color: #ed5048; font-size: 35px; font-weight: bold; margin-top: 0px; font-family: 'Montserrat'; letter-spacing: 5px;">
                             <b style="font-size: 45px; font-weight: bolder;" class="flex justify-center size-bienvenida">Bienvenido</b>
                             
-                            <div style="margin-bottom: 20px; display: flex; flex-wrap: wrap; text-align: center;">
-                                <a class="size-rol" onmouseover="this.style.color='#eb1616'" onmouseout="this.style.color='#ed5048'" href="{{ url('/dashboard') }}">
+                            <div class="flex justify-center" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; text-align: center;">
+                                <a class="size-rol" onmouseover="this.style.color='#eb1616'" onmouseout="this.style.color='#ed5048'" href="{{ url('/dashboard') }}" style="padding: 0px;">
                                     @can('only-user')
                                         <b>{{ auth()->user()->name }}</b>
                                     @endcan
@@ -239,6 +283,17 @@
                 </div>-->
 
                 <!--Botones-->
+
+                @if(0)
+                    <form action="{{ route('asesor.pruebaSweet') }}" method="POST" style="display:inline;">
+                        @csrf
+                        
+                        <x-button class="ml-4" style="margin-left: 0px;">
+                            {{ __('Probar Sweet Alert') }}
+                        </x-button>
+                    </form>
+                @endif
+
                 <div class="flex justify-center" style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
                     @auth <!--Cuando el usuario este logueado muestrame lo sigiente-->
 
@@ -249,7 +304,17 @@
 
                             <button onclick="window.location.href = '/staff';" class="boton" style="margin: 10px;  font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->
                                 Staffs
-                            </button>
+                            </button>                                                    
+
+                            <div class="button-container">
+                                <button onclick="window.location.href = '/asesor/validarcuenta';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->
+                                    Asesores
+                                </button>
+                                
+                                @if($cuentasAsesorescount > 0)
+                                    <span class="notification-badge"><b>{{$cuentasAsesorescount}}</b></span>
+                                @endif
+                            </div>
 
                             <button onclick="window.location.href = '/juez';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->
                                 Jueces
@@ -268,6 +333,15 @@
                         <button onclick="window.location.href = '/competencia';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->
                             Competencias
                         </button>
+
+                        @if(0) <!-- Pruebas Pop Up Notificación -->
+                            <div class="button-container">
+                                <button onclick="window.location.href = '/competencia';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;">
+                                    Competencias
+                                </button>
+                                <span class="notification-badge">3</span>
+                            </div>
+                        @endif
                     
                     @auth <!--Cuando el usuario este logueado muestrame lo sigiente-->
 
@@ -408,6 +482,8 @@
         </div>
     </body>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         const bodyPagina = document.getElementById('body_pagina0');
 
@@ -428,5 +504,20 @@
         updateBodyClass();
         
         window.addEventListener('resize', updateBodyClass);
+    </script>
+
+    <script>
+        function sweetAlertNotification(titulo, texto, icono, tiempo, botonConfirmacion, colorBoton) {  
+    
+            // Usando SweetAlert para notificación
+            Swal.fire({
+                title: titulo,
+                text: texto,
+                icon: icono,
+                timer: tiempo,
+                showConfirmButton: botonConfirmacion,
+                confirmButtonColor: colorBoton, //"#3085d6",
+            });
+        }    
     </script>
 </html>

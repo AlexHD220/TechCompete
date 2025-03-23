@@ -78,6 +78,7 @@
                         @can('only-superadmin')
                             <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/administrador" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Administradores</a>
                             <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/staff" class="nav-item nav-link"><i class="fa-solid fa-clipboard-user me-2"></i>Staff</a>
+                            <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/asesor/validarcuenta" class="nav-item nav-link"><i class="fa-solid fa-chalkboard-user me-2"></i>Asesores @if($NumcuentasAsesoresPendientes > 0) <span class="notification-bar-badge" style="margin-left: 15px;"><b>{{$NumcuentasAsesoresPendientes}}</b></span> @endif</a> <!-- {{ $NumcuentasAsesoresPendientes > 0 ? '('.$NumcuentasAsesoresPendientes.')' : '' }} -->
                             <!-- <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/juez" class="nav-item nav-link"><i class="fa-solid fa-clipboard-check me-2"></i>Jueces</a> -->
                             <div class="nav-item dropdown">
                                 <div style="display: flex; justify-content: flex-start; margin-left: 5px;" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
