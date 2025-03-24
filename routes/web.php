@@ -449,12 +449,11 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
     ->name('institucion.eliminarImagenPerfil');
 
     Route::patch('institucion/perfil', [InstitucionController::class, 'perfilupdate'])
-    ->name('institucion.perfilupdate');
-    
+    ->name('institucion.perfilupdate');    
     
 //------------------------------------------------------------------------------------|
 
-//------------------------------------------------------------------------------------> Perfil asesor
+//------------------------------------------------------------------------------------> Resgistro asesor
 
 Route::get('asesor/validarcuenta', [AsesorController::class, 'validarcuenta'])
 ->name('asesor.validarcuenta');
@@ -469,10 +468,43 @@ Route::post('asesor/validarcuenta/{asesor}/aprobarcuenta', [AsesorController::cl
 Route::post('asesor/validarcuenta/{asesor}/rechazarcuenta', [AsesorController::class, 'rechazarcuenta'])
 ->name('asesor.rechazarcuenta');
 
+//------------------------------------------------------------------------------------|
+
+
+//------------------------------------------------------------------------------------> Perfil asesor
+
 Route::get('asesor/perfil', [AsesorController::class, 'perfil'])
 ->name('asesor.perfil');
 
+Route::post('/asesor/perfil/ocultarContacto', [AsesorController::class, 'ocultarContacto'])
+->name('asesor.ocultarContacto');
+
+Route::post('/asesor/perfil/actualizarCredencial', [AsesorController::class, 'actualizarCredencial'])
+->name('asesor.actualizarCredencial');
+
+Route::post('/asesor/perfil/actualizarImagenPerfil', [AsesorController::class, 'actualizarImagenPerfil'])
+->name('asesor.actualizarImagenPerfil');
+
+// Ruta para mostrar los registros pendientes de publicar
+Route::get('asesor/perfil/edit', [AsesorController::class, 'perfiledit'])
+->name('asesor.edit');
+
+Route::post('/asesor/perfil/eliminarImagenPerfil', [AsesorController::class, 'eliminarImagenPerfil'])
+->name('asesor.eliminarImagenPerfil');
+
+Route::patch('asesor/perfil', [AsesorController::class, 'perfilupdate'])
+->name('asesor.perfilupdate');
+
+
+
+Route::get('asesor/institucion/vincular', [AsesorController::class, 'vincularinstitucion'])
+->name('asesor.vincularinstitucion');  
+
+Route::get('asesor/institucion/editar', [AsesorController::class, 'editarinstitucion'])
+->name('asesor.editarinstitucion');  
+
 //------------------------------------------------------------------------------------|
+
 
 //------------------------------------------------------------------------------------> Perfil juez
 
@@ -589,7 +621,7 @@ Route::post('asesor/revisarcredencial/{codigo_rechazo}', [AsesorController::clas
 
 
 
-Route::resource('asesor', AsesorController::class);
+Route::resource('asesor', AsesorController::class)->except(['edit']);
 
 
 

@@ -28,6 +28,8 @@ return new class extends Migration
             $table->string('identificacion_path', 2048)->nullable();
             $table->string('nombre_original_identificacion')->nullable();
 
+            $table->boolean('contacto_oculto')->default(true);
+
             $table->boolean('verificada')->default(true);
 
             $table->boolean('observaciones')->nullable();

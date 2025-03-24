@@ -368,7 +368,7 @@ class InstitucionController extends Controller
         //$user = auth()->user(); // Obtiene el usuario autenticado
         $institucion = auth()->user()->institucion; // Relación User -> Institucion
 
-        $fileName = Str::slug($request->name, '_');
+        $fileName = Str::slug($institucion->name, '_');
         $institucion->ubicacion_imagen = $request->file('imagenPortada')->storeAs('public/imagenes_instituciones', 'Portada_'.$fileName.'.'. $request->file('imagenPortada')->extension());
         $institucion->portada_oculta = false;
         $institucion->save();

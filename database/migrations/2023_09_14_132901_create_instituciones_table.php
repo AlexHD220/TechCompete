@@ -35,10 +35,10 @@ return new class extends Migration
 
             $table->boolean('nombre_escuela_credencial'); 
             $table->boolean('nombre_escuela_personalizado')->default(false); 
-            $table->string('nombre_credencial_escrito')->nullable();
-            $table->boolean('oculta')->default(false);
+            $table->string('nombre_credencial_escrito')->nullable();            
 
             $table->string('ubicacion_imagen', 2048)->nullable();
+            $table->boolean('portada_oculta')->default(false);
 
             $table->softDeletes(); // Agrega la columna deleted_at
             //$table->timestamps();

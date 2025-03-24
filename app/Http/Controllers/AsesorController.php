@@ -1619,6 +1619,203 @@ class AsesorController extends Controller
     }
 
 
+    //=========================================================================================================================>
+
+    public function perfil()
+    {        
+        $asesor = auth()->user()->asesor;
+
+        //dd($institucion->user);
+
+        return view('asesor/perfilasesor',compact('asesor')); 
+    }
+
+    public function ocultarContacto()
+    {
+        //$user = auth()->user(); // Obtiene el usuario autenticado
+        $asesor = auth()->user()->asesor; // Relación User -> Institucion
+
+        if ($asesor->contacto_oculto == true) {
+            $asesor->contacto_oculto = false;
+            $asesor->save();
+
+            return;
+        }
+        else{
+            $asesor->contacto_oculto = true;
+            $asesor->save();
+
+            return;
+        }
+
+        //return response()->json(['message' => 'Error al actualizar'], 400);
+    }
+
+    public function actualizarCredencial(Request $request)
+    {
+        //$user = auth()->user(); // Obtiene el usuario autenticado
+        $asesor = auth()->user()->asesor; // Relación User -> Institucion
+        
+        $fileName = Str::slug($asesor->name, '_');
+        $fileLastname = Str::slug($asesor->lastname, '_');
+        $asesor->identificacion_path = $request->file('imagenCredencial')->storeAs('public/imagenes_asesores', 'Identificacion_'.$fileName.'_'.$fileLastname.'.'. $request->file('imagenCredencial')->extension());
+        
+        $asesor->save();
+        
+        //return redirect()->route('institucion.perfil');
+        return redirect($request->ruta);
+
+        //return response()->json(['message' => 'Error al actualizar'], 400);
+    }
+    
+    public function actualizarImagenPerfil(Request $request)
+    {
+        $user = User::find(Auth::user()->id); // Obtiene el usuario autenticado        
+        $request->file('imagenPerfil')->storeAs('public/profile-photos', 'imagenPerfil_'.$user->name.'.'. $request->file('imagenPerfil')->extension());
+        $user->profile_photo_path = 'profile-photos/imagenPerfil_'.$user->name.'.'. $request->file('imagenPerfil')->extension();        
+        $user->save();
+        
+        //return redirect()->route('institucion.perfil');
+        return redirect($request->ruta);
+
+        //return response()->json(['message' => 'Error al actualizar'], 400);
+    }    
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function perfiledit()
+    {
+        $asesor = auth()->user()->asesor;
+
+        //dd($asesor->user);
+
+        return view('asesor/editPerfilAsesor',compact('asesor')); 
+    }
+    
+    public function eliminarImagenPerfil(Request $request)
+    {
+        $user = User::find(Auth::user()->id); // Obtiene el usuario autenticado        
+
+        Storage::delete('public/'.$user->profile_photo_path); // Eliminar imagen almacenada
+
+        $user->profile_photo_path = null;        
+        $user->save();
+        
+        //return redirect()->route('institucion.perfil');
+        return redirect($request->ruta);
+
+        //return response()->json(['message' => 'Error al actualizar'], 400);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function perfilupdate(Request $request)
+    {
+        //dd($request->all());
+
+        $user = User::find(Auth::user()->id); // Obtiene el usuario autenticado  
+        $asesor = $user->asesor;
+
+        //dd($request->all());        
+
+        $request->validate([ ///Validar datos, si los datos recibidos no cumplen estas regresas no les permite la entrada a la base de datos y regresa a la pagina original
+            //'name' => ['required', 'string', 'min:5', 'max:50', Rule::unique('competencias')->ignore($competencia)],
+            //'name' => ['required', 'string', 'min:5', 'max:50'],            
+            'email' => ['required', 'email', new ValidateUniqueInTables(['users', 'registro_jueces'], $asesor->email)], //| unique:registro_jueces,email",
+            'telefono' => ['nullable','numeric', Rule::unique('users', 'telefono')->ignore($user)],
+            //'fecha' => ['date', 'before_or_equal:' . now()->addYears(2)->format('Y-m-d')],
+            //'duracion' => ['required','integer','min:1','max:100'],
+            //'asesor_id' => ['required', 'not_in:Selecciona una opción'],
+            //'tipo' => ['required'],
+            //'categoria_id' => ['required'],
+            //'imagen' => ['image', 'mimes:png,jpg,jpeg', 'max:5120'], // Máximo 5 Mb
+        ]);
+        
+
+        if($request->email_confirmation){
+            // Elimina 'email_confirmation' del request
+            $request->request->remove('email_confirmation');
+        }
+
+        //dd($request->all());
+          
+        // Enviar automáticamente el correo de verificación
+        //event(new Registered($user));
+
+        $confirmarCorreo = false;
+
+        if($asesor->email != $request->email){
+            $confirmarCorreo = true;
+        }                    
+
+
+        /*if ($request->hasFile('imagen')) {
+            //dd($request);
+            $request -> merge([
+                'ubicacion_imagen' => $request->file('imagen')->storeAs('public/imagenes_competencias', 'Portada_'.$request->name.'.'. $request->file('imagen')->extension()),                
+            ]);
+        }*/     
+        
+        //dd($request->all());
+
+        Asesor::where('id', $asesor->id)->update($request->except('_token','_method','ruta'));
+        
+        
+        $user->name = $request->name;
+        $user->lastname = $request->lastname;
+        $user->email = $request->email;
+        $user->telefono = $request->telefono;
+
+        if($confirmarCorreo == true){
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+
+
+        if($confirmarCorreo == true){
+            $user->sendEmailVerificationNotification();
+        }
+
+        // Actualizar tabla pivote con los nuevos registros  
+        //$competencia->categorias()->sync($request->input('categoria_id'));
+
+        // Insertar en la tabla pivote relacion m:n --> PENDIENTE FINAL
+        //$competencia->categorias()->attach($request->categoria_id); //detach() elimina de la lista el usuario que le pasemos
+
+
+        //Competencia::where('id', $competencia->id)->update($request->except('_token','_method')); //opuesto de except (only)
+
+        //return redirect() -> route('categoria.show', $categoria); //esto corresponde a el listado de route:list 
+        
+        //return redirect() -> route('competencia.index'); //esto corresponde a el listado de route:list         
+
+        //return redirect($request->ruta); 
+        
+        // Configura los datos para la notificación
+        //session()->flash('alerta', [   
+        
+        session()->put('alerta', [                
+            'texto' => 'Perfil Actualizado Exitosamente!',
+            'icono' => 'success',
+            'tiempo' => 2000,
+            'botonConfirmacion' => false,
+        ]);
+        
+        /*$previousUrl = session('_custom_previous.url');
+
+        //return redirect() -> route('competencia.show', $competencia);
+        return redirect($previousUrl);*/
+
+        //return redirect($request->ruta);
+
+        return redirect()->route('asesor.perfil');
+    }
+
+//=========================================================================================================================>
+
 
     /**
      * Store a newly created resource in storage.

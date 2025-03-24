@@ -185,7 +185,7 @@
     @endif    
 
 
-    <h3 style="margin-bottom: 15px;"><b>Actualizar imagen de portada</b></h1>
+    <h3 style="margin-bottom: 15px;"><b>Actualizar imagen de portada</b></h3>
 
     <!--<div style="display: flex; align-items: center; margin-bottom: 20px;">-->
     @if (!is_null($institucion->ubicacion_imagen))
@@ -297,7 +297,7 @@
         </form>
     @endif    
         
-    <h3 style="margin-top: 40px; margin-bottom: 15px;"><b>Actualizar imagen de perfil</b></h1>
+    <h3 style="margin-top: 40px; margin-bottom: 15px;"><b>Actualizar imagen de perfil</b></h3>
 
     <!-- Imagen de perfil -->
     @if (!is_null($institucion->user->profile_photo_path))
@@ -415,8 +415,7 @@
 
         <input id="ruta" type="hidden" name="ruta" value="{{ request()->path() }}">
 
-        <h3 style="margin-top: 20px; margin-bottom: 15px;"><b>Información básica</b></h1>
-
+        <h3 style="margin-top: 20px; margin-bottom: 15px;"><b>Información básica</b></h3>
                 
         <label for="name"><b> Nombre de la institución: </b></label>
         <input id="name" type="text" name="name" style="width: 250px" value = "{{ old('name') ?? $institucion -> name }}" minlength="5" maxlength="100" required><br><br> <!-- autocomplete="name" --->
@@ -554,9 +553,10 @@
 
     <!--<br>
     <button onclick="window.location.href = '/competencia';">Cancelar</button>-->
+    
+</x-plantilla-body>
 
-
-    <!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
 
     <!-- Scripts -->
@@ -1229,4 +1229,4 @@
 
     </script>
 
-</x-plantilla-body>
+</html>

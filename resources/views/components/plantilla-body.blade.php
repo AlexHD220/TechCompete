@@ -54,6 +54,10 @@
 
                     <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="/" class="nav-item nav-link"><i class="fa fa-home me-2"></i>Página principal</a>
 
+                    @can('have-perfil')                                                                                        
+                        <a style="display: flex; justify-content: flex-start; margin-left: 5px;" href="{{ Auth::user()->rol == 5 ? route('institucion.perfil') : (Auth::user()->rol == 6 ? route('asesor.perfil') : route('juez.perfil')) }}" class="nav-item nav-link"><i class="fa-solid fa-user me-2"></i>Perfil</a> 
+                    @endcan
+
                     @auth <!--Cuando el usuario este logueado muestrame lo sigiente-->
                         @can('only-user')
                             <div class="nav-item dropdown">
