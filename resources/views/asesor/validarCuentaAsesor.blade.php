@@ -6,6 +6,16 @@
 </x-plantilla-head>
 
 <x-plantilla-body>
+
+    @if (session('alerta'))
+        <script>                
+            document.addEventListener('DOMContentLoaded', function () {            
+                    // Captura los datos de la sesión y llama a la función                        
+                    sweetAlertNotificationHTML("{{ session('alerta.titulo') }}", "{{ session('alerta.texto') }}",  "{!! session('alerta.html') !!}", "{{ session('alerta.icono') }}", "{{ session('alerta.tiempo') }}", "{{ session('alerta.botonConfirmacion') }}");
+            });
+        </script>
+    @endif
+
     <div>
         <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
             <h1 style="display: inline;">Listado de Cuentas Pendientes de Aprobación</h1>
@@ -78,5 +88,20 @@
         <button onclick="window.location.href = '/juez/create';">Registrar nuevo juez</button>-->
     </div>
 </x-plantilla-body>
+
+<script>
+    function sweetAlertNotificationHTML(titulo, texto, html, icono, tiempo, botonConfirmacion) {  
+    
+        // Usando SweetAlert para notificación
+        Swal.fire({
+            title: titulo,
+            text: texto,
+            html: html,
+            icon: icono,
+            timer: tiempo,
+            showConfirmButton: botonConfirmacion
+        });
+    }
+</script>
 
 </html>
