@@ -326,7 +326,7 @@
                             onclick="window.location.href = this.getAttribute('link');" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->
                                 Perfil
                             </button>                            
-                        @endcan
+                        @endcan                        
                         
                     @endauth   
 
@@ -346,9 +346,17 @@
                     @auth <!--Cuando el usuario este logueado muestrame lo sigiente-->
 
                         @can('only-institucion')                            
-                            <button onclick="window.location.href = '/asesor';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->                                
-                                Asesores
-                            </button>
+                        
+                            <div class="button-container">
+                                <button onclick="window.location.href = '/asesor';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->
+                                    Asesores
+                                </button>
+                                
+                                @if($solicitudesAsesorescount > 0)
+                                    <span class="notification-badge"><b>{{$solicitudesAsesorescount}}</b></span>
+                                @endif
+                            </div>
+                        
                         
 
                             <button onclick="window.location.href = '/equipo';" class="boton" style="margin: 10px; font-size: 18px; width: 170px;"> <!--style="margin-left: 20px;"-->                                

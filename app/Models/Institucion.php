@@ -35,6 +35,11 @@ class Institucion extends Model
         return $this->hasMany (Asesor::class);
     }
 
+    public function asesor_institucion_solicitudes() // --> Relacion Muchos a 1
+    {
+        return $this->hasMany (AsesorInstitucionSolicitud::class);
+    }
+
     public function equipos() // --> Relacion Muchos a 1
     {
         return $this->hasMany (Equipo::class);

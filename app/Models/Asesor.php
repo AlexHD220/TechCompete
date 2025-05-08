@@ -30,6 +30,11 @@ class Asesor extends Model
         return $this->belongsTo(institucion::class);
     }
 
+    public function asesor_institucion_solicitud() // --> Relacion Uno a Uno
+    {
+        return $this->hasOne(AsesorInstitucionSolicitud::class);
+    }
+
     public function competencia_categorias() // --> Relacion Muchos a Muchos
     {
         return $this->belongsToMany(CompetenciaCategoria::class);

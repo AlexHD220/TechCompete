@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccesoCompetenciaController;
 use App\Http\Controllers\AdministradorController;
 use App\Http\Controllers\AsesorController;
+use App\Models\AsesorInstitucionSolicitud;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\CompetenciaCategoriaController;
 use App\Http\Controllers\CompetenciaController;
@@ -50,11 +51,20 @@ Route::get('/', function () {
 
             if ($user->rol == 1 || $user->rol == 2) {
 
-                $cuentasAsesores = Asesor::where('verificada',0)->where('observaciones', 0)->get();                        
+                $cuentasAsesores = Asesor::where('verificada',0)->where('observaciones', 0)->get();                     
 
                 $cuentasAsesorescount = $cuentasAsesores->count();
 
                 return view('welcome',compact('cuentasAsesorescount')); 
+
+            } else if ($user->rol == 5) {
+                $solicitudesAsesores = AsesorInstitucionSolicitud::where('institucion_id',$user->institucion->id)->get();                     
+
+                $solicitudesAsesorescount = $solicitudesAsesores->count();
+
+                //dd($solicitudesAsesorescount);
+
+                return view('welcome',compact('solicitudesAsesorescount')); 
 
             } else{
                 return view('welcome'); // Usuario con correo verificado
@@ -450,6 +460,22 @@ Route::middleware('auth', 'verified')->group(function(){  // Necesitan iniciar s
 
     Route::patch('institucion/perfil', [InstitucionController::class, 'perfilupdate'])
     ->name('institucion.perfilupdate');    
+
+
+    Route::get('institucion/asesores', [InstitucionController::class, 'asesores'])
+    ->name('institucion.asesores');
+
+    Route::get('institucion/asesores/solicitudes', [InstitucionController::class, 'solicitudasesores'])
+    ->name('institucion.solicitudasesores');
+
+    Route::get('institucion/asesores/solicitudes/{asesor}', [InstitucionController::class, 'showsolicitudasesores'])
+    ->name('institucion.showsolicitudasesores');
+
+    Route::post('institucion/asesores/solicitudes/{asesor}/aprobarcuenta', [InstitucionController::class, 'aprobarsolicitud'])
+    ->name('institucion.aprobarsolicitud');
+
+    Route::post('institucion/asesores/solicitudes/{asesor}/rechazarcuenta', [InstitucionController::class, 'rechazarsolicitud'])
+    ->name('institucion.rechazarsolicitud');
     
 //------------------------------------------------------------------------------------|
 
@@ -467,6 +493,26 @@ Route::post('asesor/validarcuenta/{asesor}/aprobarcuenta', [AsesorController::cl
 
 Route::post('asesor/validarcuenta/{asesor}/rechazarcuenta', [AsesorController::class, 'rechazarcuenta'])
 ->name('asesor.rechazarcuenta');
+
+
+Route::get('asesor', [AsesorController::class, 'listadoasesores'])
+->name('asesor.listadoasesores');
+
+Route::get('asesor/solicitud', [AsesorController::class, 'solicitudasesores'])
+->name('asesor.solicitudasesores');
+
+Route::get('asesor/solicitud/{asesor}', [AsesorController::class, 'showsolicitudasesores'])
+->name('asesor.showsolicitudasesores');
+
+Route::post('asesor/solicitudes/{asesor}/aprobarcuenta', [AsesorController::class, 'aprobarsolicitud'])
+->name('asesor.aprobarsolicitud');
+
+Route::post('asesor/solicitudes/{asesor}/rechazarcuenta', [AsesorController::class, 'rechazarsolicitud'])
+->name('asesor.rechazarsolicitud');
+
+
+Route::post('asesor/institucion/editar', [AsesorController::class, 'editarinstitucion'])
+->name('asesor.editarinstitucion');
 
 //------------------------------------------------------------------------------------|
 
@@ -500,8 +546,18 @@ Route::patch('asesor/perfil', [AsesorController::class, 'perfilupdate'])
 Route::get('asesor/institucion/vincular', [AsesorController::class, 'vincularinstitucion'])
 ->name('asesor.vincularinstitucion');  
 
-Route::get('asesor/institucion/editar', [AsesorController::class, 'editarinstitucion'])
-->name('asesor.editarinstitucion');  
+Route::post('asesor/institucion/vincular/busqueda', [AsesorController::class, 'vincularinstitucionbusqueda'])
+->name('asesor.vincularinstitucionbusqueda');  
+
+Route::post('asesor/institucion/vincular', [AsesorController::class, 'vincularinstitucionstore'])
+->name('asesor.vincularinstitucionstore');  
+
+
+Route::delete('asesor/institucion/solicitud/{asesorinstitucionsolicitud}/cancelar', [AsesorController::class, 'cancelarsolicitudinstitucion'])
+->name('asesor.cancelarsolicitudinstitucion');  
+
+Route::delete('asesor/institucion/desvincular/{asesor}', [AsesorController::class, 'desvincularinstitucion'])
+->name('asesor.desvincularinstitucion');  
 
 //------------------------------------------------------------------------------------|
 
@@ -621,7 +677,7 @@ Route::post('asesor/revisarcredencial/{codigo_rechazo}', [AsesorController::clas
 
 
 
-Route::resource('asesor', AsesorController::class)->except(['edit']);
+Route::resource('asesor', AsesorController::class)->except(['index', 'edit']);
 
 
 

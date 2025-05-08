@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 use App\Models\Administrador;
+use App\Models\AsesorInstitucionSolicitud;
 use App\Models\Team;
 use App\Rules\ValidateUniqueInTables;
 use Illuminate\Auth\Events\Registered;
@@ -1811,6 +1812,388 @@ class AsesorController extends Controller
 
         //return redirect($request->ruta);
 
+        return redirect()->route('asesor.perfil');
+    }
+
+
+    // Usuario view
+    public function vincularinstitucion()
+    {
+        if (Auth::check()) {
+            // Si el usuario está autenticado, revisar que no tenga institucion
+            $user = auth()->user();
+            if(!$user->asesor->institucion_id && !$user->inst_independiente && !$user->asesor->asesor_institucion_solicitud){
+                return view("asesor/vincularInstitucionAsesor"); 
+            }
+
+            return redirect('/');
+        }
+    
+        // Si no está autenticado, regresar a inicio                
+        return redirect('/');
+    }
+
+    // Usuario
+    public function vincularinstitucionbusqueda(Request $request)
+    {
+        if (Auth::check()) {
+            // Si el usuario está autenticado, revisar que no tenga institucion
+            $user = auth()->user();
+            if(!$user->asesor->institucion_id && !$user->inst_independiente && !$user->asesor->asesor_institucion_solicitud){
+
+                //dd($request->busqueda);
+
+                // Validar los campos
+                $request->validate([            
+                    //'codigo_rechazo' => 'required|min:15|max:15|exists:asesores,codigo_rechazo',            
+                    'busqueda' => 'required|string',            
+                ]);
+
+                //dd($request->busqueda);
+
+                // Normaliza el término de búsqueda (quita acentos y baja a minúsculas)
+                $busqueda = quitar_acentos(strtolower($request->busqueda));
+
+                // Buscar el código de registro en la base de datos
+                // Trae todas las instituciones y filtra en PHP
+                $coincidencias = Institucion::all()->filter(function($inst) use ($busqueda) {
+                    // Normaliza nombre y código de cada registro
+                    $nombreNorm = quitar_acentos(strtolower($inst->name));            
+
+                    // Coincide si el término está contenido en uno u otro
+                    return str_contains($nombreNorm, $busqueda);             
+                });
+
+                //dd($coincidencias->count());
+
+                if($coincidencias->count()){                    
+                    //return redirect() -> route('asesor.validarcredencialrechazada', $asesor->codigo_rechazo);
+
+                    // Envía resultados a la vista
+                    return view('asesor/busquedaVincularInstitucionAsesor', [
+                        'coincidencias' => $coincidencias,
+                        'busqueda' => $request->busqueda,
+                    ]);
+                }
+                else{
+                    // Configura los datos para la notificación
+                    session()->flash('alerta', [
+                        'titulo' => '"No se encontro ninguna coincidencia"',            
+                        'texto' => 'Por favor ingrese el nombre de una institución valida con registro previo dentro de la plataforma.',
+                        'icono' => 'error',
+                        //'tiempo' => 5000,
+                        'botonConfirmacion' => true,            
+                    ]);
+
+                    //dd($request->all());
+
+                    return redirect() -> route('asesor.vincularinstitucion');
+                }
+
+            }
+
+            return redirect('/');
+        }
+    
+        // Si no está autenticado, regresar a inicio                
+        return redirect('/');
+    }
+
+    public function vincularinstitucionstore(Request $request)
+    {
+        if (Auth::check()) {
+            // Si el usuario está autenticado, revisar que no tenga institucion
+            $user = auth()->user();
+            if(!$user->asesor->institucion_id && !$user->inst_independiente && !$user->asesor->asesor_institucion_solicitud){
+
+                $asesorinstitucionsolicitud = new AsesorInstitucionSolicitud();
+
+                // Crear el registro en la base de datos
+
+                //dd($user->asesor->id);
+                
+                $asesorinstitucionsolicitud->asesor_id = $user->asesor->id;
+                $asesorinstitucionsolicitud->institucion_id = $request->institucion;   
+
+                $asesorinstitucionsolicitud->save();     
+                
+                session()->put('alerta', [                
+                    'titulo' => 'Solicitud enviada exitosamente!',
+                    'texto' => 'Ya se ha notificado a la institucion que deseas vincular tu cuenta de asesor como parte de su institucion.',
+                    'icono' => 'success',
+                    'tiempo' => 3000,
+                    'botonConfirmacion' => false,
+                ]);
+        
+                return redirect()->route('asesor.perfil');
+                
+            }
+
+            return redirect('/');
+        }
+    
+        // Si no está autenticado, regresar a inicio                
+        return redirect('/');
+    }
+
+
+    public function cancelarsolicitudinstitucion(AsesorInstitucionSolicitud $asesorinstitucionsolicitud)
+    {        
+        //dd($asesorinstitucionsolicitud);
+                
+        $asesorinstitucionsolicitud -> delete();
+
+        session()->put('alerta', [                
+            'titulo' => 'Solicitud cancelada exitosamente!',
+            'texto' => 'La solicitud fue dada de baja correctamente, para hacer una nueva solicitud ingresa nuevamente a Vincular Institución.',
+            'icono' => 'success',
+            'tiempo' => 3000,
+            'botonConfirmacion' => false,
+        ]);
+        
+        return redirect()->route('asesor.perfil');
+    }
+
+
+    public function listadoasesores()
+    {
+        if (auth()->check()) { // Verifica si el usuario está logueado
+            
+            $user = auth()->user();
+
+            if ($user->rol == 5){
+       
+                $asesores = Asesor::where('institucion_id',$user->institucion->id)->get(); //registros que solo pertenezcan al usuario logueado
+                //dd($asesores);
+                $asesorescount = $asesores->count();
+
+                $solicitudesAsesores = AsesorInstitucionSolicitud::where('institucion_id',$user->institucion->id)->get();                     
+
+                $solicitudesAsesorescount = $solicitudesAsesores->count();
+
+                return view("asesor/indexAsesor",compact('asesores', 'asesorescount', 'solicitudesAsesorescount')); //<----- regresar vista al llamar al archivo index (asesor)
+                //compact es para enviar al archhivo todos los datos de la variable asesores 
+
+            } else{
+                return redirect('/');
+            }
+        }
+        else{
+            return redirect('/');
+        }    
+    }
+
+    // Administrador view
+    public function solicitudasesores()
+    {
+        if (auth()->check()) { // Verifica si el usuario está logueado
+            
+            $user = auth()->user();
+
+            if ($user->rol == 5) {                
+
+                $solicitudesAsesores = AsesorInstitucionSolicitud::where('institucion_id',$user->institucion->id)->get();
+                //->where('observaciones', '!=', 1) // Asegura que observaciones no sea 1      
+                $asesorIds = $solicitudesAsesores->pluck('asesor_id'); // Obtiene solo los IDs                          
+
+                $solicitudesAsesoresCount = $solicitudesAsesores->count();
+
+                $cuentasAsesores = Asesor::whereIn('id',$asesorIds)
+                ->orderBy('name', 'asc')
+                ->get();
+
+                //dd($cuentasAsesores);
+
+                return view("asesor/revisarSolicitudAsesor",compact('cuentasAsesores', 'solicitudesAsesoresCount')); 
+
+            } else{
+                return redirect('/');
+            }
+        }
+        else{
+            return redirect('/');
+        }                      
+    }
+
+    // Administrador view
+    public function showsolicitudasesores(Asesor $asesor)
+    {
+        $cuentasAsesores = Asesor::where('verificada', 0)
+        //->where('observaciones', '!=', 1) // Asegura que observaciones no sea 1
+        ->where('observaciones', 0)
+        ->orderBy('name', 'asc')
+        ->get();
+
+        // Encontrar el índice del asesor actual en la colección
+        $indiceAsesorActual = $cuentasAsesores->search(function ($item) use ($asesor) {
+            return $item->id === $asesor->id;
+        });
+
+        // Obtener el asesor anterior, si existe
+        $asesorAnterior = $indiceAsesorActual > 0 ? $cuentasAsesores[$indiceAsesorActual - 1] : null;
+        // Obtener el asesor siguiente, si existe
+        $asesorSiguiente = $indiceAsesorActual < $cuentasAsesores->count() - 1 ? $cuentasAsesores[$indiceAsesorActual + 1] : null;
+
+        //dd($asesorAnterior);
+        //dd($asesorSiguiente);
+
+        return view('asesor/showValidarCuentaAsesor',compact('asesor', 'asesorAnterior', 'asesorSiguiente')); //asesor es el usuario actual a mostrar
+    }
+
+    // Administrador
+    public function aprobarsolicitud(Request $request, Asesor $asesor)
+    {        
+
+        $user = auth()->user();
+
+        //dd($asesor->name);
+
+        //dd($asesor->asesor_institucion_solicitud);
+
+        $asesor->asesor_institucion_solicitud->delete();
+        
+        $asesor->institucion_id = $user->institucion->id;        
+
+        $asesor->save();
+        
+        // Configura los datos para la notificación
+        session()->flash('alerta', [
+            'titulo' => '"Solicitud de Asesor aceptada exitosamente"',            
+            //'texto' => 'La cuenta de ' . $asesor->email . ' fue activada exitosamente.',
+            'html' => 'La solicitud de <b><i>' . $asesor->name .  '</i></b> fue aceptada exitosamente.',
+            'icono' => 'success',
+            'tiempo' => 3000,
+            'botonConfirmacion' => false,            
+        ]);
+
+        if($request->listado){
+            return redirect('/asesor/solicitud');
+        }
+        else{
+            //Asesor anterior
+            if($request->asesor_anterior_id){
+                $asesorAnterior = Asesor::findOrFail($request->asesor_anterior_id);
+            }else{
+                $asesorAnterior = null;
+            }
+
+            //Asesor siguiente
+            if($request->asesor_siguiente_id){
+                $asesorSiguiente = Asesor::findOrFail($request->asesor_siguiente_id);
+            }else{
+                $asesorSiguiente = null;
+            }
+
+            //dd($asesorAnterior);
+            //dd($asesorSiguiente);
+
+            if($asesorSiguiente){
+                return redirect() -> route('asesor.showvalidarcuenta', $asesorSiguiente);
+            }
+            elseif($asesorAnterior){
+                return redirect() -> route('asesor.showvalidarcuenta', $asesorAnterior);
+            }
+            else{
+                return redirect('/asesor/solicitud');
+            }
+        }        
+
+        //return redirect('/administrador/trashed');
+    }
+
+    // Administrador
+    public function rechazarsolicitud(Request $request, Asesor $asesor)
+    {
+        $asesor->asesor_institucion_solicitud->delete();      
+        
+        // CREAR VISTA DE CORRECCION DE DATOS POR MEDIO DE URL
+        // volver a revisar los datos y volver a enviarlo a revision manual (bucle)
+
+        // Enviar correo de rechazo de cuenta
+        //Mail::to($asesor->email)->send(new NotificaCuentaAsesorRechazada($asesor, $observaciones));        
+
+        // Configura los datos para la notificación
+        session()->flash('alerta', [
+            'titulo' => '"Solicitud de asesor rechzada correctamente"',
+            //'texto' => 'La cuenta de ' . $asesor->email . ' fue activada exitosamente.',
+            'html' => 'La solicitud de <b><i>' . $asesor->name .  '</i></b> fue rechazada satisfactoriamente.',
+            'icono' => 'success',
+            'tiempo' => 3000,
+            'botonConfirmacion' => false,            
+        ]);
+
+
+        if($request->listado){
+            return redirect('/asesor/solicitud');
+        }
+        else{
+            //Asesor anterior
+            if($request->asesor_anterior_id){
+                $asesorAnterior = Asesor::findOrFail($request->asesor_anterior_id);
+            }else{
+                $asesorAnterior = null;
+            }
+
+            //Asesor siguiente
+            if($request->asesor_siguiente_id){
+                $asesorSiguiente = Asesor::findOrFail($request->asesor_siguiente_id);
+            }else{
+                $asesorSiguiente = null;
+            }
+
+            //dd($asesorAnterior);
+            //dd($asesorSiguiente);
+
+            if($asesorSiguiente){
+                return redirect() -> route('asesor.showvalidarcuenta', $asesorSiguiente);
+            }
+            elseif($asesorAnterior){
+                return redirect() -> route('asesor.showvalidarcuenta', $asesorAnterior);
+            }
+            else{
+                return redirect('/asesor/solicitud');
+            }
+        }  
+    
+
+        //dd($observaciones);
+
+        //Enviar correo de rechazo de cuenta
+
+        //
+
+        // Lógica para rechazar la cuenta y enviar notificaciones
+        // Por ejemplo, actualizar el estado del asesor, guardar las observaciones, etc.
+        //$asesor->observaciones = $data['observaciones'];
+        //$asesor->estado = 'rechazado';
+        //$asesor->save();
+
+        // Redirigir al usuario a otra ruta, por ejemplo, a una página de confirmación
+        //return redirect()->route('asesor.dashboard')->with('success', 'Cuenta rechazada y observaciones enviadas.');
+    }
+    
+
+    public function desvincularinstitucion(Request $request, Asesor $asesor)
+    {
+
+        $institucion = $asesor->institucion;
+
+        $asesor->institucion_id = null;        
+
+        $asesor->save();      
+
+        // Configura los datos para la notificación
+        session()->flash('alerta', [
+            'titulo' => '"Institucion desvinculada correctamente"',
+            //'texto' => 'La cuenta de ' . $asesor->email . ' fue activada exitosamente.',
+            'html' => 'La institucion <b><i>' . $institucion->name .  '</i></b> fue desvinculada de su cuenta.',
+            'icono' => 'success',
+            'tiempo' => 3000,
+            'botonConfirmacion' => false,            
+        ]);
+
+
+        
         return redirect()->route('asesor.perfil');
     }
 

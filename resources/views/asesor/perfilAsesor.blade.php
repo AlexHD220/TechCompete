@@ -217,29 +217,47 @@
     
         @if($asesor->institucion_id)              
             
-            <div style="margin-bottom: 15px; display: flex; flex-wrap: wrap; align-items: center;">
-                <h4> Institución: </h4>  
+            <h4> Institución: </h4> 
+                
+            <p style="margin-left: 15px; font-size: 20px;"><b>{{ $asesor->institucion->name }}</b></p>              
+            
 
-                @auth
-                    @can('only-asesor')
-                        <div class="text-center" style="margin-top: 10px;">
-                            <!-- Botón para Editar -->
-                            <a href="{{ route('asesor.editarinstitucion') }}" onmouseover="this.style.backgroundColor='#818284';" onmouseout="this.style.backgroundColor='#434851';" 
-                            style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: #434851; color: white; border: none; padding: 5px 10px; border-radius: 5px; display: inline-flex; justify-content: center; align-items: center;"
-                            title="Editar Institución">                                
-                                <i class="fas fa-edit" style="font-size: 18px; margin-right: 5px;"></i> <!-- Ícono de FontAwesome -->
-                                Editar
-                            </a>    
-                        </div>
-                    @endcan
-                @endauth
-            </div>
+            <form action="{{route('asesor.desvincularinstitucion', $asesor)}}" method = "POST" style="display: inline-block;">
+                @csrf
+                @method('DELETE')
 
-            <div style="margin-left: 15px;">
-                <a onmouseover="this.style.color='white'" onmouseout="this.style.color='#6c7293'" href="{{route('institucion.show', $asesor->institucion_id)}}" style="text-decoration: none; color: inherit; display: inline-block;">
-                        <b style="font-size: 20px;">{{ $asesor->institucion_id }}</b>
-                </a>
-            </div>
+                <button type="submit" onclick="return confirm('¿Está seguro que desea eliminar la relacion con la institucion?')" class="btn btn-primary" onMouseOver="this.style.backgroundColor='#ba1313'" onmouseout="this.style.backgroundColor='#f40b0b'" style="margin-left: 15px; font-size: 14px; background-color: #f40b0b; border:0px; box-shadow: none; padding-top: 8px; padding-bottom: 8px;">
+                <b>Desvincular institucion</b></button>
+            </form>
+
+            @if(0)
+                <div style="margin-bottom: 15px; display: flex; flex-wrap: wrap; align-items: center;">
+                    <h4> Institución: </h4>                                 
+                    
+                    @auth
+                        @can('only-asesor')
+                            <div class="text-center" style="margin-top: 10px;">
+                                
+                                <!-- Botón para Editar -->
+                                <a href="{{ route('asesor.editarinstitucion') }}" onmouseover="this.style.backgroundColor='#818284';" onmouseout="this.style.backgroundColor='#434851';" 
+                                style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: #434851; color: white; border: none; padding: 5px 10px; border-radius: 5px; display: inline-flex; justify-content: center; align-items: center;"
+                                title="Editar Institución">                                
+                                    <i class="fas fa-edit" style="font-size: 18px; margin-right: 5px;"></i> <!-- Ícono de FontAwesome -->
+                                    Editar
+                                </a> 
+
+                            </div>
+                        @endcan
+                    @endauth
+
+                </div>
+
+                <div style="margin-left: 15px;">
+                    <a onmouseover="this.style.color='white'" onmouseout="this.style.color='#6c7293'" href="{{route('institucion.show', $asesor->institucion_id)}}" style="text-decoration: none; color: inherit; display: inline-block;">
+                            <b style="font-size: 20px;">{{ $asesor->institucion_id }}</b>
+                    </a>
+                </div>
+            @endif
 
         @elseif($asesor->inst_independiente)
             <div style="margin-bottom: 15px; display: flex; flex-wrap: wrap; align-items: center;">
@@ -264,8 +282,19 @@
                 <p style="margin-bottom: 20px; font-size: 20px;">{{ $asesor->inst_nombre }}</p>   
             </div>
 
+        @elseif($asesor->asesor_institucion_solicitud)
+            <h4> Intitución: </h4>
+            <p style="margin-left: 15px;">Ya se ha enviado una solicitud a "<b><i>{{ $asesor->asesor_institucion_solicitud->institucion->name }}</i></b>" para vincular tu cuenta de asesor con la institución.</p>              
+
+            <form action="{{route('asesor.cancelarsolicitudinstitucion', $asesor->asesor_institucion_solicitud)}}" method = "POST" style="display: inline-block;">
+                @csrf
+                @method('DELETE')
+
+                <button type="submit" onclick="return confirm('¿Está seguro que desea cancelar la solicitud de vinculacion de perfiles?')" class="btn btn-primary" onMouseOver="this.style.backgroundColor='#ba1313'" onmouseout="this.style.backgroundColor='#f40b0b'" style="margin-left: 15px; font-size: 14px; background-color: #f40b0b; border:0px; box-shadow: none; padding-top: 8px; padding-bottom: 8px;">
+                <b>Cancelar Solicitud</b></button>
+            </form>
         @else
-            <h4> Escuela: </h4>
+            <h4> Intitución: </h4>
             <button class="btn btn-primary" onMouseOver="this.style.backgroundColor='#053482'" onmouseout="this.style.backgroundColor='#004ecf'" style="margin-left: 15px; font-size: 14px; background-color: #004ecf; border:0px; box-shadow: none; padding-top: 8px; padding-bottom: 8px;" 
             link="{{ route('asesor.vincularinstitucion') }}" 
             onclick="window.location.href = this.getAttribute('link');"><b>Vincular Institución</b></button>

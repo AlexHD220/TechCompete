@@ -84,65 +84,68 @@
                         </div>
                     @endif 
 
-                @elseif(Gate::allows('only-asesor'))
-                    @if($competenciaCategoria->registro_personalizado)
+                @elseif(0)
+                    @if(0)
+                    @elseif(Gate::allows('only-asesor'))
+                        @if($competenciaCategoria->registro_personalizado)
 
-                        @if (\Carbon\Carbon::parse($competenciaCategoria->inicio_registros) >= \Carbon\Carbon::now()->startOfDay() 
-                            && \Carbon\Carbon::parse($competenciaCategoria->fin_registros) < \Carbon\Carbon::now()->endOfDay())
+                            @if (\Carbon\Carbon::parse($competenciaCategoria->inicio_registros) >= \Carbon\Carbon::now()->startOfDay() 
+                                && \Carbon\Carbon::parse($competenciaCategoria->fin_registros) < \Carbon\Carbon::now()->endOfDay())
 
-                            @if($cuposrestantes > 0 || $cupo_ilimitado == True)
-                                <button class="btn btn-primary" link="{{ route('competenciacategoria.create', $competencia) }}" 
-                                onclick="window.location.href = this.getAttribute('link');">
-                                    Inscribirse
-                                </button> <!-- RUTA PENDIENTE PARA INSCRIPCIONES --> 
-                            @else
-                                <div style="text-align: center;">
-                                    <a style="font-size: 14px; color: #eb1616;">
-                                        <i>Se han ocupado todos los cupos<br> 
-                                            de inscripción disponibles</i></a>
+                                @if($cuposrestantes > 0 || $cupo_ilimitado == True)
+                                    <button class="btn btn-primary" link="{{ route('competenciacategoria.create', $competencia) }}" 
+                                    onclick="window.location.href = this.getAttribute('link');">
+                                        Inscribirse
+                                    </button> <!-- RUTA PENDIENTE PARA INSCRIPCIONES --> 
+                                @else
+                                    <div style="text-align: center;">
+                                        <a style="font-size: 14px; color: #eb1616;">
+                                            <i>Se han ocupado todos los cupos<br> 
+                                                de inscripción disponibles</i></a>
+                                    </div>
+                                @endif
+
+                            @elseif(\Carbon\Carbon::parse($competenciaCategoria->inicio_registros) < \Carbon\Carbon::now()->startOfDay())
+                                <div style="text-align: center;">  
+                                    <a style="font-size: 14px; color: #eb1616;">                          
+                                        <i>Inscripciones Cerradas</i></a>
+                                </div>
+                            @elseif(\Carbon\Carbon::parse($competenciaCategoria->fin_registros) > \Carbon\Carbon::now()->endOfDay())                                               
+                                <div style="text-align: center;">   
+                                    <a style="font-size: 14px; color: #eb1616;">                         
+                                        <i>Inscripciones Próximamente</i></a>
+                                </div>
+                            @endif                
+                            
+                        @elseif(!$competenciaCategoria->registro_personalizado)
+                            @if(\Carbon\Carbon::parse($competencia->inicio_registros) >= \Carbon\Carbon::now()->startOfDay() 
+                                && \Carbon\Carbon::parse($competencia->fin_registros) < \Carbon\Carbon::now()->endOfDay())
+
+                                @if($cuposrestantes > 0 || $cupo_ilimitado == True)
+                                    <button class="btn btn-primary" link="{{ route('competenciacategoria.create', $competencia) }}" 
+                                    onclick="window.location.href = this.getAttribute('link');">
+                                        Inscribirse
+                                    </button> <!-- RUTA PENDIENTE PARA INSCRIPCIONES --> 
+                                @else
+                                    <div style="text-align: center;">
+                                        <a style="font-size: 14px; color: #eb1616;">
+                                            <i>Se han ocupado todos los cupos<br> 
+                                                de inscripción disponibles</i></a>
+                                    </div>
+                                @endif
+                            @elseif(\Carbon\Carbon::parse($competencia->inicio_registros) < \Carbon\Carbon::now()->startOfDay())                        
+                                <div style="text-align: center;">  
+                                    <a style="font-size: 14px; color: #eb1616;">                          
+                                        <i>Inscripciones Cerradas</i></a>
+                                </div>
+                            @elseif(\Carbon\Carbon::parse($competencia->fin_registros) > \Carbon\Carbon::now()->endOfDay())
+                                <div style="text-align: center;">   
+                                    <a style="font-size: 14px; color: #eb1616;">                         
+                                        <i>Inscripciones Próximamente</i></a>
                                 </div>
                             @endif
 
-                        @elseif(\Carbon\Carbon::parse($competenciaCategoria->inicio_registros) < \Carbon\Carbon::now()->startOfDay())
-                            <div style="text-align: center;">  
-                                <a style="font-size: 14px; color: #eb1616;">                          
-                                    <i>Inscripciones Cerradas</i></a>
-                            </div>
-                        @elseif(\Carbon\Carbon::parse($competenciaCategoria->fin_registros) > \Carbon\Carbon::now()->endOfDay())                                               
-                            <div style="text-align: center;">   
-                                <a style="font-size: 14px; color: #eb1616;">                         
-                                    <i>Inscripciones Próximamente</i></a>
-                            </div>
-                        @endif                
-                        
-                    @elseif(!$competenciaCategoria->registro_personalizado)
-                        @if(\Carbon\Carbon::parse($competencia->inicio_registros) >= \Carbon\Carbon::now()->startOfDay() 
-                            && \Carbon\Carbon::parse($competencia->fin_registros) < \Carbon\Carbon::now()->endOfDay())
-
-                            @if($cuposrestantes > 0 || $cupo_ilimitado == True)
-                                <button class="btn btn-primary" link="{{ route('competenciacategoria.create', $competencia) }}" 
-                                onclick="window.location.href = this.getAttribute('link');">
-                                    Inscribirse
-                                </button> <!-- RUTA PENDIENTE PARA INSCRIPCIONES --> 
-                            @else
-                                <div style="text-align: center;">
-                                    <a style="font-size: 14px; color: #eb1616;">
-                                        <i>Se han ocupado todos los cupos<br> 
-                                            de inscripción disponibles</i></a>
-                                </div>
-                            @endif
-                        @elseif(\Carbon\Carbon::parse($competencia->inicio_registros) < \Carbon\Carbon::now()->startOfDay())                        
-                            <div style="text-align: center;">  
-                                <a style="font-size: 14px; color: #eb1616;">                          
-                                    <i>Inscripciones Cerradas</i></a>
-                            </div>
-                        @elseif(\Carbon\Carbon::parse($competencia->fin_registros) > \Carbon\Carbon::now()->endOfDay())
-                            <div style="text-align: center;">   
-                                <a style="font-size: 14px; color: #eb1616;">                         
-                                    <i>Inscripciones Próximamente</i></a>
-                            </div>
                         @endif
-
                     @endif
                 @endif
             @endif
@@ -179,6 +182,7 @@
             </div>
         </div>           
                 
+        @if(0)
         @if($competencia->publicada)
             <button class="btn btn-primary" onMouseOver="this.style.backgroundColor='#053482'" onmouseout="this.style.backgroundColor='#004ecf'" style="font-size: 14px; background-color: #004ecf; border:0px; box-shadow: none; padding-top: 8px; padding-bottom: 8px;" 
             onclick="window.location.href = '/';">
@@ -188,7 +192,8 @@
                     <b>Proyectos Inscritos</b>
                 @endif
             </button> <!-- Ruta pendiente -->
-        @endif    
+        @endif  
+        @endif  
 
     </div>    
 
