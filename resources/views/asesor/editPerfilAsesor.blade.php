@@ -319,31 +319,49 @@
     <br>
     <div style="margin-top: 15px;">           
 
-        @if($asesor->institucion_id)              
+    @if($asesor->institucion_id)              
             
-            <div style="margin-bottom: 15px; display: flex; flex-wrap: wrap; align-items: center;">
-                <h4> Institución: </h4>  
+            <h4> Institución: </h4> 
+                
+            <p style="margin-left: 15px; font-size: 20px;"><b>{{ $asesor->institucion->name }}</b></p>              
+            
 
-                @auth
-                    @can('only-asesor')
-                        <div class="text-center" style="margin-top: 10px;">
-                            <!-- Botón para Editar -->
-                            <a href="{{ route('asesor.editarinstitucion') }}" onmouseover="this.style.backgroundColor='#818284';" onmouseout="this.style.backgroundColor='#434851';" 
-                            style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: #434851; color: white; border: none; padding: 5px 10px; border-radius: 5px; display: inline-flex; justify-content: center; align-items: center;"
-                            title="Editar Institución">                                
-                                <i class="fas fa-edit" style="font-size: 18px; margin-right: 5px;"></i> <!-- Ícono de FontAwesome -->
-                                Editar
-                            </a>    
-                        </div>
-                    @endcan
-                @endauth
-            </div>
+            <form action="{{route('asesor.desvincularinstitucion', $asesor)}}" method = "POST" style="display: inline-block;">
+                @csrf
+                @method('DELETE')
 
-            <div>
-                <a onmouseover="this.style.color='white'" onmouseout="this.style.color='#6c7293'" href="{{route('institucion.show', $asesor->institucion_id)}}" style="text-decoration: none; color: inherit; display: inline-block;">
-                        <b style="font-size: 20px;">{{ $asesor->institucion_id }}</b>
-                </a>
-            </div>
+                <button type="submit" onclick="return confirm('¿Está seguro que desea eliminar la relacion con la institucion?')" class="btn btn-primary" onMouseOver="this.style.backgroundColor='#ba1313'" onmouseout="this.style.backgroundColor='#f40b0b'" style="margin-left: 15px; font-size: 14px; background-color: #f40b0b; border:0px; box-shadow: none; padding-top: 8px; padding-bottom: 8px;">
+                <b>Desvincular institucion</b></button>
+            </form>
+
+            @if(0)
+                <div style="margin-bottom: 15px; display: flex; flex-wrap: wrap; align-items: center;">
+                    <h4> Institución: </h4>                                 
+                    
+                    @auth
+                        @can('only-asesor')
+                            <div class="text-center" style="margin-top: 10px;">
+                                
+                                <!-- Botón para Editar -->
+                                <a href="{{ route('asesor.editarinstitucion') }}" onmouseover="this.style.backgroundColor='#818284';" onmouseout="this.style.backgroundColor='#434851';" 
+                                style="margin-left: 5px; margin-right: 5px; margin-top: 5px; background-color: #434851; color: white; border: none; padding: 5px 10px; border-radius: 5px; display: inline-flex; justify-content: center; align-items: center;"
+                                title="Editar Institución">                                
+                                    <i class="fas fa-edit" style="font-size: 18px; margin-right: 5px;"></i> <!-- Ícono de FontAwesome -->
+                                    Editar
+                                </a> 
+
+                            </div>
+                        @endcan
+                    @endauth
+
+                </div>
+
+                <div style="margin-left: 15px;">
+                    <a onmouseover="this.style.color='white'" onmouseout="this.style.color='#6c7293'" href="{{route('institucion.show', $asesor->institucion_id)}}" style="text-decoration: none; color: inherit; display: inline-block;">
+                            <b style="font-size: 20px;">{{ $asesor->institucion_id }}</b>
+                    </a>
+                </div>
+            @endif
 
         @elseif($asesor->inst_independiente)
             <div style="margin-bottom: 15px; display: flex; flex-wrap: wrap; align-items: center;">
